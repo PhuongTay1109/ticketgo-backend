@@ -2,9 +2,13 @@ package com.ticketgo.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 @Getter
 @Setter
+@SuperBuilder(toBuilder=true)
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 public class BusCompany extends User {
     @Column(nullable = false)

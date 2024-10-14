@@ -2,12 +2,13 @@ package com.ticketgo.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
-@Builder
+@SuperBuilder(toBuilder=true)
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -33,11 +34,6 @@ public class RouteStop extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private StopType stopType;
-}
-
-enum StopType {
-    PICKUP,
-    DROPOFF
 }
 
 

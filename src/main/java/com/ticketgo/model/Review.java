@@ -2,10 +2,11 @@ package com.ticketgo.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 @Setter
 @Getter
-@Builder
+@SuperBuilder(toBuilder=true)
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity

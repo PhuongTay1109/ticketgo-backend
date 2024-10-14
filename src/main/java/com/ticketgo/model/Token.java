@@ -2,12 +2,13 @@ package com.ticketgo.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
-@Builder
+@SuperBuilder(toBuilder=true)
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -31,13 +32,10 @@ public class Token extends BaseEntity {
     @Column(nullable = false)
     private LocalDateTime expiresAt;
 
-    @PrePersist
+    @Override
     public void prePersist() {
+        super.prePersist();
         this.expiresAt = this.getCreatedAt().plusDays(1);
     }
 }
 
-enum TokenType {
-    ACTIVATION,
-    RESET_PASSWORD
-}

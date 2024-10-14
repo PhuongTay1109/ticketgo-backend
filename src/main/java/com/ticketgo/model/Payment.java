@@ -1,13 +1,19 @@
 package com.ticketgo.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
+@SuperBuilder(toBuilder=true)
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "payments")
 public class Payment {
@@ -29,15 +35,5 @@ public class Payment {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private PaymentType type;
-}
-
-enum PaymentStatus {
-    COMPLETED,
-    FAILED
-}
-
-enum PaymentType {
-    VNPAY,
-    CASH
 }
 

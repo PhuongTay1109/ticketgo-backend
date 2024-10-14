@@ -2,13 +2,14 @@ package com.ticketgo.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
-@Builder
+@SuperBuilder(toBuilder=true)
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -56,13 +57,6 @@ public class Booking extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private BookingStatus status;
-}
-
-enum BookingStatus {
-    CONFIRMED,
-    COMPLETED,
-    CANCELLED,
-    REFUNDED
 }
 
 
