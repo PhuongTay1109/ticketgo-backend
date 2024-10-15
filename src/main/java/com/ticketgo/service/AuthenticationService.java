@@ -9,4 +9,8 @@ public interface AuthenticationService {
     void activateAccount(String token);
 
     UserLoginResponse login(UserLoginRequest request);
+
+    UserLoginResponse googleLogin(String accessToken);
+
+    UserLoginResponse facebookLogin(String accessToken);
 }

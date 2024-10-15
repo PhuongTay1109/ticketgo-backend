@@ -17,9 +17,7 @@ public class Customer extends User {
     @Column(nullable = false)
     private String fullName;
 
-    @Column(nullable = false)
     private String phoneNumber;
 
-    @Column(nullable = false)
     private LocalDate dateOfBirth;
 }

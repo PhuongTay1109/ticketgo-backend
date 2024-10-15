@@ -2,6 +2,7 @@ package com.ticketgo.controller;
 
 import com.ticketgo.dto.request.AccountActivationRequest;
 import com.ticketgo.dto.request.CustomerRegistrationRequest;
+import com.ticketgo.dto.request.OAuthTokenRequest;
 import com.ticketgo.dto.request.UserLoginRequest;
 import com.ticketgo.dto.response.ApiResponse;
 import com.ticketgo.dto.response.UserLoginResponse;
@@ -30,6 +31,26 @@ public class AuthenticationController {
     @PostMapping("/login")
     public ApiResponse login(@RequestBody @Valid UserLoginRequest request) {
         UserLoginResponse resp = authenticationService.login(request);
+        return new ApiResponse(
+                HttpStatus.OK,
+                "Đăng nhập thành công.",
+                resp
+        );
+    }
+
+    @PostMapping("/google-login")
+    public ApiResponse googleLogin(@RequestBody @Valid OAuthTokenRequest request) {
+        UserLoginResponse resp = authenticationService.googleLogin(request.getToken());
+        return new ApiResponse(
+                HttpStatus.OK,
+                "Đăng nhập thành công.",
+                resp
+        );
+    }
+
+    @PostMapping("/facebook-login")
+    public ApiResponse facebookLogin(@RequestBody @Valid OAuthTokenRequest request) {
+        UserLoginResponse resp = authenticationService.facebookLogin(request.getToken());
         return new ApiResponse(
                 HttpStatus.OK,
                 "Đăng nhập thành công.",

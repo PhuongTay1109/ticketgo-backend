@@ -25,7 +25,8 @@ public class EmailServiceImpl implements EmailService {
     public void sendActivationEmail(String email, String token) {
         MimeMessage message = emailSender.createMimeMessage();
         try {
-            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+            MimeMessageHelper helper =
+                    new MimeMessageHelper(message, true, "UTF-8");
 
             helper.setFrom("contact@ticketgo.com", "Hỗ trợ Ticket Go");
             helper.setTo(email);

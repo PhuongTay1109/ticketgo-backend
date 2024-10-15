@@ -32,7 +32,10 @@ public class TokenServiceImpl implements TokenService {
     @Override
     public Token findByToken(String token) {
         return tokenRepository.findByToken(token)
-                .orElseThrow(() -> new AppException("Token không hợp lệ", HttpStatus.BAD_REQUEST));
+                .orElseThrow(() -> new AppException(
+                        "Token không hợp lệ",
+                        HttpStatus.BAD_REQUEST
+                ));
     }
 
     @Override

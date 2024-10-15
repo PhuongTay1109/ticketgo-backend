@@ -1,6 +1,7 @@
 package com.ticketgo.service.impl;
 
 import com.ticketgo.exception.AppException;
+import com.ticketgo.model.User;
 import com.ticketgo.repository.UserRepository;
 import com.ticketgo.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -26,5 +27,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean existsByEmail(String email) {
         return userRepository.findByEmail(email).isPresent();
+    }
+
+    @Override
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new AppException(
+                        "Tài khoản với tên email " + email + " không tồn tại",
+                        HttpStatus.NOT_FOUND
+                ));
     }
 }

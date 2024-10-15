@@ -37,11 +37,15 @@ public class User extends BaseEntity implements UserDetails {
     @Column(nullable = false)
     private Role role;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Provider provider;
+
     @Column(nullable = false)
     private Boolean isEnabled;
 
     @Column(nullable = false)
-    private Boolean isLocked;
+    private Boolean isLocked = false;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

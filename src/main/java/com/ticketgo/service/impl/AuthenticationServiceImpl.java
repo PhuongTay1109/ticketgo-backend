@@ -2,8 +2,11 @@ package com.ticketgo.service.impl;
 
 import com.ticketgo.dto.request.CustomerRegistrationRequest;
 import com.ticketgo.dto.request.UserLoginRequest;
+import com.ticketgo.dto.response.FacebookUserInfoResponse;
+import com.ticketgo.dto.response.GoogleUserInfoResponse;
 import com.ticketgo.dto.response.UserLoginResponse;
 import com.ticketgo.exception.AppException;
+import com.ticketgo.mapper.CustomerMapper;
 import com.ticketgo.model.*;
 import com.ticketgo.service.*;
 import com.ticketgo.util.JwtUtil;
@@ -12,8 +15,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 
-import java.time.LocalDate;
+import org.springframework.web.client.RestTemplate;
+
 import java.time.LocalDateTime;
 
 @Service
@@ -23,18 +32,16 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final TokenService tokenService;
     private final UserService userService;
     private final CustomerService customerService;
-    private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
+
+    private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
+    private final CustomerMapper customerMapper;
 
     @Override
     @Transactional
     public void registerCustomer(CustomerRegistrationRequest request) {
         String email = request.getEmail();
-        String password = request.getPassword();
-        String fullName = request.getFullName();
-        String phoneNumber = request.getPhoneNumber();
-        LocalDate dateOfBirth = request.getDateOfBirth();
 
         if (userService.existsByEmail(email)) {
             throw new AppException(
@@ -43,22 +50,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             );
         }
 
-        Customer customer = Customer.builder()
-                .email(email)
-                .password(passwordEncoder.encode(password))
-                .imageUrl("https://res.cloudinary.com/dj1h07rea/image/upload/v1728906155/sbcf-default-avatar_iovbch.webp")
-                .fullName(fullName)
-                .phoneNumber(phoneNumber)
-                .dateOfBirth(dateOfBirth)
-                .isEnabled(false)
-                .isLocked(false)
-                .role(Role.CUSTOMER)
-                .build();
-
+        Customer customer = customerMapper.toCustomer(request, passwordEncoder);
         customerService.save(customer);
 
         Token token = tokenService.createToken(customer, TokenType.ACTIVATION);
-
         emailService.sendActivationEmail(email, token.getToken());
     }
 
@@ -91,16 +86,102 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         String email = request.getEmail();
         String password = request.getPassword();
 
-        User user = (User) userService.loadUserByUsername(email);
+        User user = userService.findByEmail(email);
 
         if (!user.isEnabled()) {
-            throw new AppException("Vui lòng kiểm tra email của bạn để xác minh tài khoản", HttpStatus.UNAUTHORIZED);
+            throw new AppException(
+                    "Vui lòng kiểm tra email của bạn để xác minh tài khoản",
+                    HttpStatus.UNAUTHORIZED
+            );
         }
 
         if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new AppException("Tên người dùng hoặc mật khẩu không hợp lệ", HttpStatus.UNAUTHORIZED);
+            throw new AppException(
+                    "Mật khẩu không đúng",
+                    HttpStatus.UNAUTHORIZED
+            );
         }
 
+        return getUserLoginResponse(user);
+    }
+
+    @Override
+    public UserLoginResponse googleLogin(String accessToken) {
+        final String googleUserInfoEndpoint = "https://www.googleapis.com/oauth2/v3/userinfo";
+        RestTemplate restTemplate = new RestTemplate();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(accessToken);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<String> httpEntity = new HttpEntity<>(headers);
+        ResponseEntity<GoogleUserInfoResponse> response = restTemplate.exchange(
+                googleUserInfoEndpoint, HttpMethod.GET, httpEntity, GoogleUserInfoResponse.class);
+
+        if (response.getStatusCode() != HttpStatus.OK) {
+            throw new AppException("Token is not valid", HttpStatus.UNAUTHORIZED);
+        }
+
+        GoogleUserInfoResponse userResponse = response.getBody();
+        String email = userResponse.getEmail();
+
+        if (userService.existsByEmail(email)) {
+            User user = userService.findByEmail(email);
+            return getUserLoginResponse(user);
+        } else {
+            Customer customer = Customer.builder()
+                    .email(email)
+                    .password("")
+                    .fullName(userResponse.getName())
+                    .imageUrl(userResponse.getPicture())
+                    .isEnabled(userResponse.isEmailVerified())
+                    .role(Role.CUSTOMER)
+                    .provider(Provider.GOOGLE)
+                    .build();
+            customerService.save(customer);
+            return getUserLoginResponse(customer);
+        }
+    }
+
+    @Override
+    public UserLoginResponse facebookLogin(String accessToken) {
+        final String facebookUserInfoEndpoint = "https://graph.facebook.com/me?fields=id,first_name,last_name,email,picture";
+        RestTemplate restTemplate = new RestTemplate();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(accessToken);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<String> httpEntity = new HttpEntity<>(headers);
+        ResponseEntity<FacebookUserInfoResponse> response = restTemplate.exchange(
+                facebookUserInfoEndpoint, HttpMethod.GET, httpEntity, FacebookUserInfoResponse.class);
+
+        if (response.getStatusCode() != HttpStatus.OK) {
+            throw new AppException("Token is not valid", HttpStatus.UNAUTHORIZED);
+        }
+
+        FacebookUserInfoResponse userResponse = response.getBody();
+        String email = userResponse.getEmail();
+
+        if (userService.existsByEmail(email)) {
+            User user = userService.findByEmail(email);
+            return getUserLoginResponse(user);
+        } else {
+            Customer customer = Customer.builder()
+                    .email(userResponse.getEmail())
+                    .password("")
+                    .fullName(userResponse.getFirstName() + " " + userResponse.getLastName())
+                    .imageUrl(userResponse.getPictureUrl())
+                    .isEnabled(true)
+                    .role(Role.CUSTOMER)
+                    .provider(Provider.GOOGLE)
+                    .build();
+            customerService.save(customer);
+            return getUserLoginResponse(customer);
+        }
+    }
+
+    private UserLoginResponse getUserLoginResponse(User user) {
         String accessToken = jwtUtil.generateAccessToken(user);
         String refreshToken = jwtUtil.generateRefreshToken(user);
 
