@@ -11,6 +11,7 @@ import com.ticketgo.model.*;
 import com.ticketgo.service.*;
 import com.ticketgo.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuthenticationServiceImpl implements AuthenticationService {
@@ -45,7 +47,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         if (userService.existsByEmail(email)) {
             throw new AppException(
-                    "Tài khoản với tên email " + email + " đã tồn tại",
+                    "Tài khoản với tên email này đã tồn tại",
                     HttpStatus.CONFLICT
             );
         }
@@ -54,7 +56,19 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         customerService.save(customer);
 
         Token token = tokenService.createToken(customer, TokenType.ACTIVATION);
-        emailService.sendActivationEmail(email, token.getToken());
+        emailService.sendActivationEmail(email, token.getToken())
+                .thenAccept(success -> {
+                    if (success) {
+                        log.info("Email sent successfully!");
+                    } else {
+                        log.error("Email sending failed.");
+                    }
+                })
+                .exceptionally(ex -> {
+                    log.error("Failed to send email: {}", ex.getMessage());
+                    return null;
+                });
+
     }
 
     @Override
@@ -91,6 +105,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         if (!user.isEnabled()) {
             throw new AppException(
                     "Vui lòng kiểm tra email của bạn để xác minh tài khoản",
+                    HttpStatus.UNAUTHORIZED
+            );
+        }
+
+        if (user.getIsLocked()) {
+            throw new AppException(
+                    "Tài khoản của bạn đã bị vô hiệu hóa bởi nhà xe",
                     HttpStatus.UNAUTHORIZED
             );
         }
@@ -137,6 +158,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                     .isEnabled(userResponse.isEmailVerified())
                     .role(Role.CUSTOMER)
                     .provider(Provider.GOOGLE)
+                    .isLocked(false)
                     .build();
             customerService.save(customer);
             return getUserLoginResponse(customer);
@@ -175,6 +197,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                     .isEnabled(true)
                     .role(Role.CUSTOMER)
                     .provider(Provider.GOOGLE)
+                    .isLocked(false)
                     .build();
             customerService.save(customer);
             return getUserLoginResponse(customer);

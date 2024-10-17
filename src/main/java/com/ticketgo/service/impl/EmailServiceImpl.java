@@ -5,7 +5,6 @@ import com.ticketgo.service.EmailService;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -22,11 +21,10 @@ public class EmailServiceImpl implements EmailService {
 
     @Async
     @Override
-    public void sendActivationEmail(String email, String token) {
+    public CompletableFuture<Boolean> sendActivationEmail(String email, String token) {
         MimeMessage message = emailSender.createMimeMessage();
         try {
-            MimeMessageHelper helper =
-                    new MimeMessageHelper(message, true, "UTF-8");
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
             helper.setFrom("contact@ticketgo.com", "Hỗ trợ Ticket Go");
             helper.setTo(email);
@@ -42,12 +40,14 @@ public class EmailServiceImpl implements EmailService {
             helper.setSubject(subject);
             helper.setText(content, true);
 
+            // Send the email
+            emailSender.send(message);
+
+            // If sending succeeds, return success
+            return CompletableFuture.completedFuture(true);
         } catch (UnsupportedEncodingException | MessagingException e) {
+            // If an error occurs, return failure and log the issue
             throw new AppException("Gửi email không thành công", HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
-        emailSender.send(message);
-        CompletableFuture.completedFuture(null);
     }
-
 }

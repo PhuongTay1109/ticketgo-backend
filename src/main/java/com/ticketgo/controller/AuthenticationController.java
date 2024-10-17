@@ -7,6 +7,7 @@ import com.ticketgo.dto.request.UserLoginRequest;
 import com.ticketgo.dto.response.ApiResponse;
 import com.ticketgo.dto.response.UserLoginResponse;
 import com.ticketgo.service.AuthenticationService;
+
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -63,7 +64,7 @@ public class AuthenticationController {
         authenticationService.activateAccount(request.getToken());
         return new ApiResponse(
                 HttpStatus.OK,
-                "Tài khoản đã được kích hoạt thành công!",
+                "Tài khoản đã được kích hoạt thành công. Vui lòng đăng nhập!",
                 null
         );
     }

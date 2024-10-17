@@ -45,7 +45,7 @@ public class User extends BaseEntity implements UserDetails {
     private Boolean isEnabled;
 
     @Column(nullable = false)
-    private Boolean isLocked = false;
+    private Boolean isLocked;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

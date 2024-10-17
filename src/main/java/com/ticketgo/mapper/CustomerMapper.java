@@ -18,6 +18,7 @@ public class CustomerMapper {
                 .phoneNumber(request.getPhoneNumber())
                 .dateOfBirth(request.getDateOfBirth())
                 .isEnabled(false)
+                .isLocked(false)
                 .role(Role.CUSTOMER)
                 .provider(Provider.LOCAL)
                 .build();

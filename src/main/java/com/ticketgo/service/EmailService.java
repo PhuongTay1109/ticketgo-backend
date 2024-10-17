@@ -1,5 +1,7 @@
 package com.ticketgo.service;
 
+import java.util.concurrent.CompletableFuture;
+
 public interface EmailService {
-    void sendActivationEmail(String email, String token);
+    CompletableFuture<Boolean> sendActivationEmail(String email, String token);
 }
