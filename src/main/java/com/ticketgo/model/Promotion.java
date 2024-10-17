@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 public class Promotion extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer promotionId;
+    private Long promotionId;
 
     @Column(nullable = false)
     private String description;

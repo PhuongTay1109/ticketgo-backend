@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 public class Booking extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer bookingId;
+    private Long bookingId;
 
     @Column(nullable = false)
     private String bookingCode;
@@ -43,16 +43,12 @@ public class Booking extends BaseEntity {
     @JoinColumn(name = "promotion_id")
     private Promotion promotion;
 
-    @Column(nullable = false)
     private String passengerName;
 
-    @Column(nullable = false)
     private String passengerEmail;
 
-    @Column(nullable = false)
     private String passengerPhone;
 
-    @Column(nullable = false)
     private LocalDate passengerDateOfBirth;
 
     @Enumerated(EnumType.STRING)

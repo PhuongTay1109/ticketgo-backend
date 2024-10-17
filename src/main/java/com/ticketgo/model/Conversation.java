@@ -14,7 +14,7 @@ import lombok.experimental.SuperBuilder;
 public class Conversation extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer conversationId;
+    private Long conversationId;
 
     @ManyToOne
     @JoinColumn(name = "customer_id", nullable = false)

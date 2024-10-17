@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 public class RouteStop extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer stopId;
+    private Long stopId;
 
     @ManyToOne
     @JoinColumn(name = "route_id", nullable = false)

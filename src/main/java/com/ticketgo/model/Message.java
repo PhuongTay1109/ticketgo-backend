@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 public class Message extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer messageId;
+    private Long messageId;
 
     @ManyToOne
     @JoinColumn(nullable = false)
@@ -36,8 +36,9 @@ public class Message extends BaseEntity {
     @Column(updatable = false)
     private LocalDateTime sentAt;
 
-    @PrePersist
-    protected void onCreate() {
-        sentAt = LocalDateTime.now();
+    @Override
+    public void prePersist() {
+        super.prePersist();
+        this.sentAt = LocalDateTime.now();
     }
 }

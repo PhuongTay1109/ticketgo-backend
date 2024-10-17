@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -17,9 +18,18 @@ import java.util.stream.Collectors;
 public class Route extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer routeId;
+    private Long routeId;
 
     private String routeName;
+
+    private String departureLocation;
+
+    private String arrivalLocation;
+
+    private LocalDateTime departureTime;
+    private LocalDateTime arrivalTime;
+
+    private Double price;
 
     @OneToMany(mappedBy = "route", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Setter(AccessLevel.NONE)

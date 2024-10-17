@@ -20,4 +20,12 @@ public class Customer extends User {
     private String phoneNumber;
 
     private LocalDate dateOfBirth;
+
+    private Integer points;
+
+    @Override
+    public void prePersist() {
+        super.prePersist();
+        this.points = 0;
+    }
 }
