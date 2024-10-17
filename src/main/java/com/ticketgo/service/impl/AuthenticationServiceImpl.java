@@ -56,7 +56,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         customerService.save(customer);
 
         Token token = tokenService.createToken(customer, TokenType.ACTIVATION);
-        emailService.sendActivationEmail(email, token.getToken())
+        emailService.sendActivationEmail(email, token.getValue())
                 .thenAccept(success -> {
                     if (success) {
                         log.info("Email sent successfully!");

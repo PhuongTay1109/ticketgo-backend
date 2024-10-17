@@ -15,15 +15,12 @@ import java.time.LocalDateTime;
 @Table(name = "tokens")
 public class Token extends BaseEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer tokenId;
+    @Column(nullable = false)
+    private String value;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
-
-    @Column(nullable = false)
-    private String token;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
