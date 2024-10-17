@@ -22,7 +22,7 @@ public class TokenServiceImpl implements TokenService {
     public Token createToken(User user, TokenType tokenType) {
         Token token = Token.builder()
                 .user(user)
-                .token(UUID.randomUUID().toString())
+                .value(UUID.randomUUID().toString())
                 .tokenType(tokenType)
                 .build();
 
