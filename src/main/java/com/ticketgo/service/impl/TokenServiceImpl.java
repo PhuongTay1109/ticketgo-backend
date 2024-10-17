@@ -30,8 +30,8 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
-    public Token findByToken(String token) {
-        return tokenRepository.findByToken(token)
+    public Token findByValue(String token) {
+        return tokenRepository.findByValue(token)
                 .orElseThrow(() -> new AppException(
                         "Token không hợp lệ",
                         HttpStatus.BAD_REQUEST

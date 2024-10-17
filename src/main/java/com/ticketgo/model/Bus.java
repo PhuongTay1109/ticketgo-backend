@@ -5,6 +5,7 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Getter
 @Setter
@@ -16,7 +17,7 @@ import java.time.LocalDate;
 public class Bus extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer busId;
+    private Long busId;
 
     @Column(nullable = false)
     private String licensePlate;
@@ -33,7 +34,7 @@ public class Bus extends BaseEntity {
     @Column(nullable = false)
     private LocalDate expirationDate;
 
-//    @OneToMany(mappedBy = "bus", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-//    private List<Seat> seats;
+    @OneToMany(mappedBy = "bus", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Seat> seats;
 }
 

@@ -9,7 +9,7 @@ import java.util.Optional;
 public interface TokenService {
     Token createToken(User user, TokenType tokenType);
 
-    Token findByToken(String token);
+    Token findByValue(String token);
 
     void deleteToken(Token activationToken);
 }

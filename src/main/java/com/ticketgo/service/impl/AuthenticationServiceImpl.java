@@ -74,7 +74,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     @Transactional
     public void activateAccount(String token) {
-        Token activationToken = tokenService.findByToken(token);
+        Token activationToken = tokenService.findByValue(token);
 
         if(activationToken.getExpiresAt().isBefore(LocalDateTime.now())) {
             throw new AppException(
