@@ -19,8 +19,8 @@ public class RouteStop extends BaseEntity {
     private Long stopId;
 
     @ManyToOne
-    @JoinColumn(name = "route_id", nullable = false)
-    private Route route;
+    @JoinColumn(name = "schedule_id", nullable = false)
+    private Schedule schedule;
 
     @Column(nullable = false)
     private String location;
@@ -35,5 +35,6 @@ public class RouteStop extends BaseEntity {
     @Column(nullable = false)
     private StopType stopType;
 }
+
 
 

@@ -5,6 +5,7 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -19,14 +20,20 @@ public class Bus extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long busId;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String licensePlate;
 
     @Column(nullable = false)
     private String busType;
 
     @Column(nullable = false)
+    private String busImage;
+
+    @Column(nullable = false)
     private Integer totalSeats;
+
+    @Column(nullable = false)
+    private Integer floors;
 
     @Column(nullable = false)
     private LocalDate registrationExpiry;
@@ -36,5 +43,27 @@ public class Bus extends BaseEntity {
 
     @OneToMany(mappedBy = "bus", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Seat> seats;
+
+    @Override
+    public void prePersist() {
+        super.prePersist();
+        if (seats == null || seats.isEmpty()) {
+            seats = new ArrayList<>();
+            int seatsPerFloor = totalSeats / floors;
+
+            for (int floor = 1; floor <= floors; floor++) {
+                for (int i = 1; i <= seatsPerFloor; i++) {
+                    Seat seat = Seat.builder()
+                            .bus(this)
+                            .seatNumber(floor + "-" + i)
+                            .isBooked(false)
+                            .floor(floor)
+                            .build();
+                    seats.add(seat);
+                }
+            }
+        }
+    }
+
 }
 
