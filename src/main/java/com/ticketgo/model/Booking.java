@@ -27,8 +27,8 @@ public class Booking extends BaseEntity {
     private User customer;
 
     @ManyToOne
-    @JoinColumn(name = "route_id")
-    private Route route;
+    @JoinColumn(name = "schedule_id")
+    private Schedule schedule;
 
     @Column(nullable = false)
     private LocalDateTime bookingDate;

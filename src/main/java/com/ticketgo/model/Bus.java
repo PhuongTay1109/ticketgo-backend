@@ -1,5 +1,6 @@
 package com.ticketgo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -42,6 +43,7 @@ public class Bus extends BaseEntity {
     private LocalDate expirationDate;
 
     @OneToMany(mappedBy = "bus", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<Seat> seats;
 
     @Override
@@ -56,7 +58,6 @@ public class Bus extends BaseEntity {
                     Seat seat = Seat.builder()
                             .bus(this)
                             .seatNumber(floor + "-" + i)
-                            .isBooked(false)
                             .floor(floor)
                             .build();
                     seats.add(seat);
@@ -64,6 +65,5 @@ public class Bus extends BaseEntity {
             }
         }
     }
-
 }
 

@@ -12,6 +12,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @SpringBootApplication
 @RequiredArgsConstructor
@@ -28,157 +30,110 @@ public class TicketgoBackEndApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        Bus newBus = Bus.builder()
-                .licensePlate("XYZ-123")
+        Bus bus1 = Bus.builder()
+                .licensePlate("29B-12345")
                 .busType("Xe giường nằm 40 ghế")
+                .busImage("https://res.cloudinary.com/dj1h07rea/image/upload/v1729513741/z3887861317674_dd3bc0afcea0760dc9d713aa3a2b0a3f_ibsgxb.jpg")
                 .totalSeats(40)
-                .floors(2)
-                .registrationExpiry(LocalDate.of(2025, 10, 1))
-                .expirationDate(LocalDate.of(2026, 10, 1))
-                .build();
-
-        busRepository.save(newBus);
-
-        Bus newBus1 = Bus.builder()
-                .licensePlate("ABC-123")
-                .busType("Xe ghế ngồi 20 ghế")
-                .totalSeats(20)
                 .floors(1)
-                .registrationExpiry(LocalDate.of(2025, 10, 1))
-                .expirationDate(LocalDate.of(2026, 10, 1))
+                .registrationExpiry(LocalDate.now().plusYears(2))
+                .expirationDate(LocalDate.now().plusYears(2))
                 .build();
 
-        busRepository.save(newBus1);
-
-        Bus newBus2 = Bus.builder()
-                .licensePlate("DEF-456")  // Biển số mới
-                .busType("Xe giường nằm 40 ghế")
-                .totalSeats(40)
-                .floors(2)
-                .registrationExpiry(LocalDate.of(2025, 10, 1))
-                .expirationDate(LocalDate.of(2026, 10, 1))
-                .build();
-
-        busRepository.save(newBus2);
-
-        Bus newBus3 = Bus.builder()
-                .licensePlate("GHI-789")  // Biển số mới
-                .busType("Xe ghế ngồi 20 ghế")
-                .totalSeats(20)
+        Bus bus2 = Bus.builder()
+                .licensePlate("29B-67890")
+                .busType("Xe ghế ngồi 45 ghế")
+                .busImage("https://res.cloudinary.com/dj1h07rea/image/upload/v1729513741/z3887861317675_dd3bc0afcea0760dc9d713aa3a2b0a3f_ibsgxb.jpg")
+                .totalSeats(45)
                 .floors(1)
-                .registrationExpiry(LocalDate.of(2025, 10, 1))
-                .expirationDate(LocalDate.of(2026, 10, 1))
+                .registrationExpiry(LocalDate.now().plusYears(3))
+                .expirationDate(LocalDate.now().plusYears(3))
                 .build();
 
-        busRepository.save(newBus3);
+        // Lưu các bus vào database
+        busRepository.save(bus1);
+        busRepository.save(bus2);
 
-        // Tạo các tuyến xe
+        // Tạo đối tượng Route
         Route route1 = Route.builder()
-                .routeName("Hà Nội - Hồ Chí Minh")
-                .departureLocation("Hà Nội")
-                .arrivalLocation("TP. Hồ Chí Minh")
-                .build();
-
-        Route route2 = Route.builder()
                 .routeName("Đà Nẵng - Nha Trang")
                 .departureLocation("Đà Nẵng")
                 .arrivalLocation("Nha Trang")
                 .build();
 
+        Route route2 = Route.builder()
+                .routeName("Hà Nội - Hạ Long")
+                .departureLocation("Hà Nội")
+                .arrivalLocation("Hạ Long")
+                .build();
+
+        // Lưu các route vào database
         routeRepository.save(route1);
         routeRepository.save(route2);
 
-// Tạo lịch trình cho từng xe
+        // Tạo đối tượng Schedule
         Schedule schedule1 = Schedule.builder()
-                .bus(newBus) // Xe giường nằm 40 ghế
+                .bus(bus1)
                 .route(route1)
-                .departureTime(LocalDateTime.of(2024, 10, 25, 8, 0))
-                .arrivalTime(LocalDateTime.of(2024, 10, 25, 20, 0))
-                .price(500000.0) // Giá vé
+                .departureTime(LocalDateTime.of(2024, 10, 26, 9, 0))
+                .arrivalTime(LocalDateTime.of(2024, 10, 26, 15, 0))
+                .price(200.0)
                 .build();
 
         Schedule schedule2 = Schedule.builder()
-                .bus(newBus1) // Xe ghế ngồi 20 ghế
-                .route(route1)
-                .departureTime(LocalDateTime.of(2024, 10, 25, 9, 0))
-                .arrivalTime(LocalDateTime.of(2024, 10, 25, 21, 0))
-                .price(400000.0) // Giá vé
-                .build();
-
-        Schedule schedule3 = Schedule.builder()
-                .bus(newBus2) // Xe giường nằm 40 ghế
+                .bus(bus2)
                 .route(route2)
-                .departureTime(LocalDateTime.of(2024, 10, 26, 9, 0))
-                .arrivalTime(LocalDateTime.of(2024, 10, 26, 15, 0))
-                .price(600000.0) // Giá vé
+                .departureTime(LocalDateTime.of(2024, 10, 27, 8, 30))
+                .arrivalTime(LocalDateTime.of(2024, 10, 27, 10, 30))
+                .price(150.0)
                 .build();
 
-        Schedule schedule4 = Schedule.builder()
-                .bus(newBus3) // Xe ghế ngồi 20 ghế
-                .route(route2)
-                .departureTime(LocalDateTime.of(2024, 10, 26, 10, 0))
-                .arrivalTime(LocalDateTime.of(2024, 10, 26, 16, 0))
-                .price(500000.0) // Giá vé
-                .build();
-
-// Lưu lịch trình vào cơ sở dữ liệu
+        // Lưu các schedule vào database
         scheduleRepository.save(schedule1);
         scheduleRepository.save(schedule2);
-        scheduleRepository.save(schedule3);
-        scheduleRepository.save(schedule4);
 
-// Tạo trạm dừng cho lịch trình 1
-        RouteStop stop1 = RouteStop.builder()
+        // Tạo đối tượng RouteStop cho schedule1
+        Set<RouteStop> stops1 = new HashSet<>();
+        stops1.add(RouteStop.builder()
                 .schedule(schedule1)
-                .location("Ninh Bình")
-                .stopOrder(1)
-                .arrivalTime(LocalDateTime.of(2024, 10, 25, 10, 0))
-                .stopType(StopType.PICKUP) // Hoặc STOP, DROP_OFF
-                .build();
-
-        RouteStop stop2 = RouteStop.builder()
-                .schedule(schedule1)
-                .location("Thanh Hóa")
-                .stopOrder(2)
-                .arrivalTime(LocalDateTime.of(2024, 10, 25, 12, 0))
-                .stopType(StopType.PICKUP) // Hoặc STOP, DROP_OFF
-                .build();
-
-        routeStopRepository.save(stop1);
-        routeStopRepository.save(stop2);
-
-// Tạo trạm dừng cho lịch trình 2
-        RouteStop stop3 = RouteStop.builder()
-                .schedule(schedule2)
-                .location("Nam Định")
-                .stopOrder(1)
-                .arrivalTime(LocalDateTime.of(2024, 10, 25, 11, 0))
-                .stopType(StopType.PICKUP) // Hoặc STOP, DROP_OFF
-                .build();
-
-        routeStopRepository.save(stop3);
-
-// Tạo trạm dừng cho lịch trình 3
-        RouteStop stop4 = RouteStop.builder()
-                .schedule(schedule3)
-                .location("Phan Thiết")
+                .location("Quảng Ngãi")
                 .stopOrder(1)
                 .arrivalTime(LocalDateTime.of(2024, 10, 26, 11, 0))
-                .stopType(StopType.PICKUP) // Hoặc STOP, DROP_OFF
-                .build();
+                .stopType(StopType.PICKUP)
+                .build());
 
-        routeStopRepository.save(stop4);
+        stops1.add(RouteStop.builder()
+                .schedule(schedule1)
+                .location("Nha Trang")
+                .stopOrder(2)
+                .arrivalTime(LocalDateTime.of(2024, 10, 26, 15, 0))
+                .stopType(StopType.DROPOFF)
+                .build());
 
-// Tạo trạm dừng cho lịch trình 4
-        RouteStop stop5 = RouteStop.builder()
-                .schedule(schedule4)
-                .location("Cam Ranh")
+        schedule1.setStops(stops1);
+        // Lưu các RouteStop cho schedule1 vào database
+        routeStopRepository.saveAll(stops1);
+
+        // Tạo đối tượng RouteStop cho schedule2
+        Set<RouteStop> stops2 = new HashSet<>();
+        stops2.add(RouteStop.builder()
+                .schedule(schedule2)
+                .location("Hải Dương")
                 .stopOrder(1)
-                .arrivalTime(LocalDateTime.of(2024, 10, 26, 12, 0))
-                .stopType(StopType.PICKUP) // Hoặc STOP, DROP_OFF
-                .build();
+                .arrivalTime(LocalDateTime.of(2024, 10, 27, 9, 0))
+                .stopType(StopType.PICKUP)
+                .build());
 
-        routeStopRepository.save(stop5);
+        stops2.add(RouteStop.builder()
+                .schedule(schedule2)
+                .location("Hạ Long")
+                .stopOrder(2)
+                .arrivalTime(LocalDateTime.of(2024, 10, 27, 10, 30))
+                .stopType(StopType.DROPOFF)
+                .build());
 
+        schedule2.setStops(stops2);
+        // Lưu các RouteStop cho schedule2 vào database
+        routeStopRepository.saveAll(stops2);
     }
 }

@@ -23,6 +23,9 @@ public class BusCompany extends User {
     @Column(nullable = false)
     private String address;
 
+    @Column(columnDefinition = "TEXT", nullable = false)
+    private String policyText;
+
     @Column(nullable = false)
     private String description;
 }

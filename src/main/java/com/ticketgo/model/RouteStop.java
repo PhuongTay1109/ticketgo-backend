@@ -1,5 +1,6 @@
 package com.ticketgo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -20,6 +21,7 @@ public class RouteStop extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "schedule_id", nullable = false)
+    @JsonIgnore
     private Schedule schedule;
 
     @Column(nullable = false)

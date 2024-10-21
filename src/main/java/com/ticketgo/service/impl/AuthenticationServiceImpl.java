@@ -38,7 +38,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
-    private final CustomerMapper customerMapper;
 
     @Override
     @Transactional
@@ -52,7 +51,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             );
         }
 
-        Customer customer = customerMapper.toCustomer(request, passwordEncoder);
+        Customer customer = CustomerMapper.toCustomer(request, passwordEncoder);
         customerService.save(customer);
 
         Token token = tokenService.createToken(customer, TokenType.ACTIVATION);

@@ -7,9 +7,8 @@ import com.ticketgo.model.Role;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-@Component
 public class CustomerMapper {
-    public Customer toCustomer(CustomerRegistrationRequest request, PasswordEncoder passwordEncoder) {
+    public static Customer toCustomer(CustomerRegistrationRequest request, PasswordEncoder passwordEncoder) {
         return Customer.builder()
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
