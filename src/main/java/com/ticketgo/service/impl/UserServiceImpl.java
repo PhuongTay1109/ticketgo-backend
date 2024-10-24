@@ -2,6 +2,7 @@ package com.ticketgo.service.impl;
 
 import com.ticketgo.dto.UserDTO;
 import com.ticketgo.exception.AppException;
+import com.ticketgo.mapper.UserMapper;
 import com.ticketgo.model.User;
 import com.ticketgo.repository.UserRepository;
 import com.ticketgo.service.UserService;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
+    private final UserMapper userMapper;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -45,6 +47,6 @@ public class UserServiceImpl implements UserService {
     public UserDTO getUserDetails() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
-        return new UserDTO(user);
+        return userMapper.INSTANCE.mapUser(user);
     }
 }

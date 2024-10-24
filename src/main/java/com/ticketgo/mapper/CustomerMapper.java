@@ -2,24 +2,22 @@ package com.ticketgo.mapper;
 
 import com.ticketgo.dto.request.CustomerRegistrationRequest;
 import com.ticketgo.model.Customer;
-import com.ticketgo.model.Provider;
-import com.ticketgo.model.Role;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.factory.Mappers;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Component;
 
-public class CustomerMapper {
-    public static Customer toCustomer(CustomerRegistrationRequest request, PasswordEncoder passwordEncoder) {
-        return Customer.builder()
-                .email(request.getEmail())
-                .password(passwordEncoder.encode(request.getPassword()))
-                .imageUrl("https://res.cloudinary.com/dj1h07rea/image/upload/v1728906155/sbcf-default-avatar_iovbch.webp")
-                .fullName(request.getFullName())
-                .phoneNumber(request.getPhoneNumber())
-                .dateOfBirth(request.getDateOfBirth())
-                .isEnabled(false)
-                .isLocked(false)
-                .role(Role.CUSTOMER)
-                .provider(Provider.LOCAL)
-                .build();
-    }
+@Mapper(componentModel = "spring")
+public interface CustomerMapper {
+
+    CustomerMapper INSTANCE = Mappers.getMapper(CustomerMapper.class);
+
+    @Mapping(target = "password", expression = "java(passwordEncoder.encode(request.getPassword()))")
+    @Mapping(target = "imageUrl", constant = "https://res.cloudinary.com/dj1h07rea/image/upload/v1728906155/sbcf-default-avatar_iovbch.webp")
+    @Mapping(target = "isEnabled", constant = "false")
+    @Mapping(target = "isLocked", constant = "false")
+    @Mapping(target = "role", expression = "java(com.ticketgo.model.Role.CUSTOMER)")
+    @Mapping(target = "provider", expression = "java(com.ticketgo.model.Provider.LOCAL)")
+    Customer toCustomer(CustomerRegistrationRequest request, PasswordEncoder passwordEncoder);
 }
+
