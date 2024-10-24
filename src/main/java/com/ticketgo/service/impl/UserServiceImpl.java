@@ -18,7 +18,6 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
-    private final UserMapper userMapper;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -47,6 +46,6 @@ public class UserServiceImpl implements UserService {
     public UserDTO getUserDetails() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
-        return userMapper.INSTANCE.mapUser(user);
+        return UserMapper.INSTANCE.mapUser(user);
     }
 }

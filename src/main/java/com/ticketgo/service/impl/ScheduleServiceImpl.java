@@ -21,8 +21,6 @@ public class ScheduleServiceImpl implements ScheduleService {
     private final ScheduleRepository scheduleRepository;
     private final BookingService bookingService;
 
-    private final ScheduleMapper scheduleMapper;
-
     @Override
     public List<ScheduleDTO> searchRoutes(String departureLocation, String arrivalLocation) {
         Specification<Schedule> spec = Specification
@@ -32,7 +30,7 @@ public class ScheduleServiceImpl implements ScheduleService {
         List<Schedule> schedules = scheduleRepository.findAll(spec);
 
         return schedules.stream()
-                .map(schedule -> scheduleMapper.INSTANCE.toScheduleDTO(
+                .map(schedule -> ScheduleMapper.INSTANCE.toScheduleDTO(
                         schedule,
                         schedule.getBus().getTotalSeats()
                                 - bookingService.getBookedSeatsCountForSchedule(schedule.getScheduleId())
