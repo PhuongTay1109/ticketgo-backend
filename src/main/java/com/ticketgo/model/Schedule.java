@@ -14,7 +14,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "schedules")
+@Table(name = "schedules", uniqueConstraints = @UniqueConstraint(columnNames = {"bus_id", "route_id", "departure_time"}))
 public class Schedule extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

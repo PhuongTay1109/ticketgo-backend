@@ -1,29 +1,32 @@
 package com.ticketgo.controller;
 
-import com.ticketgo.dto.ScheduleDTO;
-import com.ticketgo.model.Schedule;
+import com.ticketgo.dto.request.SearchRoutesRequest;
+import com.ticketgo.dto.response.ApiPaginationResponse;
 import com.ticketgo.service.ScheduleService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import lombok.extern.slf4j.Slf4j;
 
-import java.util.List;
+import org.springframework.web.bind.annotation.*;
+
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/routes")
+@Slf4j
 public class ScheduleController {
     private final ScheduleService scheduleService;
 
-    @GetMapping("/search")
-    public ResponseEntity<List<ScheduleDTO>> searchRoutes(
-            @RequestParam String departureLocation,
-            @RequestParam String arrivalLocation) {
-
-        List<ScheduleDTO> schedules = scheduleService.searchRoutes(departureLocation, arrivalLocation);
-        return ResponseEntity.ok(schedules);
+    @PostMapping("/search")
+    public ApiPaginationResponse searchRoutes(@Valid @RequestBody SearchRoutesRequest request) {
+        return scheduleService.searchRoutes(
+                request.getDepartureLocation(),
+                request.getArrivalLocation(),
+                request.getDepartureDate(),
+                request.getSortBy(),
+                request.getSortDirection(),
+                request.getPageNumber(),
+                request.getPageSize()
+        );
     }
 }

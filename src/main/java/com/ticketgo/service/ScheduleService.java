@@ -1,10 +1,17 @@
 package com.ticketgo.service;
 
 import com.ticketgo.dto.ScheduleDTO;
-import com.ticketgo.model.Schedule;
+import com.ticketgo.dto.response.ApiPaginationResponse;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface ScheduleService {
-    List<ScheduleDTO> searchRoutes(String departureLocation, String arrivalLocation);
+    ApiPaginationResponse searchRoutes(String departureLocation,
+                                       String arrivalLocation,
+                                       LocalDate departureDate,
+                                       String sortBy,
+                                       String sortDirection,
+                                       int pageNumber,
+                                       int pageSize);
 }

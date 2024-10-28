@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class ScheduleDTO {
+    private long scheduleId;
     private String routeName;
     private String busImage;
     private String busType;
