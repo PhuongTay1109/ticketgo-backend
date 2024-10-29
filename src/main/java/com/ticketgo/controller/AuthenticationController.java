@@ -1,9 +1,6 @@
 package com.ticketgo.controller;
 
-import com.ticketgo.dto.request.AccountActivationRequest;
-import com.ticketgo.dto.request.CustomerRegistrationRequest;
-import com.ticketgo.dto.request.OAuthTokenRequest;
-import com.ticketgo.dto.request.UserLoginRequest;
+import com.ticketgo.dto.request.*;
 import com.ticketgo.dto.response.ApiResponse;
 import com.ticketgo.dto.response.UserLoginResponse;
 import com.ticketgo.service.AuthenticationService;
@@ -66,6 +63,15 @@ public class AuthenticationController {
                 HttpStatus.OK,
                 "Tài khoản đã được kích hoạt thành công. Vui lòng đăng nhập!",
                 null
+        );
+    }
+
+    @PostMapping("/refresh-token")
+    public ApiResponse refreshToken(@RequestBody @Valid RefreshTokenRequest request) {
+        return new ApiResponse(
+                HttpStatus.OK,
+                "Refresh token successfully",
+                authenticationService.refreshToken(request.getRefreshToken())
         );
     }
 }

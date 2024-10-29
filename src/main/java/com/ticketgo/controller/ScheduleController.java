@@ -1,5 +1,6 @@
 package com.ticketgo.controller;
 
+import com.ticketgo.dto.ScheduleDTO;
 import com.ticketgo.dto.request.SearchRoutesRequest;
 import com.ticketgo.dto.response.ApiPaginationResponse;
 import com.ticketgo.service.ScheduleService;
@@ -8,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 @RestController
@@ -19,7 +22,7 @@ public class ScheduleController {
 
     @PostMapping("/search")
     public ApiPaginationResponse searchRoutes(@Valid @RequestBody SearchRoutesRequest request) {
-        return scheduleService.searchRoutes(
+       return  scheduleService.searchRoutes(
                 request.getDepartureLocation(),
                 request.getArrivalLocation(),
                 request.getDepartureDate(),

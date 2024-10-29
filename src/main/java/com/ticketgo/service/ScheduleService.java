@@ -1,10 +1,10 @@
 package com.ticketgo.service;
 
-import com.ticketgo.dto.ScheduleDTO;
 import com.ticketgo.dto.response.ApiPaginationResponse;
+import com.ticketgo.dto.response.RouteStopResponse;
 
 import java.time.LocalDate;
-import java.util.List;
+
 
 public interface ScheduleService {
     ApiPaginationResponse searchRoutes(String departureLocation,
@@ -14,4 +14,6 @@ public interface ScheduleService {
                                        String sortDirection,
                                        int pageNumber,
                                        int pageSize);
+
+    RouteStopResponse getRouteStops(long scheduleId);
 }

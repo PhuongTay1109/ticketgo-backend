@@ -4,6 +4,7 @@ import com.ticketgo.dto.request.CustomerRegistrationRequest;
 import com.ticketgo.dto.request.UserLoginRequest;
 import com.ticketgo.dto.response.FacebookUserInfoResponse;
 import com.ticketgo.dto.response.GoogleUserInfoResponse;
+import com.ticketgo.dto.response.RefreshTokenResponse;
 import com.ticketgo.dto.response.UserLoginResponse;
 import com.ticketgo.exception.AppException;
 import com.ticketgo.mapper.CustomerMapper;
@@ -201,6 +202,20 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             customerService.save(customer);
             return getUserLoginResponse(customer);
         }
+    }
+
+    @Override
+    public RefreshTokenResponse refreshToken(String refreshToken) {
+        try {
+            if (jwtUtil.isTokenValid(refreshToken)) {
+                String email = jwtUtil.extractUsername(refreshToken);
+                String accessToken = jwtUtil.generateAccessToken(userService.findByEmail(email));
+                return new RefreshTokenResponse(accessToken);
+            }
+        } catch (Exception e) {
+            log.warn("Invalid refresh token", e);
+        }
+        throw new AppException("Invalid refresh token", HttpStatus.UNAUTHORIZED);
     }
 
     private UserLoginResponse getUserLoginResponse(User user) {

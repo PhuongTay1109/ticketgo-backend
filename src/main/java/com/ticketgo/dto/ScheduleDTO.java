@@ -16,6 +16,7 @@ public class ScheduleDTO {
     private String routeName;
     private String busImage;
     private String busType;
+    private String busId;
     private LocalDateTime departureTime;
     private String departureLocation;
     private LocalDateTime arrivalTime;

@@ -15,6 +15,7 @@ public interface ScheduleMapper {
     @Mapping(target = "routeName", source = "schedule.route.routeName")
     @Mapping(target = "busImage", source = "schedule.bus.busImage")
     @Mapping(target = "busType", source = "schedule.bus.busType")
+    @Mapping(target = "busId", source = "schedule.bus.busId")
     @Mapping(target = "departureLocation", source = "schedule.route.departureLocation")
     @Mapping(target = "arrivalLocation", source = "schedule.route.arrivalLocation")
     @Mapping(target = "departureTime", source = "schedule.departureTime")
