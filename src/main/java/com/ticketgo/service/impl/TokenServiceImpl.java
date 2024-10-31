@@ -19,6 +19,7 @@ public class TokenServiceImpl implements TokenService {
 
     private final TokenRepository tokenRepository;
 
+    @Override
     public Token createToken(User user, TokenType tokenType) {
         Token token = Token.builder()
                 .user(user)

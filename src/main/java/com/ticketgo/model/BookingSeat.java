@@ -9,19 +9,23 @@ import lombok.experimental.SuperBuilder;
 
 @Getter
 @Setter
-@SuperBuilder(toBuilder=true)
+@SuperBuilder(toBuilder = true)
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Table(name = "booking_seats")
 public class BookingSeat extends BaseEntity {
-    @Id
+
+    @EmbeddedId
+    private BookingSeatId id;
+
     @ManyToOne
+    @MapsId("bookingId") // Maps the "booking_id" field in the composite key
     @JoinColumn(name = "booking_id")
     private Booking booking;
 
-    @Id
     @ManyToOne
+    @MapsId("seatId") // Maps the "seat_id" field in the composite key
     @JoinColumn(name = "seat_id")
     private Seat seat;
 }

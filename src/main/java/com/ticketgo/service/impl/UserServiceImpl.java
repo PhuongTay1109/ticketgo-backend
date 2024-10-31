@@ -20,7 +20,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String email) {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new AppException(
                         "Tài khoản với tên emai này không tồn tại",
@@ -44,7 +44,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDTO getUserDetails() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Authentication authentication =
+                SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
         return UserMapper.INSTANCE.mapUser(user);
     }

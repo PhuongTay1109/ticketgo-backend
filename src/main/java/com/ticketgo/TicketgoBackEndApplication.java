@@ -30,6 +30,26 @@ public class TicketgoBackEndApplication implements CommandLineRunner {
         SpringApplication.run(TicketgoBackEndApplication.class, args);
     }
 
+    List<Seat> createSeats(int floors, int rows, int columns, int lastRowColumns, Bus bus) {
+        List<Seat> seats = new ArrayList<>();
+        for (int floor = 1; floor <= floors; floor++) {
+            for (int row = 1; row <= rows; row++) {
+                int actualColumns = (row == rows) ? lastRowColumns : columns;
+                for (int column = 1; column <= actualColumns; column++) {
+                    String seatNumber = String.format("%d%d%d", floor, row, column);
+                    Seat seat = Seat.builder()
+                            .seatNumber(seatNumber)
+                            .floor(floor)
+                            .bus(bus) // Associate the seat with the bus
+                            .build();
+                    seats.add(seat);
+                }
+            }
+        }
+        return seats;
+    }
+
+
     @Override
     public void run(String... args) throws Exception {
 //        List<Bus> buses = new ArrayList<>();
@@ -39,33 +59,35 @@ public class TicketgoBackEndApplication implements CommandLineRunner {
 //        for (int i = 1; i <= 15; i++) {
 //            String licensePlate = licensePrefix + String.format("%05d", 5000 + i);
 //
+//            Bus bus;
 //            if (i % 2 == 0) {
-//                Bus sleeperBus = Bus.builder()
+//                bus = Bus.builder()
 //                        .licensePlate(licensePlate)
 //                        .busType("Limousine 22 Phòng")
 //                        .busImage("https://res.cloudinary.com/dj1h07rea/image/upload/v1729513741/z3887861317674_dd3bc0afcea0760dc9d713aa3a2b0a3f_ibsgxb.jpg")
-//                        .totalSeats(36)
+//                        .totalSeats(22)
 //                        .floors(2)
 //                        .registrationExpiry(LocalDate.now().plusYears(2))
 //                        .expirationDate(LocalDate.now().plusYears(5))
 //                        .build();
-//                buses.add(sleeperBus);
+//                bus.setSeats(createSeats(2, 6, 2, 1, bus)); // Pass bus to createSeats
 //            } else {
-//                Bus seatedBus = Bus.builder()
+//                bus = Bus.builder()
 //                        .licensePlate(licensePlate)
-//                        .busType("Giường nằm 34 chỗ")
+//                        .busType("Giường nằm 34 chỗ")
 //                        .busImage("https://res.cloudinary.com/dj1h07rea/image/upload/v1730118728/vi%CC%A3-tri%CC%81-so%CC%82%CC%81-ghe%CC%82%CC%81-xe-giu%CC%9Bo%CC%9B%CC%80ng-na%CC%86%CC%80m-1024x563_enuelc.jpg")
-//                        .totalSeats(40)
-//                        .floors(1)
+//                        .totalSeats(34)
+//                        .floors(2)
 //                        .registrationExpiry(LocalDate.now().plusYears(3))
 //                        .expirationDate(LocalDate.now().plusYears(5))
 //                        .build();
-//                buses.add(seatedBus);
+//                bus.setSeats(createSeats(2, 6, 3, 2, bus)); // Pass bus to createSeats
 //            }
+//            buses.add(bus);
 //        }
 //
 //        busRepository.saveAll(buses);
-
+//
 //        List<Route> routes = new ArrayList<>();
 //
 //        // Existing routes
@@ -143,11 +165,11 @@ public class TicketgoBackEndApplication implements CommandLineRunner {
 //                .build());
 //
 //        routeRepository.saveAll(routes);
-
+//
 //        LocalDateTime[] days = {
-//                LocalDateTime.of(2024, 11, 3, 13, 20),
-//                LocalDateTime.of(2024, 11, 4, 7, 30),
-//                LocalDateTime.of(2024, 11, 5, 9, 45)
+//                LocalDateTime.of(2024, 11, 20, 13, 20),
+//                LocalDateTime.of(2024, 11, 21, 7, 30),
+//                LocalDateTime.of(2024, 11, 22, 9, 45)
 //        };
 //
 //        for (LocalDateTime startDate : days) {

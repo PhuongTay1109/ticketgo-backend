@@ -19,7 +19,7 @@ public class Booking extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long bookingId;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String bookingCode;
 
     @ManyToOne
@@ -34,10 +34,9 @@ public class Booking extends BaseEntity {
     private LocalDateTime bookingDate;
 
     @Column(nullable = false)
-    private Double originalAmount;
+    private Double originalPrice;
 
-    @Column(nullable = false)
-    private Double discountedAmount;
+    private Double discountedPrice;
 
     @ManyToOne
     @JoinColumn(name = "promotion_id")
@@ -53,7 +52,11 @@ public class Booking extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private BookingStatus status;
+
+    @PostPersist
+    private void generateBookingCode() {
+        if (this.bookingCode == null) {
+            this.bookingCode = "TICKETGO" + this.bookingId;
+        }
+    }
 }
-
-
-

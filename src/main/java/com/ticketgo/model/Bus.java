@@ -6,7 +6,6 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -45,25 +44,4 @@ public class Bus extends BaseEntity {
     @OneToMany(mappedBy = "bus", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
     private List<Seat> seats;
-
-    @Override
-    public void prePersist() {
-        super.prePersist();
-        if (seats == null || seats.isEmpty()) {
-            seats = new ArrayList<>();
-            int seatsPerFloor = totalSeats / floors;
-
-            for (int floor = 1; floor <= floors; floor++) {
-                for (int i = 1; i <= seatsPerFloor; i++) {
-                    Seat seat = Seat.builder()
-                            .bus(this)
-                            .seatNumber(floor + "-" + i)
-                            .floor(floor)
-                            .build();
-                    seats.add(seat);
-                }
-            }
-        }
-    }
 }
-

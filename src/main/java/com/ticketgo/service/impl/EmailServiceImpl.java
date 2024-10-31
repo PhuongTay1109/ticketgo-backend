@@ -40,13 +40,10 @@ public class EmailServiceImpl implements EmailService {
             helper.setSubject(subject);
             helper.setText(content, true);
 
-            // Send the email
             emailSender.send(message);
 
-            // If sending succeeds, return success
             return CompletableFuture.completedFuture(true);
         } catch (UnsupportedEncodingException | MessagingException e) {
-            // If an error occurs, return failure and log the issue
             throw new AppException("Gửi email không thành công", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
