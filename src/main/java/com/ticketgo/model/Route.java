@@ -29,6 +29,12 @@ public class Route extends BaseEntity {
     @Column(nullable = false)
     private String arrivalLocation;
 
+    @Column(nullable = false)
+    private String departureAddress;
+
+    @Column(nullable = false)
+    private String arrivalAddress;
+
     @OneToMany(mappedBy = "route", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Schedule> schedules;
 }

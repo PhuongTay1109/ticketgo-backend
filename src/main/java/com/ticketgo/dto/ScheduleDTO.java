@@ -19,6 +19,8 @@ public class ScheduleDTO {
     private String busId;
     private LocalDateTime departureTime;
     private String departureLocation;
+    private String departureAddress;
+    private String arrivalAddress;
     private LocalDateTime arrivalTime;
     private String arrivalLocation;
     private double price;

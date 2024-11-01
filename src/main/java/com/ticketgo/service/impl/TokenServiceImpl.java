@@ -17,7 +17,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class TokenServiceImpl implements TokenService {
 
-    private final TokenRepository tokenRepository;
+    private final TokenRepository tokenRepo;
 
     @Override
     public Token createToken(User user, TokenType tokenType) {
@@ -27,12 +27,12 @@ public class TokenServiceImpl implements TokenService {
                 .tokenType(tokenType)
                 .build();
 
-        return tokenRepository.save(token);
+        return tokenRepo.save(token);
     }
 
     @Override
     public Token findByValue(String token) {
-        return tokenRepository.findByValue(token)
+        return tokenRepo.findByValue(token)
                 .orElseThrow(() -> new AppException(
                         "Token không hợp lệ",
                         HttpStatus.BAD_REQUEST
@@ -41,6 +41,6 @@ public class TokenServiceImpl implements TokenService {
 
     @Override
     public void deleteToken(Token activationToken) {
-        tokenRepository.delete(activationToken);
+        tokenRepo.delete(activationToken);
     }
 }

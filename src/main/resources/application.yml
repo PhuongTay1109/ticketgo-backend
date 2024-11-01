@@ -11,10 +11,16 @@ spring:
     hibernate:
       ddl-auto: update
 
-# Email sender account
+# Email
 email:
   username: phuongtay713@gmail.com
   password: mlfoeesojdrbhbez
+app:
+  email:
+    from: "contact@ticketgo.com"
+    fromName: "Hỗ trợ Ticket Go"
+  url:
+    base: "http://localhost:3000"
 
 # Frontend
 frontend:

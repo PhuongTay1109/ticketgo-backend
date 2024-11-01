@@ -1,20 +1,13 @@
 package com.ticketgo.service.impl;
 
-import com.ticketgo.dto.RouteStopDTO;
 import com.ticketgo.dto.ScheduleDTO;
 import com.ticketgo.dto.response.ApiPaginationResponse;
-import com.ticketgo.dto.response.RouteStopResponse;
-import com.ticketgo.exception.AppException;
-import com.ticketgo.mapper.RouteStopMapper;
 import com.ticketgo.mapper.ScheduleMapper;
-import com.ticketgo.model.RouteStop;
 import com.ticketgo.model.Schedule;
-import com.ticketgo.model.StopType;
 
-import com.ticketgo.repository.ScheduleRepository;
 import com.ticketgo.repository.specification.ScheduleSpecification;
 import com.ticketgo.service.RouteService;
-import com.ticketgo.service.RouteStopService;
+import com.ticketgo.service.ScheduleService;
 import com.ticketgo.service.SeatService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,16 +19,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class RouteServiceImpl implements RouteService {
-    private final ScheduleRepository scheduleRepository;
+    private final ScheduleService scheduleService;
     private final SeatService seatService;
 
     @Override
@@ -52,10 +43,8 @@ public class RouteServiceImpl implements RouteService {
                 .and(ScheduleSpecification.hasDepartureDate(departureDate))
                 .and(ScheduleSpecification.withSorting(sortBy, sortDirection));
 
-        log.info("Page number {}", pageNumber);
-
         Pageable pageable = PageRequest.of(pageNumber - 1, pageSize);
-        Page<Schedule> schedules = scheduleRepository.findAll(spec, pageable);
+        Page<Schedule> schedules = scheduleService.findAll(spec, pageable);
 
         List<ScheduleDTO> scheduleDTOs = schedules.stream()
                 .map(schedule -> ScheduleMapper.INSTANCE.toScheduleDTO(
