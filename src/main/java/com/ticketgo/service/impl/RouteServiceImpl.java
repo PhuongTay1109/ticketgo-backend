@@ -1,13 +1,15 @@
 package com.ticketgo.service.impl;
 
-import com.ticketgo.dto.ScheduleDTO;
+import com.ticketgo.dto.response.RouteSearchResponse;
 import com.ticketgo.dto.response.ApiPaginationResponse;
 import com.ticketgo.mapper.ScheduleMapper;
 import com.ticketgo.model.Schedule;
 
+import com.ticketgo.model.SeatType;
 import com.ticketgo.repository.specification.ScheduleSpecification;
 import com.ticketgo.service.RouteService;
 import com.ticketgo.service.ScheduleService;
+import com.ticketgo.service.SeatPricingService;
 import com.ticketgo.service.SeatService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +30,7 @@ import java.util.stream.Collectors;
 public class RouteServiceImpl implements RouteService {
     private final ScheduleService scheduleService;
     private final SeatService seatService;
+    private final SeatPricingService seatPricingService;
 
     @Override
     public ApiPaginationResponse searchRoutes(String departureLocation,
@@ -46,12 +49,19 @@ public class RouteServiceImpl implements RouteService {
         Pageable pageable = PageRequest.of(pageNumber - 1, pageSize);
         Page<Schedule> schedules = scheduleService.findAll(spec, pageable);
 
-        List<ScheduleDTO> scheduleDTOs = schedules.stream()
-                .map(schedule -> ScheduleMapper.INSTANCE.toScheduleDTO(
-                        schedule,
-                        schedule.getBus().getTotalSeats()
-                                - seatService.getBookedSeatsCountForSchedule(schedule.getScheduleId())
-                ))
+        List<RouteSearchResponse> scheduleDTOs = schedules.stream()
+                .map(schedule -> {
+                    long scheduleId = schedule.getScheduleId();
+
+                    log.info("Processing scheduleId: {}", scheduleId);
+
+                    return ScheduleMapper.INSTANCE.toRouteSearchResponse(
+                            schedule,
+                            schedule.getBus().getTotalSeats()
+                                    - seatService.getBookedSeatsCountForSchedule(scheduleId),
+                            seatPricingService.findPriceByScheduleIdAndSeatType(scheduleId, SeatType.REGULAR_SEAT)
+                    );
+                })
                 .collect(Collectors.toList());
 
         ApiPaginationResponse.Pagination pagination = new ApiPaginationResponse.Pagination(
@@ -61,6 +71,6 @@ public class RouteServiceImpl implements RouteService {
                 schedules.getTotalElements()
         );
 
-        return new ApiPaginationResponse(HttpStatus.OK, "Kết quả tìm kiếm", scheduleDTOs, pagination);
+        return new ApiPaginationResponse(HttpStatus.OK, "Search results", scheduleDTOs, pagination);
     }
 }

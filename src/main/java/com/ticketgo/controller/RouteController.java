@@ -1,7 +1,7 @@
 package com.ticketgo.controller;
 
 
-import com.ticketgo.dto.request.SearchRoutesRequest;
+import com.ticketgo.dto.request.RouteSearchRequest;
 import com.ticketgo.dto.response.ApiPaginationResponse;
 import com.ticketgo.service.RouteService;
 import jakarta.validation.Valid;
@@ -20,7 +20,7 @@ public class RouteController {
     private final RouteService routeService;
 
     @PostMapping("/search")
-    public ApiPaginationResponse searchRoutes(@Valid @RequestBody SearchRoutesRequest request) {
+    public ApiPaginationResponse searchRoutes(@Valid @RequestBody RouteSearchRequest request) {
         return  routeService.searchRoutes(
                 request.getDepartureLocation(),
                 request.getArrivalLocation(),

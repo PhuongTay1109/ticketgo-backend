@@ -1,14 +1,12 @@
 package com.ticketgo;
 
 import com.ticketgo.model.*;
-import com.ticketgo.repository.BusRepository;
-import com.ticketgo.repository.RouteRepository;
-import com.ticketgo.repository.RouteStopRepository;
-import com.ticketgo.repository.ScheduleRepository;
+import com.ticketgo.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -25,13 +23,15 @@ public class TicketgoBackEndApplication implements CommandLineRunner {
     private final RouteStopRepository routeStopRepository;
     private final ScheduleRepository scheduleRepository;
     private final RouteRepository routeRepository;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public static void main(String[] args) {
         SpringApplication.run(TicketgoBackEndApplication.class, args);
     }
 
-    List<Seat> createSeats(int floors, int rows, int columns, int lastRowColumns, Bus bus) {
-        List<Seat> seats = new ArrayList<>();
+    Set<Seat> createSeats(int floors, int rows, int columns, int lastRowColumns, Bus bus) {
+        Set<Seat> seats = new HashSet<>();
         for (int floor = 1; floor <= floors; floor++) {
             for (int row = 1; row <= rows; row++) {
                 int actualColumns = (row == rows) ? lastRowColumns : columns;
@@ -40,7 +40,8 @@ public class TicketgoBackEndApplication implements CommandLineRunner {
                     Seat seat = Seat.builder()
                             .seatNumber(seatNumber)
                             .floor(floor)
-                            .bus(bus) // Associate the seat with the bus
+                            .bus(bus)
+                            .seatType(SeatType.REGULAR_SEAT)
                             .build();
                     seats.add(seat);
                 }
@@ -52,6 +53,22 @@ public class TicketgoBackEndApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
+//        BusCompany admin = BusCompany.builder()
+//                .email("admin@gmail.com")
+//                .password(passwordEncoder.encode("your_secure_password")) // Mã hóa mật khẩu
+//                .imageUrl("default-image-url") // Thêm URL ảnh mặc định nếu cần
+//                .role(Role.BUS_COMPANY) // Thiết lập vai trò ADMIN hoặc role phù hợp
+//                .provider(Provider.LOCAL) // Hoặc thiết lập provider nếu bạn có sử dụng OAuth
+//                .isEnabled(true)
+//                .isLocked(false)
+//                .busCompanyName("TicketGo")
+//                .contactEmail("contact@ticketgo.com")
+//                .contactPhone("0979552239")
+//                .address("1, Võ Văn Ngân, P. Linh Chiểu, Q. Thủ Đức, Tp. Hồ Chí Minh")
+//                .description("Nhà xe TicketGo chuyên cung cấp dịch vụ vận chuyển chất lượng.")
+//                .build();
+//
+//        userRepository.save(admin);
 //        List<Bus> buses = new ArrayList<>();
 //
 //        String licensePrefix = "51B-";
@@ -95,48 +112,48 @@ public class TicketgoBackEndApplication implements CommandLineRunner {
 //                .routeName("Sài Gòn - Vũng Tàu")
 //                .departureLocation("Sài Gòn")
 //                .arrivalLocation("Vũng Tàu")
+//                        .departureAddress("")
+//                        .arrivalAddress("")
 //                .build());
 //
 //        routes.add(Route.builder()
 //                .routeName("Vũng Tàu - Sài Gòn")
 //                .departureLocation("Vũng Tàu")
 //                .arrivalLocation("Sài Gòn")
-//                .build());
-//
-//        routes.add(Route.builder()
-//                .routeName("Sài Gòn - Cần Thơ")
-//                .departureLocation("Sài Gòn")
-//                .arrivalLocation("Cần Thơ")
-//                .build());
-//
-//        routes.add(Route.builder()
-//                .routeName("Cần Thơ - Sài Gòn")
-//                .departureLocation("Cần Thơ")
-//                .arrivalLocation("Sài Gòn")
+//                .departureAddress("")
+//                .arrivalAddress("")
 //                .build());
 //
 //        routes.add(Route.builder()
 //                .routeName("Sài Gòn - Đà Lạt")
 //                .departureLocation("Sài Gòn")
 //                .arrivalLocation("Đà Lạt")
+//                .departureAddress("")
+//                .arrivalAddress("")
 //                .build());
 //
 //        routes.add(Route.builder()
 //                .routeName("Đà Lạt - Sài Gòn")
 //                .departureLocation("Đà Lạt")
 //                .arrivalLocation("Sài Gòn")
+//                .departureAddress("")
+//                .arrivalAddress("")
 //                .build());
 //
 //        routes.add(Route.builder()
 //                .routeName("Sài Gòn - Nha Trang")
 //                .departureLocation("Sài Gòn")
 //                .arrivalLocation("Nha Trang")
+//                .departureAddress("Vp Nguyễn Cư Trinh, Q1")
+//                        .arrivalAddress("Vp Thích Quảng Đức Nha Trang")
 //                .build());
 //
 //        routes.add(Route.builder()
 //                .routeName("Nha Trang - Sài Gòn")
 //                .departureLocation("Nha Trang")
 //                .arrivalLocation("Sài Gòn")
+//                .departureAddress("")
+//                .arrivalAddress("")
 //                .build());
 //
 //        // New routes
@@ -144,24 +161,16 @@ public class TicketgoBackEndApplication implements CommandLineRunner {
 //                .routeName("Sài Gòn - Phan Thiết")
 //                .departureLocation("Sài Gòn")
 //                .arrivalLocation("Phan Thiết")
+//                .departureAddress("")
+//                .arrivalAddress("")
 //                .build());
 //
 //        routes.add(Route.builder()
 //                .routeName("Phan Thiết - Sài Gòn")
 //                .departureLocation("Phan Thiết")
 //                .arrivalLocation("Sài Gòn")
-//                .build());
-//
-//        routes.add(Route.builder()
-//                .routeName("Sài Gòn - Bến Tre")
-//                .departureLocation("Sài Gòn")
-//                .arrivalLocation("Bến Tre")
-//                .build());
-//
-//        routes.add(Route.builder()
-//                .routeName("Bến Tre - Sài Gòn")
-//                .departureLocation("Bến Tre")
-//                .arrivalLocation("Sài Gòn")
+//                .departureAddress("")
+//                .arrivalAddress("")
 //                .build());
 //
 //        routeRepository.saveAll(routes);

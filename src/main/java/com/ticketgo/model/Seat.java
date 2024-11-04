@@ -25,4 +25,8 @@ public class Seat extends BaseEntity {
 
     @Column(nullable = false)
     private Integer floor;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private SeatType seatType;
 }

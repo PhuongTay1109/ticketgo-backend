@@ -6,7 +6,7 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
-import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -43,5 +43,5 @@ public class Bus extends BaseEntity {
 
     @OneToMany(mappedBy = "bus", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
-    private List<Seat> seats;
+    private Set<Seat> seats;
 }

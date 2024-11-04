@@ -1,4 +1,4 @@
-package com.ticketgo.dto;
+package com.ticketgo.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ScheduleDTO {
+public class RouteSearchResponse {
     private long scheduleId;
     private String routeName;
     private String busImage;

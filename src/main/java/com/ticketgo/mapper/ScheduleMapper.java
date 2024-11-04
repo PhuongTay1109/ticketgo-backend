@@ -1,6 +1,6 @@
 package com.ticketgo.mapper;
 
-import com.ticketgo.dto.ScheduleDTO;
+import com.ticketgo.dto.response.RouteSearchResponse;
 import com.ticketgo.model.Schedule;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -25,7 +25,8 @@ public interface ScheduleMapper {
     @Mapping(target = "scheduleId", source = "schedule.scheduleId")
     @Mapping(target = "availableSeats", source = "availableSeats")
     @Mapping(target = "travelDuration", expression = "java(calculateTravelDuration(schedule))")
-    ScheduleDTO toScheduleDTO(Schedule schedule, int availableSeats);
+    @Mapping(target = "price", source = "price")
+    RouteSearchResponse toRouteSearchResponse(Schedule schedule, int availableSeats, double price);
 
     default String calculateTravelDuration(Schedule schedule) {
         Duration duration = Duration.between(schedule.getDepartureTime(), schedule.getArrivalTime());

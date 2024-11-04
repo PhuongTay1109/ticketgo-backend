@@ -7,6 +7,8 @@ public class SecurityWhiteList {
             "/api/v1/schedules/**",
             "/api/v1/route-stops/**",
             "/api/v1/seats/**",
+            "/api/v1/policies/**",
+            "/api/v1/amenities/**",
     };
 
     public static String[] getWhiteList() {

@@ -1,6 +1,6 @@
 package com.ticketgo.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.ticketgo.model.SeatType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class SeatStatusDTO {
     private String seatNumber;
-    @JsonProperty("isBooked")
-    private boolean isBooked;
+    private Boolean isBooked;
+    private SeatType seatType;
 }
 

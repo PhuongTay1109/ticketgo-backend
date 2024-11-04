@@ -7,7 +7,7 @@ import lombok.Getter;
 import java.time.LocalDate;
 
 @Getter
-public class SearchRoutesRequest {
+public class RouteSearchRequest {
     @NotBlank(message =  "Nơi xuất phát không được để trống")
     private String departureLocation;
     @NotBlank(message =  "Nơi đến không được để trống")
