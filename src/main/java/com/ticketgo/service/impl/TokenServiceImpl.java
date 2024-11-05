@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
@@ -40,7 +41,12 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
-    public void deleteToken(Token activationToken) {
-        tokenRepo.delete(activationToken);
+    public void deleteToken(Token token) {
+        tokenRepo.delete(token);
+    }
+
+    @Override
+    public boolean isExpired(Token token) {
+        return token.getExpiresAt().isBefore(LocalDateTime.now());
     }
 }

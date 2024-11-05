@@ -9,5 +9,7 @@ public interface TokenService {
 
     Token findByValue(String token);
 
-    void deleteToken(Token activationToken);
+    void deleteToken(Token token);
+
+    boolean isExpired(Token token);
 }

@@ -19,6 +19,7 @@ import java.util.concurrent.CompletableFuture;
 @RequiredArgsConstructor
 @Slf4j
 public class EmailServiceImpl implements EmailService {
+
     private final JavaMailSender emailSender;
 
     @Value("${app.email.from}")

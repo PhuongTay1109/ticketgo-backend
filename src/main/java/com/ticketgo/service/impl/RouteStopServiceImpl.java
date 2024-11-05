@@ -18,6 +18,7 @@ import java.util.Set;
 @Service
 @RequiredArgsConstructor
 public class RouteStopServiceImpl implements RouteStopService {
+
     private final ScheduleService scheduleService;
 
     @Override

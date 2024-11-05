@@ -18,7 +18,6 @@ public class PolicyServiceImpl implements PolicyService {
 
     private final PolicyRepository policyRepo;
 
-
     @Override
     public List<PolicyDTO> getPolicies() {
         List<Policy> policies = policyRepo.findAll();

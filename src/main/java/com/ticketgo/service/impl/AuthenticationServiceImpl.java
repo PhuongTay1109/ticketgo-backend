@@ -25,8 +25,6 @@ import org.springframework.http.ResponseEntity;
 
 import org.springframework.web.client.RestTemplate;
 
-import java.time.LocalDateTime;
-
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -68,7 +66,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                     log.error("Failed to send email: {}", ex.getMessage());
                     return null;
                 });
-
     }
 
     @Override
@@ -76,7 +73,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public void activateAccount(String token) {
         Token activationToken = tokenService.findByValue(token);
 
-        if(activationToken.getExpiresAt().isBefore(LocalDateTime.now())) {
+        if(tokenService.isExpired(activationToken)) {
             throw new AppException(
                     "Đường link đã hết hạn. Vui lòng chọn gửi lại đường link mới!",
                     HttpStatus.GONE
@@ -144,10 +141,16 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
 
         GoogleUserInfoResponse userResponse = response.getBody();
+
+        if (userResponse == null) {
+            throw new AppException("There is no information about this user", HttpStatus.UNAUTHORIZED);
+        }
+
         String email = userResponse.getEmail();
 
         if (userService.existsByEmail(email)) {
             User user = userService.findByEmail(email);
+
             return getUserLoginResponse(user);
         } else {
             Customer customer = Customer.builder()
@@ -161,6 +164,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                     .isLocked(false)
                     .build();
             customerService.save(customer);
+
             return getUserLoginResponse(customer);
         }
     }
@@ -183,10 +187,16 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
 
         FacebookUserInfoResponse userResponse = response.getBody();
+
+        if (userResponse == null) {
+            throw new AppException("There is no information about this user", HttpStatus.UNAUTHORIZED);
+        }
+
         String email = userResponse.getEmail();
 
         if (userService.existsByEmail(email)) {
             User user = userService.findByEmail(email);
+
             return getUserLoginResponse(user);
         } else {
             Customer customer = Customer.builder()
@@ -200,6 +210,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                     .isLocked(false)
                     .build();
             customerService.save(customer);
+
             return getUserLoginResponse(customer);
         }
     }
@@ -210,6 +221,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             if (jwtUtil.isTokenValid(refreshToken)) {
                 String email = jwtUtil.extractUsername(refreshToken);
                 String accessToken = jwtUtil.generateAccessToken(userService.findByEmail(email));
+
                 return new RefreshTokenResponse(accessToken);
             }
         } catch (Exception e) {

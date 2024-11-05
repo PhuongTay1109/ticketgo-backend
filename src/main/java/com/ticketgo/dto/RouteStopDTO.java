@@ -1,17 +1,17 @@
 package com.ticketgo.dto;
 
-import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class RouteStopDTO {
-    @Column(nullable = false)
     private String location;
-
-    @Column(nullable = false)
-    private LocalDateTime arrivalTime;
+        private LocalDateTime arrivalTime;
 }

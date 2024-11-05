@@ -1,7 +1,6 @@
 package com.ticketgo.filter;
 
 import com.ticketgo.config.security.SecurityWhiteList;
-import com.ticketgo.model.User;
 import com.ticketgo.util.JwtUtil;
 import com.ticketgo.service.UserService;
 
@@ -35,12 +34,13 @@ public class JwtFilter extends OncePerRequestFilter {
     private final HandlerExceptionResolver handlerExceptionResolver;
 
     private static final Set<String> EXCLUDE_URL_PATTERNS = Arrays.stream(SecurityWhiteList.getWhiteList())
-            .collect(Collectors.toSet());
+                                                                    .collect(Collectors.toSet());
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getRequestURI();
         AntPathMatcher pathMatcher = new AntPathMatcher();
+
         return EXCLUDE_URL_PATTERNS.stream()
                 .anyMatch(pattern -> pathMatcher.match(pattern, path));
     }
@@ -59,14 +59,15 @@ public class JwtFilter extends OncePerRequestFilter {
 
         try {
             final String username = jwtUtil.extractUsername(accessToken);
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            Authentication authentication =
+                    SecurityContextHolder.getContext().getAuthentication();
 
             if (username != null && authentication == null) {
                 UserDetails user = userService.loadUserByUsername(username);
 
                 if (jwtUtil.isTokenValid(accessToken)) {
-                    UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(user,
-                            null, user.getAuthorities());
+                    UsernamePasswordAuthenticationToken token =
+                            new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
                     token.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(token);
                 }
