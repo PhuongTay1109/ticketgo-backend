@@ -25,27 +25,36 @@ public interface SeatRepository extends JpaRepository<Seat, Long> {
             s.seat_id AS seatId,
             s.seat_number AS seatNumber,
             CASE
-                WHEN bs.seat_id IS NOT NULL THEN TRUE
+                WHEN EXISTS (
+                    SELECT 1
+                    FROM booking_seats bs
+                    WHERE bs.seat_id = s.seat_id
+                    AND bs.booking_id IN (
+                        SELECT booking_id
+                        FROM bookings b
+                        WHERE b.schedule_id = :scheduleId
+                    )
+                ) OR EXISTS (
+                    SELECT 1
+                    FROM reservation_seats rs
+                    WHERE rs.seat_id = s.seat_id
+                    AND rs.schedule_id = :scheduleId
+                ) THEN TRUE
                 ELSE FALSE
             END AS isBooked,
             s.seat_type AS seatType
         FROM
             seats s
-        LEFT JOIN
-            booking_seats bs ON s.seat_id = bs.seat_id
-        LEFT JOIN
-            bookings b ON bs.booking_id = b.booking_id AND b.schedule_id = 1
-        LEFT JOIN
-            buses bus ON s.bus_id = bus.bus_id
         WHERE
-            bus.bus_id IN (
-                SELECT bus_id FROM schedules WHERE schedule_id = 1
+            s.bus_id IN (
+                SELECT bus_id
+                FROM schedules
+                WHERE schedule_id = :scheduleId
             )
-        ORDER BY\s
-            s.seat_number ASC;
+        ORDER BY
+            s.seat_number ASC
     """, nativeQuery = true)
     List<SeatStatusDTOTuple> findSeatStatusByScheduleId(@Param("scheduleId") Long scheduleId);
-
 
     @Query("""
             SELECT s
