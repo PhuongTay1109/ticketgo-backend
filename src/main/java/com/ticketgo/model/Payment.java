@@ -8,6 +8,7 @@ import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -20,10 +21,6 @@ public class Payment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long paymentId;
-
-    @ManyToOne
-    @JoinColumn(name = "booking_id")
-    private Booking booking;
 
     @Column(nullable = false)
     private LocalDateTime paymentDate;

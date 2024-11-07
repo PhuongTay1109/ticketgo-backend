@@ -1,5 +1,5 @@
 package com.ticketgo.service.impl;
-
+import com.ticketgo.dto.SeatStatusDTOTuple;
 import com.ticketgo.dto.SeatStatusDTO;
 import com.ticketgo.repository.SeatRepository;
 import com.ticketgo.service.SeatService;
@@ -7,6 +7,7 @@ import com.ticketgo.service.SeatService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -22,7 +23,16 @@ public class SeatServiceImpl implements SeatService {
     }
 
     @Override
+    @Transactional
     public List<SeatStatusDTO> getSeatStatusForSchedule(Long scheduleId) {
-        return seatRepo.getSeatStatusForSchedule(scheduleId);
+        List<SeatStatusDTOTuple> data = seatRepo.findSeatStatusByScheduleId(scheduleId);
+        return data.stream()
+                .map(row -> new SeatStatusDTO(
+                                row.getSeatId(),
+                                row.getSeatNumber(),
+                                row.getIsBooked() == 1,
+                                row.getSeatType()
+                        ))
+                .toList();
     }
 }

@@ -1,7 +1,11 @@
 package com.ticketgo.model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
+@Setter
+@Getter
 @Entity
 @Table(name = "seat_pricings", uniqueConstraints = @UniqueConstraint(columnNames = {"schedule_id", "seat_type_id"}))
 public class SeatPricing extends BaseEntity {

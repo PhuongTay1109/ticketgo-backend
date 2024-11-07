@@ -1,8 +1,10 @@
 package com.ticketgo.controller;
 
 import com.ticketgo.dto.SeatPriceDTO;
-import com.ticketgo.dto.SeatStatusDTO;
 import com.ticketgo.dto.response.ApiResponse;
+import com.ticketgo.dto.SeatStatusDTO;
+import com.ticketgo.model.ReservationSeat;
+import com.ticketgo.service.ReservationSeatService;
 import com.ticketgo.service.SeatPricingService;
 import com.ticketgo.service.SeatService;
 
@@ -18,6 +20,7 @@ import java.util.List;
 public class SeatController {
     private final SeatService seatService;
     private final SeatPricingService seatPricingService;
+    private final ReservationSeatService reservationSeatService;
 
     @GetMapping("")
     public ApiResponse getSeatStatus(@RequestParam Long scheduleId) {
@@ -29,5 +32,10 @@ public class SeatController {
     public ApiResponse getSeatPricing(@RequestParam Long scheduleId) {
         List<SeatPriceDTO> resp = seatPricingService.getSeatPricesByScheduleId(scheduleId);
         return new ApiResponse(HttpStatus.OK, "Get seat prices", resp);
+    }
+
+    @GetMapping("/reservation")
+    public List<ReservationSeat> getReservationSeats(@RequestParam Long scheduleId) {
+        return reservationSeatService.getReservationSeatsByScheduleId(scheduleId);
     }
 }

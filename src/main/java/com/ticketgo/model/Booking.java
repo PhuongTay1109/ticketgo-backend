@@ -23,6 +23,10 @@ public class Booking extends BaseEntity {
     private String bookingCode;
 
     @ManyToOne
+    @JoinColumn(name = "payment_id")
+    private Payment payment;
+
+    @ManyToOne
     @JoinColumn(name = "customer_id")
     private User customer;
 
