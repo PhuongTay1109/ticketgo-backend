@@ -10,6 +10,8 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Repository
 public interface TicketRepository extends JpaRepository<Ticket, String> {
     @Modifying
@@ -34,4 +36,7 @@ public interface TicketRepository extends JpaRepository<Ticket, String> {
         AND t.seat.seatId = :seatId 
         AND t.status = 'AVAILABLE'""")
     Ticket selectTicketForUpdate(@Param("scheduleId") long scheduleId, @Param("seatId") long seatId);
+
+
+    List<Ticket> findAllByCustomer_UserId(long customerId);
 }

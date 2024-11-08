@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class TicketServiceImpl implements TicketService {
@@ -25,5 +27,15 @@ public class TicketServiceImpl implements TicketService {
         }
 
         ticketRepo.reserveSeats(scheduleId, seatId, customerId);
+    }
+
+    @Override
+    public List<Ticket> findReservedTickets(long userId) {
+        return ticketRepo.findAllByCustomer_UserId(userId);
+    }
+
+    @Override
+    public void saveAll(List<Ticket> tickets) {
+        ticketRepo.saveAll(tickets);
     }
 }
