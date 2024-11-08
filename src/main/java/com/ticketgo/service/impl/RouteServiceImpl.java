@@ -5,11 +5,9 @@ import com.ticketgo.dto.response.ApiPaginationResponse;
 import com.ticketgo.mapper.ScheduleMapper;
 import com.ticketgo.model.Schedule;
 
-import com.ticketgo.model.SeatType;
 import com.ticketgo.repository.specification.ScheduleSpecification;
 import com.ticketgo.service.RouteService;
 import com.ticketgo.service.ScheduleService;
-import com.ticketgo.service.SeatPricingService;
 import com.ticketgo.service.SeatService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -30,9 +29,9 @@ import java.util.stream.Collectors;
 public class RouteServiceImpl implements RouteService {
     private final ScheduleService scheduleService;
     private final SeatService seatService;
-    private final SeatPricingService seatPricingService;
 
     @Override
+    @Transactional
     public ApiPaginationResponse searchRoutes(String departureLocation,
                                               String arrivalLocation,
                                               LocalDate departureDate,
@@ -53,13 +52,10 @@ public class RouteServiceImpl implements RouteService {
                 .map(schedule -> {
                     long scheduleId = schedule.getScheduleId();
 
-                    log.info("Processing scheduleId: {}", scheduleId);
-
                     return ScheduleMapper.INSTANCE.toRouteSearchResponse(
                             schedule,
-                            schedule.getBus().getTotalSeats()
-                                    - seatService.getBookedSeatsCountForSchedule(scheduleId),
-                            seatPricingService.findPriceByScheduleIdAndSeatType(scheduleId, SeatType.REGULAR_SEAT)
+                            seatService.countAvailableSeatsByScheduleId(scheduleId),
+                            schedule.getPrice()
                     );
                 })
                 .collect(Collectors.toList());

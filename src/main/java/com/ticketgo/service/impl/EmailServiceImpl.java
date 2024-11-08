@@ -28,8 +28,8 @@ public class EmailServiceImpl implements EmailService {
     @Value("${app.email.fromName}")
     private String fromName;
 
-    @Value("${app.url.base}")
-    private String baseUrl;
+    @Value("${frontend.url}")
+    private String feUrl;
 
     @Async
     @Override
@@ -62,7 +62,7 @@ public class EmailServiceImpl implements EmailService {
     }
 
     private String getActivationEmailContent(String token) {
-        String activationLink = String.format("%s/activate?token=%s", baseUrl, token);
+        String activationLink = String.format("%s/activate?token=%s", feUrl, token);
         return """
                <p>Xin chào,</p>
                <p>Cảm ơn bạn đã đăng ký với Ticket Go.</p>

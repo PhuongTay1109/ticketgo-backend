@@ -2,6 +2,7 @@ package com.ticketgo;
 
 import com.ticketgo.model.*;
 import com.ticketgo.repository.*;
+import com.ticketgo.service.ScheduleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -25,6 +26,8 @@ public class TicketgoBackEndApplication implements CommandLineRunner {
     private final RouteRepository routeRepository;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final ScheduleService scheduleService;
+    private final TicketRepository ticketRepository;
 
     public static void main(String[] args) {
         SpringApplication.run(TicketgoBackEndApplication.class, args);
@@ -197,7 +200,7 @@ public class TicketgoBackEndApplication implements CommandLineRunner {
 //                        .route(routeRepository.findByRouteName("Sài Gòn - Nha Trang"))
 //                        .departureTime(departureTime)
 //                        .arrivalTime(arrivalTime)
-//                        .price(300000.0)
+//                        .price(0.0)
 //                        .build();
 //
 //                // Pickup stops
@@ -230,6 +233,31 @@ public class TicketgoBackEndApplication implements CommandLineRunner {
 //                // Save each schedule
 //                scheduleRepository.save(schedule);
 //            }
+//    }
+//        for (long i = 1; i <= 9; i++) {
+//            Schedule schedule = scheduleService.findById(i);
+//            Set<Seat> seats = schedule.getBus().getSeats();
+//            double price = 500000.0;
+//            if (i==2) {
+//                price=400000.0;
+//            } else if (i==3) {
+//                price=300000.0;
+//            } else if (i==4) {
+//                price=450000.0;
+//            } else if (i==5) {
+//                price=600000.0;
+//            }
+//            for(Seat seat : seats) {
+//                Ticket ticket = Ticket.builder()
+//                        .seat(seat)
+//                        .schedule(schedule)
+//                        .status(TicketStatus.AVAILABLE)
+//                        .price(price)
+//                        .build();
+//                ticketRepository.save(ticket);
+//            }
+//            schedule.setPrice(price);
+//            scheduleRepository.save(schedule);
 //        }
     }
 }

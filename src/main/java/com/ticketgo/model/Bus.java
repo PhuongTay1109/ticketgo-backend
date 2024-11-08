@@ -41,7 +41,7 @@ public class Bus extends BaseEntity {
     @Column(nullable = false)
     private LocalDate expirationDate;
 
-    @OneToMany(mappedBy = "bus", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "bus", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JsonIgnore
     private Set<Seat> seats;
 }
