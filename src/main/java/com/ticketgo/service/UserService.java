@@ -1,5 +1,6 @@
 package com.ticketgo.service;
 
+import com.ticketgo.dto.CustomerContactInfoDTO;
 import com.ticketgo.dto.UserDTO;
 import com.ticketgo.model.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -12,4 +13,6 @@ public interface UserService extends UserDetailsService {
     User findByEmail(String email);
 
     UserDTO getUserDetails();
+
+    CustomerContactInfoDTO getCustomerContactIno();
 }

@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RouteStopDTO {
+    private Long stopId;
     private String location;
-        private LocalDateTime arrivalTime;
+    private LocalDateTime arrivalTime;
 }

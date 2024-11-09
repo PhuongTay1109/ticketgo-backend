@@ -54,7 +54,7 @@ public class RouteServiceImpl implements RouteService {
 
                     return ScheduleMapper.INSTANCE.toRouteSearchResponse(
                             schedule,
-                            seatService.countAvailableSeatsByScheduleId(scheduleId),
+                            seatService.countAvailableSeatsBySchedule(scheduleId),
                             schedule.getPrice()
                     );
                 })

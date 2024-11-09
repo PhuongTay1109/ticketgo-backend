@@ -6,6 +6,7 @@ import com.ticketgo.mapper.RouteStopMapper;
 import com.ticketgo.model.RouteStop;
 import com.ticketgo.model.Schedule;
 import com.ticketgo.model.StopType;
+import com.ticketgo.repository.RouteStopRepository;
 import com.ticketgo.service.RouteStopService;
 import com.ticketgo.service.ScheduleService;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ import java.util.Set;
 public class RouteStopServiceImpl implements RouteStopService {
 
     private final ScheduleService scheduleService;
+    private final RouteStopRepository routeStopRepo;
 
     @Override
     public RouteStopResponse getRouteStops(long scheduleId) {
@@ -43,5 +45,21 @@ public class RouteStopServiceImpl implements RouteStopService {
                 .pickup(pickupStops)
                 .dropoff(dropoffStops)
                 .build();
+    }
+
+    @Override
+    public List<RouteStopDTO> getPickupStops(long scheduleId) {
+        List<RouteStop> pickupStops = routeStopRepo.getPickupRouteStopsByScheduleId(scheduleId);
+        return pickupStops.stream()
+                .map(RouteStopMapper.INSTANCE::toRouteStopDTO)
+                .toList();
+    }
+
+    @Override
+    public List<RouteStopDTO> getDropoffStops(long scheduleId) {
+        List<RouteStop> dropoffStops = routeStopRepo.getDropoffRouteStopsByScheduleId(scheduleId);
+        return dropoffStops.stream()
+                .map(RouteStopMapper.INSTANCE::toRouteStopDTO)
+                .toList();
     }
 }

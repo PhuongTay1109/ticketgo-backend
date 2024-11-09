@@ -28,7 +28,7 @@ public class SeatServiceImpl implements SeatService {
     }
 
     @Override
-    public int countAvailableSeatsByScheduleId(Long scheduleId) {
+    public int countAvailableSeatsBySchedule(Long scheduleId) {
         return seatRepo.countAvailableSeatsByScheduleId(scheduleId);
     }
 

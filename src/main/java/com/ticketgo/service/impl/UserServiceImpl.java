@@ -1,8 +1,10 @@
 package com.ticketgo.service.impl;
 
+import com.ticketgo.dto.CustomerContactInfoDTO;
 import com.ticketgo.dto.UserDTO;
 import com.ticketgo.exception.AppException;
 import com.ticketgo.mapper.UserMapper;
+import com.ticketgo.model.Customer;
 import com.ticketgo.model.User;
 import com.ticketgo.repository.UserRepository;
 import com.ticketgo.service.UserService;
@@ -50,5 +52,17 @@ public class UserServiceImpl implements UserService {
                 SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
         return UserMapper.INSTANCE.mapUser(user);
+    }
+
+    @Override
+    public CustomerContactInfoDTO getCustomerContactIno() {
+        Authentication authentication =
+                SecurityContextHolder.getContext().getAuthentication();
+        Customer customer =  (Customer) authentication.getPrincipal();
+        return CustomerContactInfoDTO.builder()
+                .fullName(customer.getFullName())
+                .phoneNumber(customer.getPhoneNumber())
+                .email(customer.getEmail())
+                .build();
     }
 }
