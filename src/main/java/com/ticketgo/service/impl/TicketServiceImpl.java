@@ -1,6 +1,7 @@
 package com.ticketgo.service.impl;
 
 import com.ticketgo.exception.AppException;
+import com.ticketgo.model.Customer;
 import com.ticketgo.model.Ticket;
 import com.ticketgo.model.TicketStatus;
 import com.ticketgo.repository.TicketRepository;
@@ -37,5 +38,25 @@ public class TicketServiceImpl implements TicketService {
     @Override
     public void saveAll(List<Ticket> tickets) {
         ticketRepo.saveAll(tickets);
+    }
+
+    @Override
+    public boolean existsReservedSeatsByCustomer(Customer customer) {
+        return ticketRepo.existsReservedSeatsByCustomer(customer);
+    }
+
+    @Override
+    public void releaseReservedSeatsByCustomer(long customerId) {
+        ticketRepo.releaseReservedSeatsByCustomer(customerId);
+    }
+
+    @Override
+    public boolean isSeatAvailable(long seatId, long scheduleId) {
+        return ticketRepo.isSeatAvailable(seatId, scheduleId);
+    }
+
+    @Override
+    public List<Ticket> findAllByScheduleId(long scheduleId) {
+        return ticketRepo.findAllBySchedule_ScheduleId(scheduleId);
     }
 }

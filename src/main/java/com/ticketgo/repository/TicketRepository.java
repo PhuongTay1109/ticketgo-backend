@@ -1,6 +1,8 @@
 package com.ticketgo.repository;
 
+import com.ticketgo.model.Customer;
 import com.ticketgo.model.Ticket;
+import com.ticketgo.model.User;
 import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
@@ -19,7 +21,7 @@ public interface TicketRepository extends JpaRepository<Ticket, String> {
     @Query(value = """
             UPDATE tickets t
             SET 
-                t.status = 'REVERSED',
+                t.status = 'RESERVED',
                 t.reserved_until = CURRENT_TIMESTAMP + INTERVAL 5 MINUTE,
                 t.customer_id = :customerId
             WHERE t.schedule_id = :scheduleId
@@ -39,4 +41,36 @@ public interface TicketRepository extends JpaRepository<Ticket, String> {
 
 
     List<Ticket> findAllByCustomer_UserId(long customerId);
+
+    List<Ticket> findAllBySchedule_ScheduleId(long scheduleId);
+
+    @Query("""
+        SELECT CASE WHEN COUNT(t) > 0 THEN true ELSE false END
+        FROM Ticket t
+        WHERE t.customer = :customer
+        AND t.status = com.ticketgo.model.TicketStatus.RESERVED
+    """)
+    boolean existsReservedSeatsByCustomer(@Param("customer") User customer);
+
+    @Modifying
+    @Transactional
+    @Query(value = """
+            UPDATE tickets t
+            SET 
+                t.status = 'AVAILABLE',
+                t.reserved_until = null,
+                t.customer_id = null
+            WHERE t.customer_id = :customerId
+            AND t.status = 'RESERVED'
+            """, nativeQuery = true)
+    void releaseReservedSeatsByCustomer(@Param("customerId") long customerId);
+
+    @Query("""
+            SELECT CASE WHEN COUNT(t) > 0
+            THEN false ELSE true END 
+            FROM Ticket t WHERE t.seat.seatId = :seatId 
+            AND t.schedule.scheduleId = :scheduleId 
+            AND t.status = com.ticketgo.model.TicketStatus.AVAILABLE
+            """)
+    boolean isSeatAvailable(@Param("seatId") long seatId, @Param("scheduleId") long scheduleId);
 }

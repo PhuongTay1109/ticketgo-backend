@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 public class PaymentServiceImpl implements PaymentService {
     private final PaymentRepository paymentRepo;
 
-
     @Override
     public void save(Payment payment) {
         paymentRepo.save(payment);

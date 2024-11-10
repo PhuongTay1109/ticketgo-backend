@@ -32,7 +32,7 @@ public class Ticket extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private TicketStatus status; // AVAILABLE, BOOKED, REVERSED
+    private TicketStatus status; // AVAILABLE, BOOKED, RESERVED
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id")

@@ -14,6 +14,8 @@ import com.ticketgo.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -228,6 +230,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             log.warn("Invalid refresh token", e);
         }
         throw new AppException("Invalid refresh token", HttpStatus.UNAUTHORIZED);
+    }
+
+    @Override
+    public Customer getAuthorizedCustomer() {
+        Authentication authentication =
+                SecurityContextHolder.getContext().getAuthentication();
+       return (Customer) authentication.getPrincipal();
     }
 
     private UserLoginResponse getUserLoginResponse(User user) {

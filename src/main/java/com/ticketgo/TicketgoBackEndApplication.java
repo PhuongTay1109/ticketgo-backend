@@ -33,25 +33,70 @@ public class TicketgoBackEndApplication implements CommandLineRunner {
         SpringApplication.run(TicketgoBackEndApplication.class, args);
     }
 
-    Set<Seat> createSeats(int floors, int rows, int columns, int lastRowColumns, Bus bus) {
+    Set<Seat> initialize22Seats(Bus bus) {
+        String[][][] seatStructure = {
+                { // Floor 1: Ghế A và B
+                        {"1A", "1B"}, {"2A", "2B"}, {"3A", "3B"},
+                        {"4A", "4B"}, {"5A", "5B"}, {"6A", ""}
+                },
+                { // Floor 2: Ghế C và D
+                        {"1C", "1D"}, {"2C", "2D"}, {"3C", "3D"},
+                        {"4C", "4D"}, {"5C", "5D"}, {"6C", ""}
+                }
+        };
+
         Set<Seat> seats = new HashSet<>();
-        for (int floor = 1; floor <= floors; floor++) {
-            for (int row = 1; row <= rows; row++) {
-                int actualColumns = (row == rows) ? lastRowColumns : columns;
-                for (int column = 1; column <= actualColumns; column++) {
-                    String seatNumber = String.format("%d%d%d", floor, row, column);
-                    Seat seat = Seat.builder()
-                            .seatNumber(seatNumber)
-                            .floor(floor)
-                            .bus(bus)
-                            .seatType(SeatType.REGULAR_SEAT)
-                            .build();
-                    seats.add(seat);
+        for (int floor = 0; floor < seatStructure.length; floor++) {
+            for (String[] row : seatStructure[floor]) {
+                for (String seat : row) {
+                    if (!seat.isEmpty()) {
+                        Seat seatEntity = new Seat();
+                        seatEntity.setBus(bus);
+                        seatEntity.setFloor(floor + 1);
+                        seatEntity.setSeatNumber(seat);
+                        seatEntity.setRow(Integer.parseInt(seat.substring(0, 1))); // Số hàng
+                        seatEntity.setCol(seat.substring(1)); // Cột (ví dụ: A, B, C, D)
+                        seats.add(seatEntity);
+                    }
                 }
             }
         }
         return seats;
     }
+
+    Set<Seat> initialize34Seats(Bus bus) {
+        String[][][] seatStructure = {
+                { // Floor 1: Ghế A, B, C
+                        {"1A", "1B", "1C"}, {"2A", "2B", "2C"}, {"3A", "3B", "3C"},
+                        {"4A", "4B", "4C"}, {"5A", "5B", "5C"}, {"6A", "6B"}
+                },
+                { // Floor 2: Ghế D, E, F
+                        {"1D", "1E", "1F"}, {"2D", "2E", "2F"}, {"3D", "3E", "3F"},
+                        {"4D", "4E", "4F"}, {"5D", "5E", "5F"}, {"6D", "6E"}
+                }
+        };
+
+        Set<Seat> seats = new HashSet<>();
+        for (int floor = 0; floor < seatStructure.length; floor++) {
+            for (String[] row : seatStructure[floor]) {
+                for (String seat : row) {
+                    if (!seat.isEmpty()) {
+                        Seat seatEntity = new Seat();
+                        seatEntity.setBus(bus);
+                        seatEntity.setFloor(floor + 1);
+                        seatEntity.setSeatNumber(seat);
+                        seatEntity.setRow(Integer.parseInt(seat.substring(0, 1))); // Số hàng
+                        seatEntity.setCol(seat.substring(1)); // Cột (ví dụ: A, B, C, D, E, F)
+                        seats.add(seatEntity);
+                    }
+                }
+            }
+        }
+        return seats;
+    }
+
+
+
 
 
     @Override
@@ -90,7 +135,7 @@ public class TicketgoBackEndApplication implements CommandLineRunner {
 //                        .registrationExpiry(LocalDate.now().plusYears(2))
 //                        .expirationDate(LocalDate.now().plusYears(5))
 //                        .build();
-//                bus.setSeats(createSeats(2, 6, 2, 1, bus)); // Pass bus to createSeats
+//                bus.setSeats(initialize22Seats(bus)); // Pass bus to createSeats
 //            } else {
 //                bus = Bus.builder()
 //                        .licensePlate(licensePlate)
@@ -101,7 +146,7 @@ public class TicketgoBackEndApplication implements CommandLineRunner {
 //                        .registrationExpiry(LocalDate.now().plusYears(3))
 //                        .expirationDate(LocalDate.now().plusYears(5))
 //                        .build();
-//                bus.setSeats(createSeats(2, 6, 3, 2, bus)); // Pass bus to createSeats
+//                bus.setSeats(initialize34Seats(bus)); // Pass bus to createSeats
 //            }
 //            buses.add(bus);
 //        }

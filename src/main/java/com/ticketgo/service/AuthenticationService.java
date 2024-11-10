@@ -4,6 +4,7 @@ import com.ticketgo.dto.request.CustomerRegistrationRequest;
 import com.ticketgo.dto.request.UserLoginRequest;
 import com.ticketgo.dto.response.RefreshTokenResponse;
 import com.ticketgo.dto.response.UserLoginResponse;
+import com.ticketgo.model.Customer;
 
 public interface AuthenticationService {
     void registerCustomer(CustomerRegistrationRequest request);
@@ -16,4 +17,6 @@ public interface AuthenticationService {
     UserLoginResponse facebookLogin(String accessToken);
 
     RefreshTokenResponse refreshToken(String refreshToken);
+
+    Customer getAuthorizedCustomer();
 }

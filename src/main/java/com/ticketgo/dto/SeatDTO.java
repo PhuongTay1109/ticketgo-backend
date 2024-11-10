@@ -1,5 +1,4 @@
 package com.ticketgo.dto;
-import com.ticketgo.model.SeatType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -7,9 +6,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class SeatStatusDTO {
+public class SeatDTO {
     private Long seatId;
     private String seatNumber;
-    private Boolean isBooked;
-    private SeatType seatType;
+    private Boolean isAvailable;
 }

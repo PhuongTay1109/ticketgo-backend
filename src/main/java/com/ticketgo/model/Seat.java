@@ -17,7 +17,7 @@ public class Seat extends BaseEntity {
     private Long seatId;
 
     @ManyToOne
-    @JoinColumn(name = "bus_id")
+    @JoinColumn(name = "bus_id", nullable = false)
     private Bus bus;
 
     @Column(nullable = false)
@@ -26,7 +26,10 @@ public class Seat extends BaseEntity {
     @Column(nullable = false)
     private Integer floor;
 
-    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private SeatType seatType;
+    private Integer row;
+
+    @Column(nullable = false)
+    private String col;
 }
+

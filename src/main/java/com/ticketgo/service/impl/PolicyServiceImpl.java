@@ -21,9 +21,7 @@ public class PolicyServiceImpl implements PolicyService {
     @Override
     public List<PolicyDTO> getPolicies() {
         List<Policy> policies = policyRepo.findAll();
-        for (Policy policy : policies) {
-            log.info(policy.getPolicyType() + ": " + policy.getPolicyContent());
-        }
+
         return policies.stream()
                 .map(PolicyMapper.INSTANCE::toPolicyDTO)
                 .toList();

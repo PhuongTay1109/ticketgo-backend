@@ -1,19 +1,24 @@
 package com.ticketgo.service.impl;
 
-import com.ticketgo.dto.SeatStatusDTO;
+import com.ticketgo.dto.SeatDTO;
 import com.ticketgo.dto.request.SeatReservationRequest;
-import com.ticketgo.model.Customer;
+import com.ticketgo.exception.AppException;
+import com.ticketgo.model.*;
 import com.ticketgo.repository.SeatRepository;
+import com.ticketgo.service.AuthenticationService;
+import com.ticketgo.service.BusService;
 import com.ticketgo.service.SeatService;
 
 import com.ticketgo.service.TicketService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -21,10 +26,76 @@ import java.util.List;
 public class SeatServiceImpl implements SeatService {
     private final SeatRepository seatRepo;
     private final TicketService ticketService;
+    private final BusService busService;
+    private final AuthenticationService authService;
 
     @Override
-    public List<SeatStatusDTO> getSeatStatusForSchedule(Long scheduleId) {
-        return seatRepo.findSeatStatusesByScheduleId(scheduleId);
+    public Map<String, List<List<SeatDTO>>> getSeatStatusForSchedule(Long scheduleId) {
+        Bus bus = busService.findBySchedule(scheduleId);
+        Set<Seat> seats = bus.getSeats();
+
+        List<Seat> sortedSeats = new ArrayList<>(seats);
+        sortedSeats.sort(Comparator.comparingInt(Seat::getFloor)
+                .thenComparingInt(Seat::getRow)
+                .thenComparing(Seat::getCol));
+
+        // floor_, data
+        Map<String, List<List<SeatDTO>>> result = new LinkedHashMap<>();
+
+        Map<Long, TicketStatus> seatStatusMap = getTicketStatusBySchedule(scheduleId);
+
+        //example
+//        {
+//            1: { // Tầng 1
+//            1: [SeatDTO_A1], // Hàng 1: chứa Ghế A1
+//            2: [SeatDTO_B2]  // Hàng 2: chứa Ghế B2
+//        },
+//            2: { // Tầng 2
+//            1: [SeatDTO_C1]  // Hàng 1: chứa Ghế C1
+//        }
+//        }
+        Map<Integer, Map<Integer, List<SeatDTO>>> floorGroups = new LinkedHashMap<>();
+
+        for (Seat seat : sortedSeats) {
+            TicketStatus status = seatStatusMap.get(seat.getSeatId());
+
+            SeatDTO seatDTO = new SeatDTO(
+                    seat.getSeatId(),
+                    seat.getSeatNumber(),
+                    status == TicketStatus.AVAILABLE
+            );
+
+            floorGroups
+                    .computeIfAbsent(seat.getFloor(), k -> new LinkedHashMap<>())
+                    .computeIfAbsent(seat.getRow(), k -> new ArrayList<>())
+                    .add(seatDTO);
+        }
+
+        for (Map.Entry<Integer, Map<Integer, List<SeatDTO>>> floorEntry : floorGroups.entrySet()) {
+            String floorKey = "floor_" + floorEntry.getKey();
+            List<List<SeatDTO>> rows = new ArrayList<>();
+
+            for (Map.Entry<Integer, List<SeatDTO>> rowEntry : floorEntry.getValue().entrySet()) {
+                rows.add(rowEntry.getValue());
+            }
+
+            result.put(floorKey, rows);
+        }
+
+        return result;
+    }
+
+    private Map<Long, TicketStatus> getTicketStatusBySchedule(Long scheduleId) {
+        List<Ticket> tickets = ticketService.findAllByScheduleId(scheduleId);
+
+        Map<Long, TicketStatus> seatStatusMap = new HashMap<>();
+        for (Ticket ticket : tickets) {
+            seatStatusMap.put(
+                            ticket.getSeat().getSeatId(),
+                            ticket.getStatus());
+        }
+
+        return seatStatusMap;
     }
 
     @Override
@@ -33,19 +104,29 @@ public class SeatServiceImpl implements SeatService {
     }
 
     @Override
+    @Transactional
     public void reserveSeats(SeatReservationRequest request) {
+        Customer customer = authService.getAuthorizedCustomer();
+        long customerId = customer.getUserId();
+
+        if (ticketService.existsReservedSeatsByCustomer(customer)) {
+            throw new AppException("Another reserved tickets are in progess", HttpStatus.CONFLICT);
+        }
+
         List<SeatReservationRequest.SeatSchedulePair> seatSchedulePairs =
                 request.getSeatSchedulePairs();
-
-        Authentication authentication =
-                SecurityContextHolder.getContext().getAuthentication();
-        Customer customer = (Customer) authentication.getPrincipal();
-        long customerId = customer.getUserId();
 
         for(SeatReservationRequest.SeatSchedulePair pair : seatSchedulePairs) {
             long seatId = pair.getSeatId();
             long scheduleId = pair.getScheduleId();
             ticketService.reserveSeats(scheduleId, seatId, customerId);
         }
+    }
+
+    @Override
+    public void releaseReservedSeatsByCustomer() {
+        Customer customer = authService.getAuthorizedCustomer();
+        long customerId = customer.getUserId();
+        ticketService.releaseReservedSeatsByCustomer(customerId);
     }
 }

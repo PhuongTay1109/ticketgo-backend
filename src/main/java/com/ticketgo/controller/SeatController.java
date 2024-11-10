@@ -1,8 +1,8 @@
 package com.ticketgo.controller;
 
+import com.ticketgo.dto.SeatDTO;
 import com.ticketgo.dto.request.SeatReservationRequest;
 import com.ticketgo.dto.response.ApiResponse;
-import com.ticketgo.dto.SeatStatusDTO;
 import com.ticketgo.service.SeatService;
 
 import lombok.RequiredArgsConstructor;
@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/seats")
@@ -21,7 +22,7 @@ public class SeatController {
 
     @GetMapping("")
     public ApiResponse getSeatStatus(@RequestParam Long scheduleId) {
-        List<SeatStatusDTO> resp = seatService.getSeatStatusForSchedule(scheduleId);
+        Map<String, List<List<SeatDTO>>> resp = seatService.getSeatStatusForSchedule(scheduleId);
         return new ApiResponse(HttpStatus.OK, "Get seats status", resp);
     }
 
@@ -29,6 +30,12 @@ public class SeatController {
     public ResponseEntity<Void> reserveSeats(@RequestBody SeatReservationRequest request) {
         seatService.reserveSeats(request);
 
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("release")
+    public ResponseEntity<Void> releaseSeats(@RequestBody SeatReservationRequest request) {
+        seatService.releaseReservedSeatsByCustomer();
         return ResponseEntity.ok().build();
     }
 }
