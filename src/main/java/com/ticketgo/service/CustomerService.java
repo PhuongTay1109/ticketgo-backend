@@ -4,4 +4,6 @@ import com.ticketgo.model.Customer;
 
 public interface CustomerService {
     void save(Customer customer);
+
+    Customer findById(long customerId);
 }

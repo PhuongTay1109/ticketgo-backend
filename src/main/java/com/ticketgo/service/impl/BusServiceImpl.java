@@ -16,8 +16,7 @@ public class BusServiceImpl implements BusService {
     @Override
     public Bus findBySchedule(long scheduleId) {
         return busRepo.findBySchedule(scheduleId)
-                .orElseThrow(() -> new AppException(
-                                "No bus found for schedule: " + scheduleId,
-                                HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new RuntimeException(
+                                "No bus found for schedule: " + scheduleId));
     }
 }

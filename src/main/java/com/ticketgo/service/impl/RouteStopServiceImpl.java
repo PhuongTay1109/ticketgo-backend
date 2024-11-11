@@ -62,4 +62,10 @@ public class RouteStopServiceImpl implements RouteStopService {
                 .map(RouteStopMapper.INSTANCE::toRouteStopDTO)
                 .toList();
     }
+
+    @Override
+    public RouteStop findById(long id) {
+        return routeStopRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Route stop with id " + id + " not found"));
+    }
 }

@@ -67,6 +67,6 @@ public class RouteServiceImpl implements RouteService {
                 schedules.getTotalElements()
         );
 
-        return new ApiPaginationResponse(HttpStatus.OK, "Search results", scheduleDTOs, pagination);
+        return new ApiPaginationResponse(HttpStatus.OK, "Kết quả tìm kiếm", scheduleDTOs, pagination);
     }
 }

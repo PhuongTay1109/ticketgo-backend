@@ -22,18 +22,18 @@ public class RouteStopController {
     @GetMapping()
     public ApiResponse getRouteStops(@RequestParam long scheduleId) {
         RouteStopResponse resp = routeStopService.getRouteStops(scheduleId);
-        return new ApiResponse(HttpStatus.OK, "Get route stops", resp);
+        return new ApiResponse(HttpStatus.OK, "Lấy các trạm dừng thành công", resp);
     }
 
     @GetMapping("/pickup")
     public ApiResponse getPickupStops(@RequestParam long scheduleId) {
         List<RouteStopDTO> resp = routeStopService.getPickupStops(scheduleId);
-        return new ApiResponse(HttpStatus.OK, "Get pick up stops", resp);
+        return new ApiResponse(HttpStatus.OK, "Lấy các trạm đón thành công", resp);
     }
 
     @GetMapping("/dropoff")
     public ApiResponse getDropoffStops(@RequestParam long scheduleId) {
         List<RouteStopDTO> resp = routeStopService.getDropoffStops(scheduleId);
-        return new ApiResponse(HttpStatus.OK, "Get drop off stops", resp);
+        return new ApiResponse(HttpStatus.OK, "Lấy các trạm trả thành công", resp);
     }
 }

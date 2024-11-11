@@ -16,4 +16,10 @@ public class CustomerServiceImpl implements CustomerService {
     public void save(Customer customer) {
         customerRepo.save(customer);
     }
+
+    @Override
+    public Customer findById(long customerId) {
+        return customerRepo.findById(customerId)
+                .orElseThrow(() -> new RuntimeException("Customer not found"));
+    }
 }

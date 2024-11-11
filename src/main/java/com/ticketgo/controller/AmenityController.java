@@ -20,6 +20,6 @@ public class AmenityController {
     @GetMapping("")
     public ApiResponse getAmenities() {
         List<AmenityDTO> resp = amenityService.getAmenities();
-        return new ApiResponse(HttpStatus.OK, "Get amenities", resp);
+        return new ApiResponse(HttpStatus.OK, "Lấy các tiện ích của công ty thành công", resp);
     }
 }

@@ -31,16 +31,21 @@ public interface TicketRepository extends JpaRepository<Ticket, String> {
                       @Param("seatId") long seatId,
                       @Param("customerId") long customerId);
 
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("""
         SELECT t FROM Ticket t
         WHERE t.schedule.scheduleId = :scheduleId
         AND t.seat.seatId = :seatId 
         AND t.status = 'AVAILABLE'""")
-    Ticket selectTicketForUpdate(@Param("scheduleId") long scheduleId, @Param("seatId") long seatId);
+    Ticket findTicketBySeatIdAndScheduleId(@Param("scheduleId") long scheduleId,
+                                           @Param("seatId") long seatId);
 
 
-    List<Ticket> findAllByCustomer_UserId(long customerId);
+    @Query("""
+        SELECT t FROM Ticket t
+        WHERE t.customer.userId = :customerId
+        AND t.status = com.ticketgo.model.TicketStatus.RESERVED
+        """)
+    List<Ticket> findReservedTicketsByCustomerId(long customerId);
 
     List<Ticket> findAllBySchedule_ScheduleId(long scheduleId);
 
@@ -73,4 +78,12 @@ public interface TicketRepository extends JpaRepository<Ticket, String> {
             AND t.status = com.ticketgo.model.TicketStatus.AVAILABLE
             """)
     boolean isSeatAvailable(@Param("seatId") long seatId, @Param("scheduleId") long scheduleId);
+
+    @Query("""
+        SELECT t.price FROM Ticket t
+        WHERE t.schedule.scheduleId = :scheduleId
+        AND t.seat.seatId = :seatId
+        """)
+    double getPriceBySeatIdAndScheduleId(@Param("scheduleId") long scheduleId,
+                                         @Param("seatId") long seatId);
 }

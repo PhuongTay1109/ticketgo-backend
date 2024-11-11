@@ -2,6 +2,8 @@ package com.ticketgo.service.impl;
 
 import com.ticketgo.dto.SeatDTO;
 import com.ticketgo.dto.request.SeatReservationRequest;
+import com.ticketgo.dto.request.TotalPriceCalculationRequest;
+import com.ticketgo.dto.response.TotalPriceCalculationResponse;
 import com.ticketgo.exception.AppException;
 import com.ticketgo.model.*;
 import com.ticketgo.repository.SeatRepository;
@@ -110,15 +112,15 @@ public class SeatServiceImpl implements SeatService {
         long customerId = customer.getUserId();
 
         if (ticketService.existsReservedSeatsByCustomer(customer)) {
-            throw new AppException("Another reserved tickets are in progess", HttpStatus.CONFLICT);
+            throw new AppException(
+                            "Bạn có đặt chỗ chưa hoàn tất. ",
+                            HttpStatus.CONFLICT);
         }
 
-        List<SeatReservationRequest.SeatSchedulePair> seatSchedulePairs =
-                request.getSeatSchedulePairs();
+        List<Long> seatIds = request.getSeatIds();
+        long scheduleId = request.getScheduleId();
 
-        for(SeatReservationRequest.SeatSchedulePair pair : seatSchedulePairs) {
-            long seatId = pair.getSeatId();
-            long scheduleId = pair.getScheduleId();
+        for(long seatId : seatIds) {
             ticketService.reserveSeats(scheduleId, seatId, customerId);
         }
     }
@@ -128,5 +130,35 @@ public class SeatServiceImpl implements SeatService {
         Customer customer = authService.getAuthorizedCustomer();
         long customerId = customer.getUserId();
         ticketService.releaseReservedSeatsByCustomer(customerId);
+    }
+
+    @Override
+    public TotalPriceCalculationResponse getSeatPrice(TotalPriceCalculationRequest request) {
+        List<Long> seatIds = request.getSeatIds();
+        long scheduleId = request.getScheduleId();
+        List<String> seatNumbers = new ArrayList<>();
+
+        double totalPrice = 0;
+        double unitPrice = 0;
+
+        for(long seatId : seatIds) {
+            seatNumbers.add(findById(seatId).getSeatNumber());
+            totalPrice += ticketService.getPriceBySeatIdAndScheduleId(scheduleId, seatId);
+            if(unitPrice == 0) {
+                unitPrice = ticketService.getPriceBySeatIdAndScheduleId(scheduleId, seatId);
+            }
+        }
+
+        return TotalPriceCalculationResponse.builder()
+                .seatNumbers(seatNumbers)
+                .unitPrice(unitPrice)
+                .quantity(seatIds.size())
+                .totalPrice(totalPrice)
+                .build();
+    }
+
+    public Seat findById(long id) {
+        return seatRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Seat with id " + id + " not found"));
     }
 }

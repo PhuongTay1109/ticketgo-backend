@@ -27,10 +27,6 @@ public class Payment {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private PaymentStatus status;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
     private PaymentType type;
 }
 

@@ -95,10 +95,6 @@ public class TicketgoBackEndApplication implements CommandLineRunner {
         return seats;
     }
 
-
-
-
-
     @Override
     public void run(String... args) throws Exception {
 //        BusCompany admin = BusCompany.builder()

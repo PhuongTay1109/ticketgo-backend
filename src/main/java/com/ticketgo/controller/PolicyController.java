@@ -20,6 +20,6 @@ public class PolicyController {
     @GetMapping("")
     public ApiResponse getPolicies() {
         List<PolicyDTO> resp = policyService.getPolicies();
-        return new ApiResponse(HttpStatus.OK, "Get policies", resp);
+        return new ApiResponse(HttpStatus.OK, "Lấy các chính sách của công ty thành công", resp);
     }
 }

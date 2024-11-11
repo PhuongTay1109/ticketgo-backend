@@ -70,7 +70,7 @@ public class AuthenticationController {
     public ApiResponse refreshToken(@RequestBody @Valid RefreshTokenRequest request) {
         return new ApiResponse(
                 HttpStatus.OK,
-                "Refresh token successfully",
+                "Refresh token thành công",
                 authenticationService.refreshToken(request.getRefreshToken())
         );
     }

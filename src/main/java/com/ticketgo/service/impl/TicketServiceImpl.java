@@ -21,10 +21,10 @@ public class TicketServiceImpl implements TicketService {
     @Override
     @Transactional
     public void reserveSeats(long scheduleId, long seatId, long customerId) {
-        Ticket ticket = ticketRepo.selectTicketForUpdate(scheduleId, seatId);
+        Ticket ticket = ticketRepo.findTicketBySeatIdAndScheduleId(scheduleId, seatId);
 
         if (ticket == null || ticket.getStatus() != TicketStatus.AVAILABLE) {
-            throw new AppException("The seat is already reserved or booked.", HttpStatus.BAD_REQUEST);
+            throw new AppException("Ghế này đã được đặt.", HttpStatus.CONFLICT);
         }
 
         ticketRepo.reserveSeats(scheduleId, seatId, customerId);
@@ -32,7 +32,7 @@ public class TicketServiceImpl implements TicketService {
 
     @Override
     public List<Ticket> findReservedTickets(long userId) {
-        return ticketRepo.findAllByCustomer_UserId(userId);
+        return ticketRepo.findReservedTicketsByCustomerId(userId);
     }
 
     @Override
@@ -58,5 +58,10 @@ public class TicketServiceImpl implements TicketService {
     @Override
     public List<Ticket> findAllByScheduleId(long scheduleId) {
         return ticketRepo.findAllBySchedule_ScheduleId(scheduleId);
+    }
+
+    @Override
+    public double getPriceBySeatIdAndScheduleId(long scheduleId, long seatId) {
+        return ticketRepo.getPriceBySeatIdAndScheduleId(scheduleId, seatId);
     }
 }

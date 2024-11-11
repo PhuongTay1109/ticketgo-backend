@@ -126,6 +126,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
+    @Transactional
     public UserLoginResponse googleLogin(String accessToken) {
         final String googleUserInfoEndpoint = "https://www.googleapis.com/oauth2/v3/userinfo";
         RestTemplate restTemplate = new RestTemplate();
@@ -139,13 +140,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 googleUserInfoEndpoint, HttpMethod.GET, httpEntity, GoogleUserInfoResponse.class);
 
         if (response.getStatusCode() != HttpStatus.OK) {
-            throw new AppException("Token is not valid", HttpStatus.UNAUTHORIZED);
+            throw new RuntimeException("Token is invalid");
         }
 
         GoogleUserInfoResponse userResponse = response.getBody();
 
         if (userResponse == null) {
-            throw new AppException("There is no information about this user", HttpStatus.UNAUTHORIZED);
+            throw new RuntimeException("There is no information about this user");
         }
 
         String email = userResponse.getEmail();
@@ -172,8 +173,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
+    @Transactional
     public UserLoginResponse facebookLogin(String accessToken) {
-        final String facebookUserInfoEndpoint = "https://graph.facebook.com/me?fields=id,first_name,last_name,email,picture";
+        final String facebookUserInfoEndpoint =
+                "https://graph.facebook.com/me?fields=id,first_name,last_name,email,picture";
         RestTemplate restTemplate = new RestTemplate();
 
         HttpHeaders headers = new HttpHeaders();
@@ -185,13 +188,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 facebookUserInfoEndpoint, HttpMethod.GET, httpEntity, FacebookUserInfoResponse.class);
 
         if (response.getStatusCode() != HttpStatus.OK) {
-            throw new AppException("Token is not valid", HttpStatus.UNAUTHORIZED);
+            throw new RuntimeException("Token is invalid");
         }
 
         FacebookUserInfoResponse userResponse = response.getBody();
 
         if (userResponse == null) {
-            throw new AppException("There is no information about this user", HttpStatus.UNAUTHORIZED);
+            throw new RuntimeException("There is no information about this user");
         }
 
         String email = userResponse.getEmail();

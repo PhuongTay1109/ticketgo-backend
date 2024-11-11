@@ -2,6 +2,7 @@ package com.ticketgo.service;
 
 import com.ticketgo.dto.RouteStopDTO;
 import com.ticketgo.dto.response.RouteStopResponse;
+import com.ticketgo.model.RouteStop;
 
 import java.util.List;
 
@@ -10,4 +11,6 @@ public interface RouteStopService {
 
     List<RouteStopDTO> getPickupStops(long scheduleId);
     List<RouteStopDTO> getDropoffStops(long scheduleId);
+
+    RouteStop findById(long id);
 }

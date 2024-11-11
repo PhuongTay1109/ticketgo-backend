@@ -9,7 +9,7 @@ public class SecurityWhiteList {
             "/api/v1/seats",
             "/api/v1/policies/**",
             "/api/v1/amenities/**",
-            "/vnpayment/**"
+            "/api/v1/vnpay/return"
     };
 
     public static String[] getWhiteList() {

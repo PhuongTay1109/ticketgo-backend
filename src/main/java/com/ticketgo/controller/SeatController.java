@@ -2,7 +2,9 @@ package com.ticketgo.controller;
 
 import com.ticketgo.dto.SeatDTO;
 import com.ticketgo.dto.request.SeatReservationRequest;
+import com.ticketgo.dto.request.TotalPriceCalculationRequest;
 import com.ticketgo.dto.response.ApiResponse;
+import com.ticketgo.dto.response.TotalPriceCalculationResponse;
 import com.ticketgo.service.SeatService;
 
 import lombok.RequiredArgsConstructor;
@@ -23,7 +25,7 @@ public class SeatController {
     @GetMapping("")
     public ApiResponse getSeatStatus(@RequestParam Long scheduleId) {
         Map<String, List<List<SeatDTO>>> resp = seatService.getSeatStatusForSchedule(scheduleId);
-        return new ApiResponse(HttpStatus.OK, "Get seats status", resp);
+        return new ApiResponse(HttpStatus.OK, "Lấy trạng thái các ghế thành công", resp);
     }
 
     @PostMapping("/reserve")
@@ -34,8 +36,14 @@ public class SeatController {
     }
 
     @PostMapping("release")
-    public ResponseEntity<Void> releaseSeats(@RequestBody SeatReservationRequest request) {
+    public ApiResponse releaseSeats(@RequestBody SeatReservationRequest request) {
         seatService.releaseReservedSeatsByCustomer();
-        return ResponseEntity.ok().build();
+        return new ApiResponse(HttpStatus.OK, "Hủy các ghế đã đặt thành công", null);
+    }
+
+    @PostMapping("/prices")
+    public ApiResponse getSeatPrice(@RequestBody TotalPriceCalculationRequest request) {
+        TotalPriceCalculationResponse resp = seatService.getSeatPrice(request);
+        return new ApiResponse(HttpStatus.OK, "Lấy thông tin giá thành công", resp);
     }
 }

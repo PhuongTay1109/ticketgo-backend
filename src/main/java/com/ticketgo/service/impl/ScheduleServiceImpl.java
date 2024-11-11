@@ -16,8 +16,9 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     @Override
     public Schedule findById(long scheduleId) {
-        return  scheduleRepo.findById(scheduleId)
-                .orElseThrow(() -> new RuntimeException("Schedule not found"));
+        return scheduleRepo.findById(scheduleId)
+                .orElseThrow(() -> new RuntimeException(
+                                "Schedule with id " + scheduleId + " not found"));
     }
 
     @Override

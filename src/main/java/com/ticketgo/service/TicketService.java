@@ -20,4 +20,6 @@ public interface TicketService {
     boolean isSeatAvailable( long seatId, long scheduleId);
 
     List<Ticket> findAllByScheduleId(long scheduleId);
+
+    double getPriceBySeatIdAndScheduleId(long scheduleId, long seatId);
 }
