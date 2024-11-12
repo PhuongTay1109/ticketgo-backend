@@ -2,9 +2,7 @@ package com.ticketgo.controller;
 
 import com.ticketgo.dto.SeatDTO;
 import com.ticketgo.dto.request.SeatReservationRequest;
-import com.ticketgo.dto.request.TotalPriceCalculationRequest;
 import com.ticketgo.dto.response.ApiResponse;
-import com.ticketgo.dto.response.TotalPriceCalculationResponse;
 import com.ticketgo.service.SeatService;
 
 import lombok.RequiredArgsConstructor;
@@ -39,11 +37,5 @@ public class SeatController {
     public ApiResponse releaseSeats(@RequestBody SeatReservationRequest request) {
         seatService.releaseReservedSeatsByCustomer();
         return new ApiResponse(HttpStatus.OK, "Hủy các ghế đã đặt thành công", null);
-    }
-
-    @PostMapping("/prices")
-    public ApiResponse getSeatPrice(@RequestBody TotalPriceCalculationRequest request) {
-        TotalPriceCalculationResponse resp = seatService.getSeatPrice(request);
-        return new ApiResponse(HttpStatus.OK, "Lấy thông tin giá thành công", resp);
     }
 }

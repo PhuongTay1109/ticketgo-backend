@@ -2,8 +2,8 @@ package com.ticketgo.service.impl;
 
 import com.ticketgo.dto.SeatDTO;
 import com.ticketgo.dto.request.SeatReservationRequest;
-import com.ticketgo.dto.request.TotalPriceCalculationRequest;
-import com.ticketgo.dto.response.TotalPriceCalculationResponse;
+import com.ticketgo.dto.request.PriceEstimationRequest;
+import com.ticketgo.dto.response.PriceEstimationResponse;
 import com.ticketgo.exception.AppException;
 import com.ticketgo.model.*;
 import com.ticketgo.repository.SeatRepository;
@@ -15,8 +15,6 @@ import com.ticketgo.service.TicketService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -133,7 +131,7 @@ public class SeatServiceImpl implements SeatService {
     }
 
     @Override
-    public TotalPriceCalculationResponse getSeatPrice(TotalPriceCalculationRequest request) {
+    public PriceEstimationResponse getSeatPrice(PriceEstimationRequest request) {
         List<Long> seatIds = request.getSeatIds();
         long scheduleId = request.getScheduleId();
         List<String> seatNumbers = new ArrayList<>();
@@ -149,7 +147,7 @@ public class SeatServiceImpl implements SeatService {
             }
         }
 
-        return TotalPriceCalculationResponse.builder()
+        return PriceEstimationResponse.builder()
                 .seatNumbers(seatNumbers)
                 .unitPrice(unitPrice)
                 .quantity(seatIds.size())

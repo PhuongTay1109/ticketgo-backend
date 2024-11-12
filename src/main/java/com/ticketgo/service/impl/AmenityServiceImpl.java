@@ -2,7 +2,7 @@ package com.ticketgo.service.impl;
 
 import com.ticketgo.dto.AmenityDTO;
 import com.ticketgo.mapper.AmenityMapper;
-import com.ticketgo.model.Amenity;
+import com.ticketgo.model.Amenity; 
 import com.ticketgo.repository.AmenityRepository;
 import com.ticketgo.service.AmenityService;
 import lombok.RequiredArgsConstructor;

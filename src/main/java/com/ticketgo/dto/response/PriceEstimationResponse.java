@@ -9,7 +9,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class TotalPriceCalculationResponse {
+public class PriceEstimationResponse {
     private double totalPrice;
     private double unitPrice;
     private int quantity;

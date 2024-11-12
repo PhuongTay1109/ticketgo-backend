@@ -1,12 +1,11 @@
 package com.ticketgo.dto.request;
 
 import lombok.Getter;
-import lombok.Setter;
 
 import java.util.List;
 
 @Getter
-public class TotalPriceCalculationRequest {
+public class PriceEstimationRequest {
     private List<Long> seatIds;
     private Long scheduleId;
 }
