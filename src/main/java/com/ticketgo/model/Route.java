@@ -35,6 +35,8 @@ public class Route extends BaseEntity {
     @Column(nullable = false)
     private String arrivalAddress;
 
+    private String routeImage;
+
     @OneToMany(mappedBy = "route", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Schedule> schedules;
 }

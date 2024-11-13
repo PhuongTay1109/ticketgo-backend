@@ -1,10 +1,13 @@
 package com.ticketgo.service.impl;
 
+import com.ticketgo.dto.response.PopularRoutesResponse;
 import com.ticketgo.dto.response.RouteSearchResponse;
 import com.ticketgo.dto.response.ApiPaginationResponse;
 import com.ticketgo.mapper.ScheduleMapper;
+import com.ticketgo.model.Route;
 import com.ticketgo.model.Schedule;
 
+import com.ticketgo.repository.RouteRepository;
 import com.ticketgo.repository.specification.ScheduleSpecification;
 import com.ticketgo.service.RouteService;
 import com.ticketgo.service.ScheduleService;
@@ -29,6 +32,7 @@ import java.util.stream.Collectors;
 public class RouteServiceImpl implements RouteService {
     private final ScheduleService scheduleService;
     private final SeatService seatService;
+    private final RouteRepository routeRepo;
 
     @Override
     @Transactional
@@ -68,5 +72,16 @@ public class RouteServiceImpl implements RouteService {
         );
 
         return new ApiPaginationResponse(HttpStatus.OK, "Kết quả tìm kiếm", scheduleDTOs, pagination);
+    }
+
+    @Override
+    public List<PopularRoutesResponse> getPopularRoutes() {
+        List<Route> routes = routeRepo.findAllByDepartureLocationContains("Sài Gòn");
+        return routes.stream()
+                .map(route -> new PopularRoutesResponse(
+                                route.getRouteImage(),
+                                route.getRouteName(),
+                          200000L))
+                .toList();
     }
 }

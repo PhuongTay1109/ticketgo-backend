@@ -1,8 +1,10 @@
 package com.ticketgo.service;
 
 import com.ticketgo.dto.response.ApiPaginationResponse;
+import com.ticketgo.dto.response.PopularRoutesResponse;
 
 import java.time.LocalDate;
+import java.util.List;
 
 
 public interface RouteService {
@@ -13,4 +15,6 @@ public interface RouteService {
                                        String sortDirection,
                                        int pageNumber,
                                        int pageSize);
+
+    List<PopularRoutesResponse> getPopularRoutes();
 }
