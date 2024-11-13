@@ -3,7 +3,6 @@ package com.ticketgo.model;
 import jakarta.persistence.*;
 import lombok.*;
 
-
 @Getter
 @Setter
 @AllArgsConstructor

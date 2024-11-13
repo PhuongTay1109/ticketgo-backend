@@ -1,7 +1,7 @@
 package com.ticketgo.filter;
 
 import com.ticketgo.config.security.SecurityWhiteList;
-import com.ticketgo.util.JwtUtil;
+import com.ticketgo.util.JwtUtils;
 import com.ticketgo.service.UserService;
 
 import io.jsonwebtoken.ExpiredJwtException;
@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 @Component
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
-    private final JwtUtil jwtUtil;
+    private final JwtUtils jwtUtil;
     private final UserService userService;
     private final HandlerExceptionResolver handlerExceptionResolver;
 

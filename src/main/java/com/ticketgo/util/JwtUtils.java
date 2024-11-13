@@ -17,7 +17,7 @@ import java.util.Date;
 import java.util.function.Function;
 
 @Component
-public class JwtUtil {
+public class JwtUtils {
 
     @Value("${jwt.private.key.path}")
     private String privateKeyPath;

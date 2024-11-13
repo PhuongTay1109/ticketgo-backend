@@ -10,7 +10,7 @@ import com.ticketgo.exception.AppException;
 import com.ticketgo.mapper.CustomerMapper;
 import com.ticketgo.model.*;
 import com.ticketgo.service.*;
-import com.ticketgo.util.JwtUtil;
+import com.ticketgo.util.JwtUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -38,7 +38,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final EmailService emailService;
 
     private final PasswordEncoder passwordEncoder;
-    private final JwtUtil jwtUtil;
+    private final JwtUtils jwtUtil;
 
     @Override
     @Transactional
