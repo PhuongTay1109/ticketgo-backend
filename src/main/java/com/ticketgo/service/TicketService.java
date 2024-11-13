@@ -2,12 +2,11 @@ package com.ticketgo.service;
 
 import com.ticketgo.model.Customer;
 import com.ticketgo.model.Ticket;
-import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
 public interface TicketService {
-    void reserveSeats(long scheduleId, long seatId, long customerId);
+    void reserveSeats(String ticketCode, long customerId);
 
     List<Ticket> findReservedTickets(long userId);
 
@@ -24,4 +23,6 @@ public interface TicketService {
     double getPriceBySeatIdAndScheduleId(long scheduleId, long seatId);
 
     Ticket findByTicketCode(String ticketCode);
+
+    List<Ticket> findAllByBookingId(long bookingId);
 }

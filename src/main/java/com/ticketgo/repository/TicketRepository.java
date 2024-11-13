@@ -24,11 +24,9 @@ public interface TicketRepository extends JpaRepository<Ticket, String> {
                 t.status = 'RESERVED',
                 t.reserved_until = CURRENT_TIMESTAMP + INTERVAL 5 MINUTE,
                 t.customer_id = :customerId
-            WHERE t.schedule_id = :scheduleId
-            AND t.seat_id = :seatId
+            WHERE t.ticket_code = :ticketCode
             """, nativeQuery = true)
-    void reserveSeats(@Param("scheduleId") long scheduleId,
-                      @Param("seatId") long seatId,
+    void reserveSeats(@Param("ticketCode") String ticketCode,
                       @Param("customerId") long customerId);
 
     @Query("""
@@ -48,6 +46,8 @@ public interface TicketRepository extends JpaRepository<Ticket, String> {
     List<Ticket> findReservedTicketsByCustomerId(long customerId);
 
     List<Ticket> findAllBySchedule_ScheduleId(long scheduleId);
+
+    List<Ticket> findAllByBooking_BookingId(long bookingId);
 
     @Query("""
         SELECT CASE WHEN COUNT(t) > 0 THEN true ELSE false END

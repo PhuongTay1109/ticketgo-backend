@@ -1,9 +1,14 @@
 package com.ticketgo.service;
 
-import com.ticketgo.dto.request.BookingRequest;
+import com.ticketgo.dto.request.PaymentRequest;
 import com.ticketgo.dto.response.TripInformationResponse;
+import com.ticketgo.model.Booking;
 
 public interface BookingService {
-    void saveBookingForVNPay(BookingRequest request);
     TripInformationResponse getTripInformation(long pickupStopId, long dropoffStopId, long scheduleId);
+    long saveInProgressBooking(PaymentRequest request);
+
+    void setConfirmedVNPayBooking(long bookingId);
+    void setFailedVNPayBooking(long bookingId);
+    Booking findById(long bookingId);
 }

@@ -1,16 +1,16 @@
 package com.ticketgo.service.impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ticketgo.config.vnpay.VNPayConfig;
-import com.ticketgo.dto.request.BookingRequest;
+import com.ticketgo.dto.request.PaymentRequest;
 import com.ticketgo.model.Customer;
 import com.ticketgo.model.Payment;
 import com.ticketgo.repository.PaymentRepository;
 import com.ticketgo.service.AuthenticationService;
+import com.ticketgo.service.BookingService;
 import com.ticketgo.service.PaymentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -23,15 +23,15 @@ import java.text.SimpleDateFormat;
 public class PaymentServiceImpl implements PaymentService {
     private final PaymentRepository paymentRepo;
     private final AuthenticationService authService;
+    private final BookingService bookingService;
 
     @Override
-    public String createVNPayment(BookingRequest request) throws JsonProcessingException {
+    @Transactional
+    public void createVNPayment(PaymentRequest request) {
         Customer customer = authService.getAuthorizedCustomer();
         request.setCustomerId(customer.getUserId());
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        String orderInfoJson = objectMapper.writeValueAsString(request);
-        String encodedOrderInfo = Base64.getEncoder().encodeToString(orderInfoJson.getBytes(StandardCharsets.UTF_8));
+        long bookingId = bookingService.saveInProgressBooking(request);
 
         String vnp_Version = "2.1.0";
         String vnp_Command = "pay";
@@ -47,7 +47,7 @@ public class PaymentServiceImpl implements PaymentService {
         vnp_Params.put("vnp_Amount", amount);
         vnp_Params.put("vnp_CurrCode", "VND");
         vnp_Params.put("vnp_TxnRef", vnp_TxnRef);
-        vnp_Params.put("vnp_OrderInfo", encodedOrderInfo);
+        vnp_Params.put("vnp_OrderInfo", String.valueOf(bookingId));
         vnp_Params.put("vnp_OrderType", "250000");
         vnp_Params.put("vnp_ReturnUrl", VNPayConfig.vnp_ReturnUrl);
 
@@ -85,7 +85,6 @@ public class PaymentServiceImpl implements PaymentService {
         queryUrl += "&vnp_SecureHash=" + vnp_SecureHash;
         String paymentUrl = VNPayConfig.vnp_PayUrl + "?" + queryUrl;
         System.out.println(paymentUrl);
-        return "redirect:" + paymentUrl;
     }
 
     @Override

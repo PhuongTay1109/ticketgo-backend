@@ -1,9 +1,10 @@
 package com.ticketgo.service.impl;
 
-import com.ticketgo.dto.request.BookingRequest;
+import com.ticketgo.dto.request.PaymentRequest;
 import com.ticketgo.dto.response.TripInformationResponse;
 import com.ticketgo.model.*;
 import com.ticketgo.repository.BookingRepository;
+import com.ticketgo.repository.PaymentRepository;
 import com.ticketgo.service.*;
 import lombok.RequiredArgsConstructor;
 
@@ -20,56 +21,11 @@ import java.util.List;
 public class BookingServiceImpl implements BookingService {
     private final BookingRepository bookingRepo;
     private final TicketService ticketService;
-    private final PaymentService paymentService;
     private final CustomerService customerService;
     private final RouteStopService routeStopService;
     private final ScheduleService scheduleService;
     private final BusService busService;
-
-    @Override
-    public void saveBookingForVNPay(BookingRequest request) {
-        long customerId = request.getCustomerId();
-        Customer customer = customerService.findById(customerId);
-        RouteStop pickupStop = routeStopService.findById(request.getPickupStopId());
-        RouteStop dropoffStop = routeStopService.findById(request.getDropoffStopId());
-
-        List<Ticket> tickets = ticketService.findReservedTickets(customerId);
-
-        for (Ticket ticket : tickets) {
-            log.info("ticket status {} and seat id {}", ticket.getStatus(), ticket.getSeat().getSeatId());
-            ticket.setStatus(TicketStatus.BOOKED);
-            ticket.setReservedUntil(null);
-        }
-        ticketService.saveAll(tickets);
-
-        Payment payment = Payment.builder()
-                .paymentDate(LocalDateTime.now())
-                .type(PaymentType.VNPAY)
-                .build();
-        paymentService.save(payment);
-
-        Booking booking = Booking.builder()
-                .customer(customer)
-                .bookingDate(LocalDateTime.now())
-                .originalPrice(Double.valueOf(request.getTotalPrice()))
-                .payment(payment)
-                .tickets(tickets)
-                .contactEmail(request.getContactEmail())
-                .contactName(request.getContactName())
-                .contactPhone(request.getContactPhone())
-                .pickupStop(pickupStop)
-                .dropoffStop(dropoffStop)
-                .status(BookingStatus.CONFIRMED)
-                .build();
-
-        bookingRepo.save(booking);
-
-        for (Ticket ticket : tickets) {
-            ticket.setBooking(booking);
-        }
-
-        ticketService.saveAll(tickets);
-    }
+    private final PaymentRepository paymentRepo;
 
     @Override
     @Transactional
@@ -88,5 +44,90 @@ public class BookingServiceImpl implements BookingService {
                 .dropoffTime(dropoffStop.getArrivalTime())
                 .dropoffLocation(dropoffStop.getLocation())
                 .build();
+    }
+
+    @Override
+    @Transactional
+    public long saveInProgressBooking(PaymentRequest request) {
+        long customerId = request.getCustomerId();
+        Customer customer = customerService.findById(customerId);
+        RouteStop pickupStop = routeStopService.findById(request.getPickupStopId());
+        RouteStop dropoffStop = routeStopService.findById(request.getDropoffStopId());
+
+        List<Ticket> tickets = ticketService.findReservedTickets(customerId);
+
+        for (Ticket ticket : tickets) {
+            log.info("ticket status {} and seat id {}", ticket.getStatus(), ticket.getSeat().getSeatId());
+            ticket.setStatus(TicketStatus.BOOKED);
+            ticket.setReservedUntil(null);
+        }
+        ticketService.saveAll(tickets);
+
+        Booking booking = Booking.builder()
+                .customer(customer)
+                .bookingDate(LocalDateTime.now())
+                .originalPrice(Double.valueOf(request.getTotalPrice()))
+                .tickets(tickets)
+                .contactEmail(request.getContactEmail())
+                .contactName(request.getContactName())
+                .contactPhone(request.getContactPhone())
+                .pickupStop(pickupStop)
+                .dropoffStop(dropoffStop)
+                .status(BookingStatus.IN_PROGRESS)
+                .build();
+
+        bookingRepo.save(booking);
+
+        for (Ticket ticket : tickets) {
+            ticket.setBooking(booking);
+        }
+
+        ticketService.saveAll(tickets);
+
+        return booking.getBookingId();
+    }
+
+    @Override
+    @Transactional
+    public void setConfirmedVNPayBooking(long bookingId) {
+        Payment payment = Payment.builder()
+                .paymentDate(LocalDateTime.now())
+                .type(PaymentType.VNPAY)
+                .build();
+        paymentRepo.save(payment);
+
+        Booking booking = findById(bookingId);
+        booking.setStatus(BookingStatus.CONFIRMED);
+        booking.setPayment(payment);
+        bookingRepo.save(booking);
+    }
+
+    @Override
+    @Transactional
+    public void setFailedVNPayBooking(long bookingId) {
+        List<Ticket> tickets = ticketService.findAllByBookingId(bookingId);
+        for(Ticket ticket : tickets) {
+            ticket.setStatus(TicketStatus.AVAILABLE);
+            ticket.setCustomer(null);
+            ticket.setReservedUntil(null);
+        }
+        ticketService.saveAll(tickets);
+
+        Payment payment = Payment.builder()
+                .paymentDate(LocalDateTime.now())
+                .type(PaymentType.VNPAY)
+                .build();
+        paymentRepo.save(payment);
+
+        Booking booking = findById(bookingId);
+        booking.setStatus(BookingStatus.FAILED);
+        booking.setPayment(payment);
+        bookingRepo.save(booking);
+    }
+
+    @Override
+    public Booking findById(long bookingId) {
+        return bookingRepo.findById(bookingId)
+                .orElseThrow(() -> new RuntimeException("Booking not found for id " + bookingId));
     }
 }

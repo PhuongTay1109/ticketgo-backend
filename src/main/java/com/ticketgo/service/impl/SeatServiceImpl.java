@@ -104,17 +104,18 @@ public class SeatServiceImpl implements SeatService {
         Customer customer = authService.getAuthorizedCustomer();
         long customerId = customer.getUserId();
 
-        if (ticketService.existsReservedSeatsByCustomer(customer)) {
-            throw new AppException(
-                            "Bạn có đặt chỗ chưa hoàn tất.",
-                            HttpStatus.CONFLICT);
+        List<String> ticketCodes = request.getTicketCodes();
+        for (String ticketCode : ticketCodes) {
+            Ticket ticket = ticketService.findByTicketCode(ticketCode);
+            if (ticket.getStatus() != TicketStatus.AVAILABLE) {
+                throw new AppException(
+                        "Chỗ bạn chọn đã có người khác nhanh tay mua rồi, bạn hãy chọn chỗ khác nhé.",
+                        HttpStatus.BAD_REQUEST);
+            }
         }
 
-        List<Long> seatIds = request.getSeatIds();
-        long scheduleId = request.getScheduleId();
-
-        for(long seatId : seatIds) {
-            ticketService.reserveSeats(scheduleId, seatId, customerId);
+        for(String ticketCode : ticketCodes) {
+            ticketService.reserveSeats(ticketCode, customerId);
         }
     }
 
@@ -131,7 +132,7 @@ public class SeatServiceImpl implements SeatService {
 
         double totalPrice = 0;
         double unitPrice = 0;
-        
+
         List<String> seatNumbers = new ArrayList<>();
 
         for (String ticketCode : ticketCodes) {

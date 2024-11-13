@@ -20,14 +20,8 @@ public class TicketServiceImpl implements TicketService {
 
     @Override
     @Transactional
-    public void reserveSeats(long scheduleId, long seatId, long customerId) {
-        Ticket ticket = ticketRepo.findTicketBySeatIdAndScheduleId(scheduleId, seatId);
-
-        if (ticket == null || ticket.getStatus() != TicketStatus.AVAILABLE) {
-            throw new AppException("Ghế này đã được đặt.", HttpStatus.CONFLICT);
-        }
-
-        ticketRepo.reserveSeats(scheduleId, seatId, customerId);
+    public void reserveSeats(String ticketCode, long customerId) {
+        ticketRepo.reserveSeats(ticketCode, customerId);
     }
 
     @Override
@@ -69,5 +63,10 @@ public class TicketServiceImpl implements TicketService {
     public Ticket findByTicketCode(String ticketCode) {
         return ticketRepo.findByTicketCode(ticketCode)
                 .orElseThrow(() -> new RuntimeException("Ticket not found for ticket code " + ticketCode));
+    }
+
+    @Override
+    public List<Ticket> findAllByBookingId(long bookingId) {
+        return ticketRepo.findAllByBooking_BookingId(bookingId);
     }
 }

@@ -7,7 +7,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class BookingRequest {
+public class PaymentRequest {
     private String contactName;
     private String contactEmail;
     private String contactPhone;

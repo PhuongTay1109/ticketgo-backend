@@ -28,10 +28,10 @@ public class SeatController {
     }
 
     @PostMapping("/reserve")
-    public ResponseEntity<Void> reserveSeats(@RequestBody SeatReservationRequest request) {
+    public ApiResponse reserveSeats(@RequestBody SeatReservationRequest request) {
         seatService.reserveSeats(request);
 
-        return ResponseEntity.ok().build();
+        return new ApiResponse(HttpStatus.OK, "Đặt giữ vé thành công cho khách hàng", null);
     }
 
     @PostMapping("release")
