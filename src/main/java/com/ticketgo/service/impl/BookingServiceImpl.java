@@ -1,5 +1,7 @@
 package com.ticketgo.service.impl;
 
+import com.ticketgo.dto.BookingInfoDTO;
+import com.ticketgo.dto.BookingInfoDTOTuple;
 import com.ticketgo.dto.request.PaymentRequest;
 import com.ticketgo.dto.response.TripInformationResponse;
 import com.ticketgo.model.*;
@@ -13,7 +15,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +30,11 @@ public class BookingServiceImpl implements BookingService {
     private final ScheduleService scheduleService;
     private final BusService busService;
     private final PaymentRepository paymentRepo;
+
+    private static final DateTimeFormatter DATE_FORMATTER =
+            DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    private static final DateTimeFormatter DATE_TIME_FORMATTER =
+            DateTimeFormatter.ofPattern("HH:mm dd/MM/yyyy");
 
     @Override
     @Transactional
@@ -129,5 +138,27 @@ public class BookingServiceImpl implements BookingService {
     public Booking findById(long bookingId) {
         return bookingRepo.findById(bookingId)
                 .orElseThrow(() -> new RuntimeException("Booking not found for id " + bookingId));
+    }
+
+    @Override
+    public List<BookingInfoDTO> getBookingInfoList(long bookingId) {
+        List<BookingInfoDTOTuple> bookingInfoTuples = bookingRepo.findBookingInfoByBookingId(bookingId);
+
+        return bookingInfoTuples.stream()
+                .map(tuple -> BookingInfoDTO.builder()
+                        .ticketCode(tuple.getTicketCode())
+                        .contactName(tuple.getContactName())
+                        .contactEmail(tuple.getContactEmail())
+                        .routeName(tuple.getRouteName())
+                        .departureDate(tuple.getDepartureDate().format(DATE_FORMATTER))
+                        .pickupTime(tuple.getPickupTime().format(DATE_TIME_FORMATTER))
+                        .pickupLocation(tuple.getPickupLocation())
+                        .dropoffLocation(tuple.getDropoffLocation())
+                        .seatNumber(tuple.getSeatNumber())
+                        .price(tuple.getPrice().toString())
+                        .licensePlate(tuple.getLicensePlate())
+                        .build()
+                )
+                .collect(Collectors.toList());
     }
 }

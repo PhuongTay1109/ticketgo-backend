@@ -2,6 +2,7 @@ package com.ticketgo;
 
 import com.ticketgo.model.*;
 import com.ticketgo.repository.*;
+import com.ticketgo.service.EmailService;
 import com.ticketgo.service.ScheduleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
@@ -28,6 +29,7 @@ public class TicketgoBackEndApplication implements CommandLineRunner {
     private final PasswordEncoder passwordEncoder;
     private final ScheduleService scheduleService;
     private final TicketRepository ticketRepository;
+    private final EmailService emailService;
 
     public static void main(String[] args) {
         SpringApplication.run(TicketgoBackEndApplication.class, args);
@@ -97,6 +99,7 @@ public class TicketgoBackEndApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
+//        emailService.sendBookingInfo(11);
 //        BusCompany admin = BusCompany.builder()
 //                .email("admin@gmail.com")
 //                .password(passwordEncoder.encode("your_secure_password")) // Mã hóa mật khẩu
