@@ -14,17 +14,22 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
+@RequestMapping("/api/v1/payment")
 public class PaymentController {
     private final PaymentService paymentService;
     private final BookingService bookingService;
 
-    @PostMapping("/api/v1/vnpay")
-    public ApiResponse createVNPayment(@RequestBody PaymentRequest request) {
-        paymentService.createVNPayment(request);
-        return new ApiResponse(HttpStatus.OK, null, null);
+    @PostMapping("vnpay")
+    public ResponseEntity<Void> createVNPayment(@RequestBody PaymentRequest request) {
+        String paymentUrl = paymentService.createVNPayment(request);
+        log.info("Payment url: " + paymentUrl);
+        return ResponseEntity.status(302)
+                .header("Location",
+                        paymentUrl)
+                .build();
     }
 
-    @GetMapping("/api/v1/vnpay/return")
+    @GetMapping("vnpay/return")
     @Transactional
     public ResponseEntity<Void> getVNPaymentReturn(@RequestParam("vnp_ResponseCode") String responseCode,
                                                    @RequestParam("vnp_OrderInfo") String orderInfo) {

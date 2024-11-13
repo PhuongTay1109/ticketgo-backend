@@ -14,7 +14,7 @@ public class VNPayConfig {
     public static String vnp_HashSecret = "PYBFIPHNTLCNZOYXNRKSQNUONIDFBVVB";
 
     public static String vnp_PayUrl = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
-    public static String vnp_ReturnUrl = "http://localhost:8080/api/v1/vnpay/return";
+    public static String vnp_ReturnUrl = "http://localhost:8080/api/v1/payment/vnpay/return";
 
     public static String Sha256(String message) {
         String digest = null;

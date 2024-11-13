@@ -27,7 +27,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     @Transactional
-    public void createVNPayment(PaymentRequest request) {
+    public String createVNPayment(PaymentRequest request) {
         Customer customer = authService.getAuthorizedCustomer();
         request.setCustomerId(customer.getUserId());
 
@@ -83,8 +83,7 @@ public class PaymentServiceImpl implements PaymentService {
         String queryUrl = query.toString();
         String vnp_SecureHash = VNPayConfig.hmacSHA512(VNPayConfig.vnp_HashSecret, hashData.toString());
         queryUrl += "&vnp_SecureHash=" + vnp_SecureHash;
-        String paymentUrl = VNPayConfig.vnp_PayUrl + "?" + queryUrl;
-        System.out.println(paymentUrl);
+        return VNPayConfig.vnp_PayUrl + "?" + queryUrl;
     }
 
     @Override
