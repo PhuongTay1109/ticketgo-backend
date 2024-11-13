@@ -3,7 +3,7 @@ package com.ticketgo.repository;
 import com.ticketgo.model.Customer;
 import com.ticketgo.model.Ticket;
 import com.ticketgo.model.User;
-import jakarta.persistence.LockModeType;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Modifying;
@@ -86,4 +86,6 @@ public interface TicketRepository extends JpaRepository<Ticket, String> {
         """)
     double getPriceBySeatIdAndScheduleId(@Param("scheduleId") long scheduleId,
                                          @Param("seatId") long seatId);
+
+    Optional<Ticket> findByTicketCode(String ticketCode);
 }

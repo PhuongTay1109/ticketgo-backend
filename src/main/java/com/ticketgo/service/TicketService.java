@@ -22,4 +22,6 @@ public interface TicketService {
     List<Ticket> findAllByScheduleId(long scheduleId);
 
     double getPriceBySeatIdAndScheduleId(long scheduleId, long seatId);
+
+    Ticket findByTicketCode(String ticketCode);
 }

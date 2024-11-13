@@ -6,6 +6,5 @@ import java.util.List;
 
 @Getter
 public class PriceEstimationRequest {
-    private List<Long> seatIds;
-    private Long scheduleId;
+    private List<String> ticketCodes;
 }

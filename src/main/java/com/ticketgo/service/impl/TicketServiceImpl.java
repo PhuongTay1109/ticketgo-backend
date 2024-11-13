@@ -64,4 +64,10 @@ public class TicketServiceImpl implements TicketService {
     public double getPriceBySeatIdAndScheduleId(long scheduleId, long seatId) {
         return ticketRepo.getPriceBySeatIdAndScheduleId(scheduleId, seatId);
     }
+
+    @Override
+    public Ticket findByTicketCode(String ticketCode) {
+        return ticketRepo.findByTicketCode(ticketCode)
+                .orElseThrow(() -> new RuntimeException("Ticket not found for ticket code " + ticketCode));
+    }
 }

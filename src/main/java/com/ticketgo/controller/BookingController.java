@@ -40,5 +40,4 @@ public class BookingController {
         TripInformationResponse resp = bookingService.getTripInformation(pickupStopId, dropOffStopId, scheduleId);
         return new ApiResponse(HttpStatus.OK, "Lấy thông tin chuyến đi thành công", resp);
     }
-
 }

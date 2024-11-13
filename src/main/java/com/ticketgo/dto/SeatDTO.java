@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SeatDTO {
-    private Long seatId;
+    private String ticketCode;
     private String seatNumber;
     private Boolean isAvailable;
 }

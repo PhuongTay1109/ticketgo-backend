@@ -41,9 +41,6 @@ public class SeatServiceImpl implements SeatService {
 
         // floor_, data
         Map<String, List<List<SeatDTO>>> result = new LinkedHashMap<>();
-
-        Map<Long, TicketStatus> seatStatusMap = getTicketStatusBySchedule(scheduleId);
-
         //example
 //        {
 //            1: { // Tầng 1
@@ -55,12 +52,23 @@ public class SeatServiceImpl implements SeatService {
 //        }
 //        }
         Map<Integer, Map<Integer, List<SeatDTO>>> floorGroups = new LinkedHashMap<>();
+        Map<Long, String> seatTicketMap = new HashMap<>();
+        List<Ticket> tickets = ticketService.findAllByScheduleId(scheduleId);
+
+        Map<Long, TicketStatus> seatStatusMap = new HashMap<>();
+        for (Ticket ticket : tickets) {
+            long seatId = ticket.getSeat().getSeatId();
+            seatStatusMap.put(seatId, ticket.getStatus());
+            seatTicketMap.put(seatId, ticket.getTicketCode());
+        }
 
         for (Seat seat : sortedSeats) {
-            TicketStatus status = seatStatusMap.get(seat.getSeatId());
+            long seatId = seat.getSeatId();
+            TicketStatus status = seatStatusMap.get(seatId);
+            String ticketCode = seatTicketMap.get(seatId);
 
             SeatDTO seatDTO = new SeatDTO(
-                    seat.getSeatId(),
+                    ticketCode,
                     seat.getSeatNumber(),
                     status == TicketStatus.AVAILABLE
             );
@@ -85,19 +93,6 @@ public class SeatServiceImpl implements SeatService {
         return result;
     }
 
-    private Map<Long, TicketStatus> getTicketStatusBySchedule(Long scheduleId) {
-        List<Ticket> tickets = ticketService.findAllByScheduleId(scheduleId);
-
-        Map<Long, TicketStatus> seatStatusMap = new HashMap<>();
-        for (Ticket ticket : tickets) {
-            seatStatusMap.put(
-                            ticket.getSeat().getSeatId(),
-                            ticket.getStatus());
-        }
-
-        return seatStatusMap;
-    }
-
     @Override
     public int countAvailableSeatsBySchedule(Long scheduleId) {
         return seatRepo.countAvailableSeatsByScheduleId(scheduleId);
@@ -111,7 +106,7 @@ public class SeatServiceImpl implements SeatService {
 
         if (ticketService.existsReservedSeatsByCustomer(customer)) {
             throw new AppException(
-                            "Bạn có đặt chỗ chưa hoàn tất. ",
+                            "Bạn có đặt chỗ chưa hoàn tất.",
                             HttpStatus.CONFLICT);
         }
 
@@ -132,25 +127,26 @@ public class SeatServiceImpl implements SeatService {
 
     @Override
     public PriceEstimationResponse getSeatPrice(PriceEstimationRequest request) {
-        List<Long> seatIds = request.getSeatIds();
-        long scheduleId = request.getScheduleId();
-        List<String> seatNumbers = new ArrayList<>();
+        List<String> ticketCodes = request.getTicketCodes();
 
         double totalPrice = 0;
         double unitPrice = 0;
+        
+        List<String> seatNumbers = new ArrayList<>();
 
-        for(long seatId : seatIds) {
-            seatNumbers.add(findById(seatId).getSeatNumber());
-            totalPrice += ticketService.getPriceBySeatIdAndScheduleId(scheduleId, seatId);
-            if(unitPrice == 0) {
-                unitPrice = ticketService.getPriceBySeatIdAndScheduleId(scheduleId, seatId);
+        for (String ticketCode : ticketCodes) {
+            Ticket ticket = ticketService.findByTicketCode(ticketCode);
+            totalPrice += ticket.getPrice();
+            seatNumbers.add(ticket.getSeat().getSeatNumber());
+            if (unitPrice == 0) {
+                unitPrice = ticket.getPrice();
             }
         }
 
         return PriceEstimationResponse.builder()
                 .seatNumbers(seatNumbers)
                 .unitPrice(unitPrice)
-                .quantity(seatIds.size())
+                .quantity(ticketCodes.size())
                 .totalPrice(totalPrice)
                 .build();
     }

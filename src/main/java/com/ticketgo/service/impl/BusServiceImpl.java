@@ -1,11 +1,9 @@
 package com.ticketgo.service.impl;
 
-import com.ticketgo.exception.AppException;
 import com.ticketgo.model.Bus;
 import com.ticketgo.repository.BusRepository;
 import com.ticketgo.service.BusService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 @Service

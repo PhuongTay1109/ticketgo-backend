@@ -1,8 +1,10 @@
 package com.ticketgo.controller;
 
 import com.ticketgo.dto.SeatDTO;
+import com.ticketgo.dto.request.PriceEstimationRequest;
 import com.ticketgo.dto.request.SeatReservationRequest;
 import com.ticketgo.dto.response.ApiResponse;
+import com.ticketgo.dto.response.PriceEstimationResponse;
 import com.ticketgo.service.SeatService;
 
 import lombok.RequiredArgsConstructor;
@@ -18,7 +20,6 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class SeatController {
     private final SeatService seatService;
-
 
     @GetMapping("")
     public ApiResponse getSeatStatus(@RequestParam Long scheduleId) {
