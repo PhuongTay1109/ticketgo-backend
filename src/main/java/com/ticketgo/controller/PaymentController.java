@@ -6,7 +6,6 @@ import com.ticketgo.service.EmailService;
 import com.ticketgo.service.PaymentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -21,13 +20,8 @@ public class PaymentController {
     private final EmailService emailService;
 
     @PostMapping("vnpay")
-    public ResponseEntity<Void> createVNPayment(@RequestBody PaymentRequest request) {
-        String paymentUrl = paymentService.createVNPayment(request);
-        log.info("Payment url: " + paymentUrl);
-        return ResponseEntity.status(302)
-                .header("Location",
-                        paymentUrl)
-                .build();
+    public String createVNPayment(@RequestBody PaymentRequest request) {
+        return paymentService.createVNPayment(request);
     }
 
     @GetMapping("vnpay/return")
