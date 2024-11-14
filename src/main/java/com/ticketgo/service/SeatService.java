@@ -15,7 +15,7 @@ public interface SeatService {
 
     void reserveSeats(SeatReservationRequest request);
 
-    void releaseReservedSeatsByCustomer();
+    void cancelReservedSeatsByCustomer();
 
     PriceEstimationResponse getSeatPrice(PriceEstimationRequest request);
 }

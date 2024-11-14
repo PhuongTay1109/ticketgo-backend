@@ -1,15 +1,11 @@
 package com.ticketgo.controller;
 
 import com.ticketgo.dto.SeatDTO;
-import com.ticketgo.dto.request.PriceEstimationRequest;
 import com.ticketgo.dto.request.SeatReservationRequest;
 import com.ticketgo.dto.response.ApiResponse;
-import com.ticketgo.dto.response.PriceEstimationResponse;
 import com.ticketgo.service.SeatService;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,9 +30,9 @@ public class SeatController {
         return new ApiResponse(HttpStatus.OK, "Đặt giữ vé thành công cho khách hàng", null);
     }
 
-    @PostMapping("release")
-    public ApiResponse releaseSeats(@RequestBody SeatReservationRequest request) {
-        seatService.releaseReservedSeatsByCustomer();
-        return new ApiResponse(HttpStatus.OK, "Hủy các ghế đã đặt thành công", null);
+    @PostMapping("/cancel-reserve")
+    public ApiResponse cancelReserveSeats() {
+        seatService.cancelReservedSeatsByCustomer();
+        return new ApiResponse(HttpStatus.OK, "Hủy các vé đang giữ cho khách hàng thành công", null);
     }
 }

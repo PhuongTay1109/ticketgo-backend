@@ -1,6 +1,7 @@
 package com.ticketgo;
 
-import com.ticketgo.model.*;
+import com.ticketgo.model.Bus;
+import com.ticketgo.model.Seat;
 import com.ticketgo.repository.*;
 import com.ticketgo.service.EmailService;
 import com.ticketgo.service.ScheduleService;
@@ -10,11 +11,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @SpringBootApplication
@@ -99,7 +96,7 @@ public class TicketgoBackEndApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-//        emailService.sendBookingInfo(11);
+       // emailService.sendBookingInfo(11);
 //        BusCompany admin = BusCompany.builder()
 //                .email("admin@gmail.com")
 //                .password(passwordEncoder.encode("your_secure_password")) // Mã hóa mật khẩu

@@ -120,7 +120,7 @@ public class SeatServiceImpl implements SeatService {
     }
 
     @Override
-    public void releaseReservedSeatsByCustomer() {
+    public void cancelReservedSeatsByCustomer() {
         Customer customer = authService.getAuthorizedCustomer();
         long customerId = customer.getUserId();
         ticketService.releaseReservedSeatsByCustomer(customerId);

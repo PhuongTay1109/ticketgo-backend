@@ -16,4 +16,6 @@ public interface BookingService {
     Booking findById(long bookingId);
 
     List<BookingInfoDTO> getBookingInfoList(long bookingId);
+
+    List<BookingInfoDTO> getBookingHistoryForCustomer();
 }

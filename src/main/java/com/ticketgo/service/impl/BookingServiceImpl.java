@@ -30,6 +30,7 @@ public class BookingServiceImpl implements BookingService {
     private final ScheduleService scheduleService;
     private final BusService busService;
     private final PaymentRepository paymentRepo;
+    private final AuthenticationService authService;
 
     private static final DateTimeFormatter DATE_FORMATTER =
             DateTimeFormatter.ofPattern("dd/MM/yyyy");
@@ -144,6 +145,18 @@ public class BookingServiceImpl implements BookingService {
     public List<BookingInfoDTO> getBookingInfoList(long bookingId) {
         List<BookingInfoDTOTuple> bookingInfoTuples = bookingRepo.findBookingInfoByBookingId(bookingId);
 
+        return getBookingInfoDTOS(bookingInfoTuples);
+    }
+
+    @Override
+    public List<BookingInfoDTO> getBookingHistoryForCustomer() {
+        Customer customer = authService.getAuthorizedCustomer();
+        List<BookingInfoDTOTuple> bookingInfoTuples = bookingRepo.getBookingHistoryForCustomer(customer.getUserId());
+
+        return getBookingInfoDTOS(bookingInfoTuples);
+    }
+
+    private List<BookingInfoDTO> getBookingInfoDTOS(List<BookingInfoDTOTuple> bookingInfoTuples) {
         return bookingInfoTuples.stream()
                 .map(tuple -> BookingInfoDTO.builder()
                         .ticketCode(tuple.getTicketCode())
