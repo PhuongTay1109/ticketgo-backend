@@ -1,7 +1,10 @@
 package com.ticketgo.repository;
 
+import com.ticketgo.dto.BookingHistoryDTOTuple;
 import com.ticketgo.dto.BookingInfoDTOTuple;
 import com.ticketgo.model.Booking;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -57,7 +60,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             ds.location AS dropoffLocation,
             st.seat_number AS seatNumber,
             bs.license_plate AS licensePlate,
-            b.original_price AS price
+            b.original_price AS price,
+            b.status AS status
         FROM
             bookings b
         JOIN
@@ -78,7 +82,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             b.status NOT LIKE "IN_PROGRESS"
         AND b.customer_id = :customerId
         ORDER BY
-            b.booking_date DESC;
+            b.booking_date DESC
         """, nativeQuery = true)
-    List<BookingInfoDTOTuple> getBookingHistoryForCustomer(@Param("customerId") Long customerId);
+    Page<BookingHistoryDTOTuple> getBookingHistoryForCustomer(@Param("customerId") Long customerId, Pageable pageable);
+
 }

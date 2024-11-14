@@ -85,6 +85,10 @@ public class EmailServiceImpl implements EmailService {
                 emailContent.append("<p><b style='color: #333;'>Thời gian đón dự kiến:</b> ").append(info.getPickupTime()).append("</p>");
                 emailContent.append("<p><b style='color: #333;'>Địa điểm đón:</b> ").append(info.getPickupLocation()).append("</p>");
                 emailContent.append("<p><b style='color: #333;'>Địa điểm trả:</b> ").append(info.getDropoffLocation()).append("</p>");
+
+                // Add the ticket status here after drop-off location
+                emailContent.append("<p style='font-size: 18px; font-weight: bold; color: #1E90FF;'>Trạng thái vé: Đã xác nhận</p>");
+
                 emailContent.append("</div>");
                 emailContent.append("</div>");
             }
@@ -109,7 +113,6 @@ public class EmailServiceImpl implements EmailService {
             }
         }
     }
-
 
     private MimeMessage createActivationEmail(String email, String token)
             throws MessagingException, UnsupportedEncodingException {

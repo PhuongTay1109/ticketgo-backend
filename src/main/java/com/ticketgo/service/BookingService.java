@@ -2,6 +2,7 @@ package com.ticketgo.service;
 
 import com.ticketgo.dto.BookingInfoDTO;
 import com.ticketgo.dto.request.PaymentRequest;
+import com.ticketgo.dto.response.ApiPaginationResponse;
 import com.ticketgo.dto.response.TripInformationResponse;
 import com.ticketgo.model.Booking;
 
@@ -17,5 +18,6 @@ public interface BookingService {
 
     List<BookingInfoDTO> getBookingInfoList(long bookingId);
 
-    List<BookingInfoDTO> getBookingHistoryForCustomer();
+//    List<BookingHistoryDTO> getBookingHistoryForCustomer();
+    ApiPaginationResponse getBookingHistoryForCustomer(int pageNumber, int pageSize);
 }

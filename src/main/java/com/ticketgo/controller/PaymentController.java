@@ -34,7 +34,7 @@ public class PaymentController {
             emailService.sendBookingInfo(Long.parseLong(orderInfo));
             return ResponseEntity.status(302)
                     .header("Location",
-                            "https://www.notion.so/Thanh-to-n-th-nh-c-ng-13d5b3bc131780a0b01bc48e43523669")
+                            "http://localhost:3000/thankyou")
                     .build();
         } else {
             bookingService.setFailedVNPayBooking(Long.parseLong(orderInfo));

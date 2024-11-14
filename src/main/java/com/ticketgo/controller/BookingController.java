@@ -2,6 +2,7 @@ package com.ticketgo.controller;
 
 import com.ticketgo.dto.CustomerContactInfoDTO;
 import com.ticketgo.dto.request.PriceEstimationRequest;
+import com.ticketgo.dto.response.ApiPaginationResponse;
 import com.ticketgo.dto.response.ApiResponse;
 import com.ticketgo.dto.response.PriceEstimationResponse;
 import com.ticketgo.dto.response.TripInformationResponse;
@@ -42,7 +43,14 @@ public class BookingController {
     }
 
     @GetMapping("/history")
-    public ApiResponse getBookingHistory() {
-        return new ApiResponse(HttpStatus.OK, "Lịch sử đặt vé của khách hàng", bookingService.getBookingHistoryForCustomer());
+    public ApiPaginationResponse getBookingHistory(
+            @RequestParam(defaultValue = "1") int pageNumber,
+            @RequestParam(defaultValue = "10") int pageSize) {
+        return bookingService.getBookingHistoryForCustomer(pageNumber, pageSize);
     }
+
+//    @GetMapping("/history")
+//    public ApiResponse getBookingHistory() {
+//        return new ApiResponse(HttpStatus.OK, "Lịch sử đặt vé của khách hàng", bookingService.getBookingHistoryForCustomer());
+//    }
 }

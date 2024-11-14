@@ -1,16 +1,24 @@
 package com.ticketgo.service.impl;
 
+import com.ticketgo.dto.BookingHistoryDTO;
+import com.ticketgo.dto.BookingHistoryDTOTuple;
 import com.ticketgo.dto.BookingInfoDTO;
 import com.ticketgo.dto.BookingInfoDTOTuple;
 import com.ticketgo.dto.request.PaymentRequest;
+import com.ticketgo.dto.response.ApiPaginationResponse;
 import com.ticketgo.dto.response.TripInformationResponse;
+import com.ticketgo.mapper.BookingHistoryMapper;
+import com.ticketgo.mapper.BookingInfoMapper;
 import com.ticketgo.model.*;
 import com.ticketgo.repository.BookingRepository;
 import com.ticketgo.repository.PaymentRepository;
 import com.ticketgo.service.*;
 import lombok.RequiredArgsConstructor;
-
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -145,33 +153,36 @@ public class BookingServiceImpl implements BookingService {
     public List<BookingInfoDTO> getBookingInfoList(long bookingId) {
         List<BookingInfoDTOTuple> bookingInfoTuples = bookingRepo.findBookingInfoByBookingId(bookingId);
 
-        return getBookingInfoDTOS(bookingInfoTuples);
-    }
-
-    @Override
-    public List<BookingInfoDTO> getBookingHistoryForCustomer() {
-        Customer customer = authService.getAuthorizedCustomer();
-        List<BookingInfoDTOTuple> bookingInfoTuples = bookingRepo.getBookingHistoryForCustomer(customer.getUserId());
-
-        return getBookingInfoDTOS(bookingInfoTuples);
-    }
-
-    private List<BookingInfoDTO> getBookingInfoDTOS(List<BookingInfoDTOTuple> bookingInfoTuples) {
         return bookingInfoTuples.stream()
-                .map(tuple -> BookingInfoDTO.builder()
-                        .ticketCode(tuple.getTicketCode())
-                        .contactName(tuple.getContactName())
-                        .contactEmail(tuple.getContactEmail())
-                        .routeName(tuple.getRouteName())
-                        .departureDate(tuple.getDepartureDate().format(DATE_FORMATTER))
-                        .pickupTime(tuple.getPickupTime().format(DATE_TIME_FORMATTER))
-                        .pickupLocation(tuple.getPickupLocation())
-                        .dropoffLocation(tuple.getDropoffLocation())
-                        .seatNumber(tuple.getSeatNumber())
-                        .price(tuple.getPrice().toString())
-                        .licensePlate(tuple.getLicensePlate())
-                        .build()
-                )
+                .map(BookingInfoMapper::toBookingInfoDTO)
                 .collect(Collectors.toList());
     }
+
+    public ApiPaginationResponse getBookingHistoryForCustomer(int pageNumber, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNumber - 1, pageSize);
+
+        Customer customer = authService.getAuthorizedCustomer();
+        Page<BookingHistoryDTOTuple> bookingHistoryPage =
+                bookingRepo.getBookingHistoryForCustomer(customer.getUserId(), pageable);
+
+        List<BookingHistoryDTO> bookingHistoryDTOs = bookingHistoryPage.getContent()
+                .stream()
+                .map(BookingHistoryMapper::toBookingHistoryDTO)
+                .collect(Collectors.toList());
+
+        ApiPaginationResponse.Pagination pagination = new ApiPaginationResponse.Pagination(
+                bookingHistoryPage.getNumber() + 1,
+                bookingHistoryPage.getSize(),
+                bookingHistoryPage.getTotalPages(),
+                bookingHistoryPage.getTotalElements()
+        );
+
+        return new ApiPaginationResponse(
+                HttpStatus.OK,
+                "Lịch sử đặt vé của khách hàng",
+                bookingHistoryDTOs,
+                pagination
+        );
+    }
+
 }
