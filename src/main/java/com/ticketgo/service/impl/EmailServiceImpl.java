@@ -8,14 +8,12 @@ import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -64,8 +62,13 @@ public class EmailServiceImpl implements EmailService {
             emailContent.append("<h2 style='color: #1E90FF; text-align: center; font-size: 30px; font-weight: bold;'>Thông tin đặt vé của bạn</h2>");
 
             for (BookingInfoDTO info : bookingInfoList) {
-                emailContent.append("<div style='background-color: white; padding: 15px; margin-bottom: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);'>");
-                emailContent.append("<p><b style='color: #333;'>Mã vé:</b> <span style='color: #1E90FF; font-weight: bold;'>").append(info.getTicketCode()).append("</span></p>");
+                emailContent.append("<div style='background-color: white; padding: 20px; margin-bottom: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);'>");
+
+                emailContent.append("<div style='background-color: #286db1; color: white; font-size: 24px; font-weight: bold; padding: 15px; text-align: center; border-radius: 8px 8px 0 0;'>");
+                emailContent.append("<span style='font-weight: bold;'>").append(info.getTicketCode()).append("</span>");
+                emailContent.append("</div>");
+
+                emailContent.append("<div style='background-color: #cee3f5; color: black; padding: 15px; margin-top: 10px; border-radius: 0 0 8px 8px;'>");
                 emailContent.append("<p><b style='color: #333;'>Tên khách hàng:</b> ").append(info.getContactName()).append("</p>");
                 emailContent.append("<p><b style='color: #333;'>Tuyến đường:</b> ").append(info.getRouteName()).append("</p>");
                 emailContent.append("<p><b style='color: #333;'>Ngày khởi hành:</b> ").append(info.getDepartureDate()).append("</p>");
@@ -74,6 +77,7 @@ public class EmailServiceImpl implements EmailService {
                 emailContent.append("<p><b style='color: #333;'>Thời gian đón dự kiến:</b> ").append(info.getPickupTime()).append("</p>");
                 emailContent.append("<p><b style='color: #333;'>Địa điểm đón:</b> ").append(info.getPickupLocation()).append("</p>");
                 emailContent.append("<p><b style='color: #333;'>Địa điểm trả:</b> ").append(info.getDropoffLocation()).append("</p>");
+                emailContent.append("</div>");
                 emailContent.append("</div>");
             }
 
@@ -97,6 +101,7 @@ public class EmailServiceImpl implements EmailService {
             }
         }
     }
+
 
     private MimeMessage createActivationEmail(String email, String token)
             throws MessagingException, UnsupportedEncodingException {
