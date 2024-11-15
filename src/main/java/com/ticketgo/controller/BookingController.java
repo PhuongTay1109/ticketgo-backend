@@ -8,9 +8,11 @@ import com.ticketgo.dto.response.PriceEstimationResponse;
 import com.ticketgo.dto.response.TripInformationResponse;
 import com.ticketgo.service.BookingService;
 import com.ticketgo.service.SeatService;
+import com.ticketgo.service.TicketService;
 import com.ticketgo.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -20,6 +22,7 @@ public class BookingController {
     private final UserService userService;
     private final SeatService seatService;
     private final BookingService bookingService;
+    private final TicketService ticketService;
 
     @GetMapping("/contact-info")
     public ApiResponse getCustomerContactInfo() {
@@ -47,6 +50,13 @@ public class BookingController {
             @RequestParam(defaultValue = "1") int pageNumber,
             @RequestParam(defaultValue = "10") int pageSize) {
         return bookingService.getBookingHistoryForCustomer(pageNumber, pageSize);
+    }
+
+    @GetMapping("/in-progress")
+    public ResponseEntity<Boolean> checkInProgressTransaction() {
+        return ResponseEntity
+                .ok()
+                .body(ticketService.existsReservedSeatsByCustomer());
     }
 
 //    @GetMapping("/history")

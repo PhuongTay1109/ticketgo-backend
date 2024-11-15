@@ -1,6 +1,5 @@
 package com.ticketgo.service;
 
-import com.ticketgo.model.Customer;
 import com.ticketgo.model.Ticket;
 
 import java.util.List;
@@ -12,7 +11,7 @@ public interface TicketService {
 
     void saveAll(List<Ticket> tickets);
 
-    boolean existsReservedSeatsByCustomer(Customer customer);
+    boolean existsReservedSeatsByCustomer();
 
     void releaseReservedSeatsByCustomer(long customerId);
 

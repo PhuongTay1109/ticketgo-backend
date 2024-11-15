@@ -3,9 +3,9 @@ package com.ticketgo.service.impl;
 import com.ticketgo.model.Customer;
 import com.ticketgo.model.Ticket;
 import com.ticketgo.repository.TicketRepository;
+import com.ticketgo.service.AuthenticationService;
 import com.ticketgo.service.TicketService;
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,6 +15,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TicketServiceImpl implements TicketService {
     private final TicketRepository ticketRepo;
+    private final AuthenticationService authService;
 
     @Override
     @Transactional
@@ -33,7 +34,8 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
-    public boolean existsReservedSeatsByCustomer(Customer customer) {
+    public boolean existsReservedSeatsByCustomer() {
+        Customer customer = authService.getAuthorizedCustomer();
         return ticketRepo.existsReservedSeatsByCustomer(customer);
     }
 
