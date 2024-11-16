@@ -1,6 +1,8 @@
 package com.ticketgo.service;
 
 import com.ticketgo.dto.request.CustomerRegistrationRequest;
+import com.ticketgo.dto.request.ForgotPasswordRequest;
+import com.ticketgo.dto.request.ResetPasswordRequest;
 import com.ticketgo.dto.request.UserLoginRequest;
 import com.ticketgo.dto.response.RefreshTokenResponse;
 import com.ticketgo.dto.response.UserLoginResponse;
@@ -19,4 +21,8 @@ public interface AuthenticationService {
     RefreshTokenResponse refreshToken(String refreshToken);
 
     Customer getAuthorizedCustomer();
+
+    void forgotPassword(ForgotPasswordRequest request);
+
+    void resetPassword(ResetPasswordRequest request);
 }

@@ -1,6 +1,8 @@
 package com.ticketgo.service.impl;
 
 import com.ticketgo.dto.request.CustomerRegistrationRequest;
+import com.ticketgo.dto.request.ForgotPasswordRequest;
+import com.ticketgo.dto.request.ResetPasswordRequest;
 import com.ticketgo.dto.request.UserLoginRequest;
 import com.ticketgo.dto.response.FacebookUserInfoResponse;
 import com.ticketgo.dto.response.GoogleUserInfoResponse;
@@ -76,6 +78,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         Token activationToken = tokenService.findByValue(token);
 
         if(tokenService.isExpired(activationToken)) {
+            tokenService.deleteToken(activationToken);
             throw new AppException(
                     "Đường link đã hết hạn. Vui lòng chọn gửi lại đường link mới!",
                     HttpStatus.GONE
@@ -240,6 +243,38 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         Authentication authentication =
                 SecurityContextHolder.getContext().getAuthentication();
        return (Customer) authentication.getPrincipal();
+    }
+
+    @Override
+    public void forgotPassword(ForgotPasswordRequest request) {
+        String email = request.getEmail();
+        Customer customer = (Customer) userService.findByEmail(email);
+        if(customer.getProvider() == Provider.GOOGLE) {
+            throw new AppException(
+                    "Bạn đã đăng nhập email này với tài khoản của Google. Hãy chọn Đăng nhập với Google để tiếp tục.",
+                    HttpStatus.BAD_REQUEST);
+        }
+
+        Token token = tokenService.createToken(customer, TokenType.RESET_PASSWORD);
+        emailService.sendResetPasswordEmail(email, token.getValue());
+    }
+
+    @Override
+    public void resetPassword(ResetPasswordRequest request) {
+        Token resetPasswordToken = tokenService.findByValue(request.getToken());
+
+        if(tokenService.isExpired(resetPasswordToken)) {
+            tokenService.deleteToken(resetPasswordToken);
+            throw new AppException(
+                    "Đường link đã hết hạn!",
+                    HttpStatus.GONE
+            );
+        }
+
+        Customer customer = (Customer) resetPasswordToken.getUser();
+        customer.setPassword(passwordEncoder.encode(request.getPassword()));
+        customerService.save(customer);
+        tokenService.deleteToken(resetPasswordToken);
     }
 
     private UserLoginResponse getUserLoginResponse(User user) {

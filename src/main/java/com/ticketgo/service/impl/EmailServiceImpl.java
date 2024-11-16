@@ -114,6 +114,31 @@ public class EmailServiceImpl implements EmailService {
         }
     }
 
+    @Async
+    @Override
+    public void sendResetPasswordEmail(String email, String token) {
+        try {
+            MimeMessage message = createResetPasswordEmail(email, token);
+            emailSender.send(message);
+            log.info("Đã gửi email đặt lại mật khẩu tới: {}", email);
+        } catch (UnsupportedEncodingException | MessagingException e) {
+            log.error("Failed to send activation email to {}: {}", email, e.getMessage());
+        }
+    }
+
+    private MimeMessage createResetPasswordEmail(String email, String token)
+            throws MessagingException, UnsupportedEncodingException {
+        MimeMessage message = emailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+        helper.setFrom(fromEmail, fromName);
+        helper.setTo(email);
+        helper.setSubject(getResetPasswordEmailSubject());
+        helper.setText(getResetPasswordEmailContent(token), true);
+
+        return message;
+    }
+
     private MimeMessage createActivationEmail(String email, String token)
             throws MessagingException, UnsupportedEncodingException {
         MimeMessage message = emailSender.createMimeMessage();
@@ -139,5 +164,20 @@ public class EmailServiceImpl implements EmailService {
                <p>Vui lòng nhấn vào liên kết bên dưới để xác nhận tài khoản của bạn:</p>
                <p><a href="%s">Xác nhận tài khoản của tôi</a></p>
                """.formatted(activationLink);
+    }
+
+    private String getResetPasswordEmailSubject() {
+        return "Đặt lại mật khẩu";
+    }
+
+    private String getResetPasswordEmailContent(String token) {
+        String resetLink = String.format("%s/reset-password?token=%s", feUrl, token);
+        return """
+           <p>Xin chào,</p>
+           <p>Bạn đã yêu cầu đặt lại mật khẩu cho tài khoản Ticket Go.</p>
+           <p>Vui lòng nhấn vào liên kết bên dưới để đặt lại mật khẩu của bạn:</p>
+           <p><a href="%s">Đặt lại mật khẩu của tôi</a></p>
+           <p>Nếu bạn không yêu cầu đặt lại mật khẩu, vui lòng bỏ qua email này.</p>
+           """.formatted(resetLink);
     }
 }

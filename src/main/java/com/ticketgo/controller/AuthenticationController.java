@@ -36,6 +36,26 @@ public class AuthenticationController {
         );
     }
 
+    @PostMapping("/forgot-password")
+    public ApiResponse forgotPassword(@RequestBody ForgotPasswordRequest request) {
+        authenticationService.forgotPassword(request);
+        return new ApiResponse(
+                HttpStatus.CREATED,
+                "Đã gửi link để đặt lại mật khẩu thành công.",
+                null
+        );
+    }
+
+    @PostMapping("/reset-password")
+    public ApiResponse resetPassword(@RequestBody ResetPasswordRequest request) {
+        authenticationService.resetPassword(request);
+        return new ApiResponse(
+                HttpStatus.CREATED,
+                "Đặt lại mật khẩu mới thành công.",
+                null
+        );
+    }
+
     @PostMapping("/google-login")
     public ApiResponse googleLogin(@RequestBody @Valid OAuthTokenRequest request) {
         UserLoginResponse resp = authenticationService.googleLogin(request.getToken());
