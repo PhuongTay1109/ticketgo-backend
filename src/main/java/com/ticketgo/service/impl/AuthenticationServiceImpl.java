@@ -78,9 +78,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         Token activationToken = tokenService.findByValue(token);
 
         if(tokenService.isExpired(activationToken)) {
+            Customer customer = (Customer) activationToken.getUser();
+            Token newToken = tokenService.createToken(customer, TokenType.ACTIVATION);
+            emailService.sendActivationEmail(customer.getEmail(), newToken.getValue());
             tokenService.deleteToken(activationToken);
             throw new AppException(
-                    "Đường link đã hết hạn. Vui lòng chọn gửi lại đường link mới!",
+                    "Đường link đã hết hạn. Một đường link kích hoạt tài khoản mới đã được gửi đến email của bạn.",
                     HttpStatus.GONE
             );
         }
