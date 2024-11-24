@@ -1,7 +1,6 @@
 package com.ticketgo;
 
-import com.ticketgo.model.Bus;
-import com.ticketgo.model.Seat;
+import com.ticketgo.model.*;
 import com.ticketgo.repository.*;
 import com.ticketgo.service.EmailService;
 import com.ticketgo.service.ScheduleService;
@@ -287,18 +286,14 @@ public class TicketgoBackEndApplication implements CommandLineRunner {
 //                scheduleRepository.save(schedule);
 //            }
 //    }
-//        for (long i = 1; i <= 9; i++) {
+//        for (long i = 10; i <= 12; i++) {
 //            Schedule schedule = scheduleService.findById(i);
 //            Set<Seat> seats = schedule.getBus().getSeats();
-//            double price = 500000.0;
-//            if (i==2) {
-//                price=400000.0;
-//            } else if (i==3) {
-//                price=300000.0;
-//            } else if (i==4) {
+//            double price = 400000.0;
+//            if (i==11) {
 //                price=450000.0;
-//            } else if (i==5) {
-//                price=600000.0;
+//            } else if (i==12) {
+//                price=500000.0;
 //            }
 //            for(Seat seat : seats) {
 //                Ticket ticket = Ticket.builder()
@@ -312,5 +307,58 @@ public class TicketgoBackEndApplication implements CommandLineRunner {
 //            schedule.setPrice(price);
 //            scheduleRepository.save(schedule);
 //        }
+//        LocalDateTime startDate = LocalDateTime.of(2024, 12, 24, 7, 0); // Bắt đầu từ ngày 24/12
+//
+//        for (int i = 0; i < 3; i++) {  // 3 chuyến trong ngày
+//            // Tính toán chỉ số xe buýt cho chuyến đi này
+//            int busId = 10 + (i % 6); // Sử dụng ID từ 10 đến 15
+//
+//            // Tìm xe buýt theo ID
+//            Bus bus = busRepository.findById((long) busId)
+//                    .orElseThrow(() -> new RuntimeException("Bus not found"));
+//
+//            LocalDateTime departureTime = startDate.plusHours(i * 4);  // Mỗi chuyến cách nhau 4 giờ
+//            LocalDateTime arrivalTime = departureTime.plusHours(7).plusMinutes(30);  // Thời gian đến sau 7 giờ 30 phút
+//
+//            Schedule schedule = Schedule.builder()
+//                    .bus(bus)
+//                    .route(routeRepository.findByRouteName("Sài Gòn - Nha Trang"))
+//                    .departureTime(departureTime)
+//                    .arrivalTime(arrivalTime)
+//                    .price(0.0)
+//                    .isVisible(true)
+//                    .build();
+//
+//            // Pickup stops
+//            Set<RouteStop> stops = new HashSet<>();
+//            stops.add(RouteStop.builder().schedule(schedule).location("Vp Nguyễn Cư Trinh, Q1").stopOrder(1).arrivalTime(departureTime).stopType(StopType.PICKUP).build());
+//            stops.add(RouteStop.builder().schedule(schedule).location("Nhà chờ Phương Trang (Đường Mai Chí Thọ)").stopOrder(2).arrivalTime(departureTime.plusMinutes(15)).stopType(StopType.PICKUP).build());
+//            stops.add(RouteStop.builder().schedule(schedule).location("Ngã 4 Tây Hoà (RMK)").stopOrder(3).arrivalTime(departureTime.plusMinutes(20)).stopType(StopType.PICKUP).build());
+//            stops.add(RouteStop.builder().schedule(schedule).location("Ngã tư Bình Thái").stopOrder(4).arrivalTime(departureTime.plusMinutes(25)).stopType(StopType.PICKUP).build());
+//            stops.add(RouteStop.builder().schedule(schedule).location("Ngã Tư Thủ Đức").stopOrder(5).arrivalTime(departureTime.plusMinutes(30)).stopType(StopType.PICKUP).build());
+//            stops.add(RouteStop.builder().schedule(schedule).location("KDL Suối Tiên").stopOrder(6).arrivalTime(departureTime.plusMinutes(35)).stopType(StopType.PICKUP).build());
+//            stops.add(RouteStop.builder().schedule(schedule).location("Bến Xe Miền Đông Mới (Quầy 120)").stopOrder(7).arrivalTime(departureTime.plusMinutes(40)).stopType(StopType.PICKUP).build());
+//            stops.add(RouteStop.builder().schedule(schedule).location("Ngã 3 Tân Vạn").stopOrder(8).arrivalTime(departureTime.plusMinutes(45)).stopType(StopType.PICKUP).build());
+//            stops.add(RouteStop.builder().schedule(schedule).location("Ngã Tư Vũng Tàu").stopOrder(9).arrivalTime(departureTime.plusMinutes(46)).stopType(StopType.PICKUP).build());
+//
+//            // Drop-off stops
+//            stops.add(RouteStop.builder().schedule(schedule).location("UBND phường Cam Nghĩa").stopOrder(10).arrivalTime(arrivalTime.minusMinutes(45)).stopType(StopType.DROPOFF).build());
+//            stops.add(RouteStop.builder().schedule(schedule).location("Ngã 3 Mỹ Ca").stopOrder(11).arrivalTime(arrivalTime.minusMinutes(40)).stopType(StopType.DROPOFF).build());
+//            stops.add(RouteStop.builder().schedule(schedule).location("Agribank CN Cam Lâm").stopOrder(12).arrivalTime(arrivalTime.minusMinutes(30)).stopType(StopType.DROPOFF).build());
+//            stops.add(RouteStop.builder().schedule(schedule).location("Bưu điện Cam Lâm").stopOrder(13).arrivalTime(arrivalTime.minusMinutes(29)).stopType(StopType.DROPOFF).build());
+//            stops.add(RouteStop.builder().schedule(schedule).location("Ngã Tư Cam Hải").stopOrder(14).arrivalTime(arrivalTime.minusMinutes(25)).stopType(StopType.DROPOFF).build());
+//            stops.add(RouteStop.builder().schedule(schedule).location("Ngã ba Lập Định").stopOrder(15).arrivalTime(arrivalTime.minusMinutes(15)).stopType(StopType.DROPOFF).build());
+//            stops.add(RouteStop.builder().schedule(schedule).location("Ngã tư Đà Lạt").stopOrder(16).arrivalTime(arrivalTime.minusMinutes(14)).stopType(StopType.DROPOFF).build());
+//            stops.add(RouteStop.builder().schedule(schedule).location("Bến xe Diên Khánh").stopOrder(17).arrivalTime(arrivalTime.minusMinutes(13)).stopType(StopType.DROPOFF).build());
+//            stops.add(RouteStop.builder().schedule(schedule).location("Trạm y tế Diên Khánh").stopOrder(18).arrivalTime(arrivalTime.minusMinutes(12)).stopType(StopType.DROPOFF).build());
+//            stops.add(RouteStop.builder().schedule(schedule).location("Ngã 3 Thành").stopOrder(19).arrivalTime(arrivalTime.minusMinutes(10)).stopType(StopType.DROPOFF).build());
+//            stops.add(RouteStop.builder().schedule(schedule).location("Vp Thích Quảng Đức Nha Trang").stopOrder(20).arrivalTime(arrivalTime).stopType(StopType.DROPOFF).build());
+//
+//            schedule.setStops(stops);
+//
+//            // Save each schedule
+//            scheduleRepository.save(schedule);
+//        }
+
     }
 }
