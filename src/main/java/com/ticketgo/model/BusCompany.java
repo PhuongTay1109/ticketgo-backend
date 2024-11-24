@@ -23,6 +23,9 @@ public class BusCompany extends User {
     @Column(nullable = false)
     private String address;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "LONGTEXT")
     private String description;
+
+    @Column(nullable = false)
+    private String bannerUrl;
 }

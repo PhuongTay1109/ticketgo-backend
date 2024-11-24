@@ -96,6 +96,18 @@ public class TicketgoBackEndApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
+//        BusCompany admin = (BusCompany) userRepository.findByEmail("admin@gmail.com").orElseThrow(() -> new UsernameNotFoundException("User not found"));
+//        admin.setDescription("Nhà xe TicketGo là đơn vị chuyên cung cấp dịch vụ vận chuyển chất lượng cao, hướng đến sự hài lòng và an tâm của khách hàng trong từng hành trình. Với sứ mệnh trở thành người bạn đồng hành đáng tin cậy, chúng tôi không ngừng cải thiện và nâng cấp các dịch vụ để mang đến những trải nghiệm tốt nhất.\n" +
+//                "\n" +
+//                "TicketGo tự hào sở hữu đội ngũ lái xe giàu kinh nghiệm, thân thiện và được đào tạo chuyên nghiệp, cùng với hệ thống xe hiện đại, sạch sẽ và an toàn. Chúng tôi cung cấp đa dạng các tuyến đường, linh hoạt đáp ứng nhu cầu di chuyển của khách hàng, từ vận chuyển cá nhân, gia đình đến các đoàn thể, tổ chức.\n" +
+//                "\n" +
+//                "Bên cạnh đó, TicketGo áp dụng công nghệ tiên tiến vào hệ thống đặt vé trực tuyến, giúp khách hàng dễ dàng tìm kiếm tuyến đường, lựa chọn chỗ ngồi và thanh toán nhanh chóng, tiện lợi. Chúng tôi cam kết minh bạch trong giá cả, hỗ trợ khách hàng tận tình và xử lý mọi yêu cầu một cách nhanh chóng.\n" +
+//                "\n" +
+//                "Với tôn chỉ \"Chất lượng - An toàn - Uy tín,\" TicketGo luôn nỗ lực từng ngày để mang đến những chuyến đi thoải mái, đúng giờ và đáng nhớ. Chúng tôi trân trọng sự tin tưởng của khách hàng và sẽ tiếp tục phát triển để trở thành sự lựa chọn hàng đầu trong lĩnh vực vận chuyển.");
+//        admin.setPassword(passwordEncoder.encode("Admin123"));
+//        admin.setBannerUrl("https://static.vexere.com/production/banners/1209/vi_leaderboard_1440x480_1.jpg");
+//        admin.setImageUrl("https://res.cloudinary.com/dj1h07rea/image/upload/v1732419422/03809988294a4197849715dd0850f3b8-free_mnt4dp.png");
+//        userRepository.save(admin);
 //        emailService.sendBookingInfo(1);
 //        BusCompany admin = BusCompany.builder()
 //                .email("admin@gmail.com")

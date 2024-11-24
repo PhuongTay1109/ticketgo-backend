@@ -11,7 +11,8 @@ public class SecurityWhiteList {
             "/api/v1/amenities/**",
             "/api/v1/payment/vnpay/return",
             "/v3/api-docs/**",
-            "/swagger-ui/**"
+            "/swagger-ui/**",
+            "/api/v1/homepage/**"
     };
 
     public static String[] getWhiteList() {
