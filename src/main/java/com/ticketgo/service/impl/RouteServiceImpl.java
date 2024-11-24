@@ -45,6 +45,7 @@ public class RouteServiceImpl implements RouteService {
                                               int pageSize) {
         Specification<Schedule> spec = Specification
                 .where(ScheduleSpecification.hasDepartureLocation(departureLocation))
+                .and(ScheduleSpecification.hasVisibility())
                 .and(ScheduleSpecification.hasArrivalLocation(arrivalLocation))
                 .and(ScheduleSpecification.hasDepartureDate(departureDate))
                 .and(ScheduleSpecification.withSorting(sortBy, sortDirection));

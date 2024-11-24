@@ -9,6 +9,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class ScheduleSpecification {
+    public static Specification<Schedule> hasVisibility() {
+        return (root, query, criteriaBuilder) -> criteriaBuilder.isTrue(root.get("isVisible"));
+    }
+
     public static Specification<Schedule> hasDepartureLocation(String departureLocation) {
         return ((root, query, criteriaBuilder) -> {
             Join<Schedule, Route> route = root.join("route");

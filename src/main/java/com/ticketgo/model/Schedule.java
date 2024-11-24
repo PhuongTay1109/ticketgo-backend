@@ -1,10 +1,12 @@
 package com.ticketgo.model;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
 
@@ -36,6 +38,9 @@ public class Schedule extends BaseEntity {
 
     @Column(nullable = false)
     private Double price;
+
+    @Column(nullable = false)
+    private Boolean isVisible;
 
     @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<RouteStop> stops;
