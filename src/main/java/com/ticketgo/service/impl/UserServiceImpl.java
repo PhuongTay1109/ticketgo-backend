@@ -2,15 +2,15 @@ package com.ticketgo.service.impl;
 
 import com.ticketgo.dto.CustomerContactInfoDTO;
 import com.ticketgo.dto.UserDTO;
+import com.ticketgo.dto.request.UserUpdateRequest;
 import com.ticketgo.exception.AppException;
 import com.ticketgo.mapper.UserMapper;
 import com.ticketgo.model.Customer;
 import com.ticketgo.model.User;
+import com.ticketgo.repository.CustomerRepository;
 import com.ticketgo.repository.UserRepository;
 import com.ticketgo.service.UserService;
-
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepo;
+    private final CustomerRepository customerRepo;
 
     @Override
     public UserDetails loadUserByUsername(String email) {
@@ -48,21 +49,43 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDTO getUserDetails() {
-        Authentication authentication =
-                SecurityContextHolder.getContext().getAuthentication();
-        User user = (User) authentication.getPrincipal();
+        User user = getAuthorizedUser();
         return UserMapper.INSTANCE.mapUser(user);
     }
 
     @Override
     public CustomerContactInfoDTO getCustomerContactIno() {
-        Authentication authentication =
-                SecurityContextHolder.getContext().getAuthentication();
-        Customer customer =  (Customer) authentication.getPrincipal();
+        Customer customer = getAuthorizedCustomer();
         return CustomerContactInfoDTO.builder()
                 .fullName(customer.getFullName())
                 .phoneNumber(customer.getPhoneNumber())
                 .email(customer.getEmail())
                 .build();
+    }
+
+    @Override
+    public void updateUser(UserUpdateRequest request) {
+        Customer customer = getAuthorizedCustomer();
+        long id = customer.getUserId();
+        int rowUpdated = customerRepo.updateCustomerFields(
+                id,
+                request.getFullName(),
+                request.getPhoneNumber(),
+                request.getDateOfBirth()
+        );
+
+        if (rowUpdated == 0) {
+            throw new AppException("Customer not found with id: " + id, HttpStatus.NOT_FOUND);
+        }
+    }
+
+    private Customer getAuthorizedCustomer() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return (Customer) authentication.getPrincipal();
+    }
+
+    private User getAuthorizedUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return (User) authentication.getPrincipal();
     }
 }
