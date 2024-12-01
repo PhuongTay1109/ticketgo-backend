@@ -16,7 +16,7 @@ public interface CustomerMapper {
     @Mapping(target = "imageUrl", constant = "https://res.cloudinary.com/dj1h07rea/image/upload/v1728906155/sbcf-default-avatar_iovbch.webp")
     @Mapping(target = "isEnabled", constant = "false")
     @Mapping(target = "isLocked", constant = "false")
-    @Mapping(target = "role", expression = "java(com.ticketgo.model.Role.CUSTOMER)")
+    @Mapping(target = "role", expression = "java(com.ticketgo.model.Role.ROLE_CUSTOMER)")
     @Mapping(target = "provider", expression = "java(com.ticketgo.model.Provider.LOCAL)")
     Customer toCustomer(CustomerRegistrationRequest request, PasswordEncoder passwordEncoder);
 }

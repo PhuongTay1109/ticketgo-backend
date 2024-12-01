@@ -2,6 +2,7 @@ package com.ticketgo.repository;
 
 import com.ticketgo.dto.BookingHistoryDTOTuple;
 import com.ticketgo.dto.BookingInfoDTOTuple;
+import com.ticketgo.dto.RevenueStatisticsDTOTuple;
 import com.ticketgo.model.Booking;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -10,6 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -86,4 +88,17 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
         """, nativeQuery = true)
     Page<BookingHistoryDTOTuple> getBookingHistoryForCustomer(@Param("customerId") Long customerId, Pageable pageable);
 
+    @Query(value = """
+        SELECT DATE_FORMAT(b.booking_date, :dateFormat) AS period,
+               SUM(b.original_price) AS totalRevenue,
+               COUNT(b.booking_id) AS totalTicketsSold
+        FROM bookings b
+        WHERE b.status = 'COMPLETED'
+          AND b.booking_date BETWEEN :startDate AND :endDate
+        GROUP BY DATE_FORMAT(b.booking_date, :dateFormat)
+    """, nativeQuery = true)
+    List<RevenueStatisticsDTOTuple> getRevenueStatistics(
+            @Param("dateFormat") String dateFormat,
+            @Param("startDate") LocalDateTime startDate,
+            @Param("endDate") LocalDateTime endDate);
 }

@@ -168,7 +168,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                     .fullName(userResponse.getName())
                     .imageUrl(userResponse.getPicture())
                     .isEnabled(userResponse.isEmailVerified())
-                    .role(Role.CUSTOMER)
+                    .role(Role.ROLE_CUSTOMER)
                     .provider(Provider.GOOGLE)
                     .isLocked(false)
                     .build();
@@ -216,7 +216,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                     .fullName(userResponse.getFirstName() + " " + userResponse.getLastName())
                     .imageUrl(userResponse.getPictureUrl())
                     .isEnabled(true)
-                    .role(Role.CUSTOMER)
+                    .role(Role.ROLE_CUSTOMER)
                     .provider(Provider.GOOGLE)
                     .isLocked(false)
                     .build();

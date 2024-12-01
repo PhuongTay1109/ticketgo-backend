@@ -1,6 +1,8 @@
 package com.ticketgo;
 
-import com.ticketgo.model.*;
+import com.ticketgo.model.Bus;
+import com.ticketgo.model.Role;
+import com.ticketgo.model.Seat;
 import com.ticketgo.repository.*;
 import com.ticketgo.service.EmailService;
 import com.ticketgo.service.ScheduleService;
@@ -95,7 +97,11 @@ public class TicketgoBackEndApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
+        userRepository.updateRoleByEmail(Role.ROLE_BUS_COMPANY, "admin@gmail.com");
+
 //        BusCompany admin = (BusCompany) userRepository.findByEmail("admin@gmail.com").orElseThrow(() -> new UsernameNotFoundException("User not found"));
+//        admin.setRole(Role.ROLE_BUS_COMPANY);
+//        userRepository.save(admin);
 //        admin.setDescription("Nhà xe TicketGo là đơn vị chuyên cung cấp dịch vụ vận chuyển chất lượng cao, hướng đến sự hài lòng và an tâm của khách hàng trong từng hành trình. Với sứ mệnh trở thành người bạn đồng hành đáng tin cậy, chúng tôi không ngừng cải thiện và nâng cấp các dịch vụ để mang đến những trải nghiệm tốt nhất.\n" +
 //                "\n" +
 //                "TicketGo tự hào sở hữu đội ngũ lái xe giàu kinh nghiệm, thân thiện và được đào tạo chuyên nghiệp, cùng với hệ thống xe hiện đại, sạch sẽ và an toàn. Chúng tôi cung cấp đa dạng các tuyến đường, linh hoạt đáp ứng nhu cầu di chuyển của khách hàng, từ vận chuyển cá nhân, gia đình đến các đoàn thể, tổ chức.\n" +

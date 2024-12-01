@@ -1,9 +1,6 @@
 package com.ticketgo.service.impl;
 
-import com.ticketgo.dto.BookingHistoryDTO;
-import com.ticketgo.dto.BookingHistoryDTOTuple;
-import com.ticketgo.dto.BookingInfoDTO;
-import com.ticketgo.dto.BookingInfoDTOTuple;
+import com.ticketgo.dto.*;
 import com.ticketgo.dto.request.PaymentRequest;
 import com.ticketgo.dto.response.ApiPaginationResponse;
 import com.ticketgo.dto.response.TripInformationResponse;
@@ -185,4 +182,35 @@ public class BookingServiceImpl implements BookingService {
         );
     }
 
+    @Override
+    public List<RevenueStatisticsDTO> getDailyRevenueStatistics(LocalDateTime startDate, LocalDateTime endDate) {
+        String dateFormat = "%Y-%m-%d";
+        List<RevenueStatisticsDTOTuple> tuples =
+                bookingRepo.getRevenueStatistics(dateFormat, startDate, endDate);
+
+        return tuples.stream()
+                .map(tuple -> new RevenueStatisticsDTO(
+                        tuple.getPeriod(),
+                        tuple.getTotalRevenue(),
+                        tuple.getTotalTicketsSold()
+                ))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<RevenueStatisticsDTO> getMonthlyRevenueStatistics(int year) {
+        String dateFormat = "%Y-%m";
+        LocalDateTime startDate = LocalDateTime.of(year, 1, 1, 0, 0, 0, 0);  // Bắt đầu từ tháng 1 năm đó
+        LocalDateTime endDate = LocalDateTime.of(year, 12, 31, 23, 59, 59, 999999);  // Kết thúc tháng 12 của năm đó
+        List<RevenueStatisticsDTOTuple> tuples =
+                bookingRepo.getRevenueStatistics(dateFormat, startDate, endDate);
+
+        return tuples.stream()
+                .map(tuple -> new RevenueStatisticsDTO(
+                        tuple.getPeriod(),
+                        tuple.getTotalRevenue(),
+                        tuple.getTotalTicketsSold()
+                ))
+                .collect(Collectors.toList());
+    }
 }

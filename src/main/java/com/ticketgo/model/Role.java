@@ -1,6 +1,6 @@
 package com.ticketgo.model;
 
 public enum Role {
-    CUSTOMER,
-    BUS_COMPANY
+    ROLE_CUSTOMER,
+    ROLE_BUS_COMPANY
 }

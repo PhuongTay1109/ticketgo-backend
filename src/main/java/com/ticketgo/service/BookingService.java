@@ -1,11 +1,13 @@
 package com.ticketgo.service;
 
 import com.ticketgo.dto.BookingInfoDTO;
+import com.ticketgo.dto.RevenueStatisticsDTO;
 import com.ticketgo.dto.request.PaymentRequest;
 import com.ticketgo.dto.response.ApiPaginationResponse;
 import com.ticketgo.dto.response.TripInformationResponse;
 import com.ticketgo.model.Booking;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface BookingService {
@@ -20,4 +22,8 @@ public interface BookingService {
 
 //    List<BookingHistoryDTO> getBookingHistoryForCustomer();
     ApiPaginationResponse getBookingHistoryForCustomer(int pageNumber, int pageSize);
+
+    List<RevenueStatisticsDTO> getDailyRevenueStatistics(LocalDateTime startDate, LocalDateTime endDate);
+
+    List<RevenueStatisticsDTO> getMonthlyRevenueStatistics(int year);
 }
