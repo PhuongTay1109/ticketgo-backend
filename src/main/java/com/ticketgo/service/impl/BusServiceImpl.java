@@ -1,10 +1,17 @@
 package com.ticketgo.service.impl;
 
+import com.ticketgo.dto.response.ApiPaginationResponse;
+import com.ticketgo.mapper.BusMapper;
 import com.ticketgo.model.Bus;
 import com.ticketgo.repository.BusRepository;
 import com.ticketgo.service.BusService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -16,5 +23,26 @@ public class BusServiceImpl implements BusService {
         return busRepo.findBySchedule(scheduleId)
                 .orElseThrow(() -> new RuntimeException(
                                 "No bus found for schedule: " + scheduleId));
+    }
+
+    @Override
+    public ApiPaginationResponse getAllBuses(int pageNumber, int pageSize) {
+        Page<Bus> busPage = busRepo.findAll(PageRequest.of(pageNumber - 1, pageSize));
+
+        ApiPaginationResponse.Pagination pagination = new ApiPaginationResponse.Pagination(
+                busPage.getNumber() + 1,
+                busPage.getSize(),
+                busPage.getTotalPages(),
+                busPage.getTotalElements()
+        );
+
+        return new ApiPaginationResponse(
+                HttpStatus.OK,
+                "Danh sách xe",
+                busPage.getContent().stream()
+                        .map(BusMapper.INSTANCE::toBusDTO)
+                        .collect(Collectors.toList()),
+                pagination
+        );
     }
 }
