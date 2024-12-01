@@ -200,8 +200,30 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public List<RevenueStatisticsDTO> getMonthlyRevenueStatistics(int year) {
         String dateFormat = "%Y-%m";
-        LocalDateTime startDate = LocalDateTime.of(year, 1, 1, 0, 0, 0, 0);  // Bắt đầu từ tháng 1 năm đó
-        LocalDateTime endDate = LocalDateTime.of(year, 12, 31, 23, 59, 59, 999999);  // Kết thúc tháng 12 của năm đó
+        LocalDateTime startDate =
+                LocalDateTime.of(year, 1, 1, 0, 0, 0, 0);
+        LocalDateTime endDate =
+                LocalDateTime.of(year, 12, 31, 23, 59, 59, 999999);
+        List<RevenueStatisticsDTOTuple> tuples =
+                bookingRepo.getRevenueStatistics(dateFormat, startDate, endDate);
+
+        return tuples.stream()
+                .map(tuple -> new RevenueStatisticsDTO(
+                        tuple.getPeriod(),
+                        tuple.getTotalRevenue(),
+                        tuple.getTotalTicketsSold()
+                ))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<RevenueStatisticsDTO> getRevenueStatisticsByYear(int year) {
+        String dateFormat = "%Y";
+        LocalDateTime startDate =
+                LocalDateTime.of(year, 1, 1, 0, 0, 0, 0);
+        LocalDateTime endDate =
+                LocalDateTime.of(year, 12, 31, 23, 59, 59, 999999);
+
         List<RevenueStatisticsDTOTuple> tuples =
                 bookingRepo.getRevenueStatistics(dateFormat, startDate, endDate);
 

@@ -26,4 +26,6 @@ public interface BookingService {
     List<RevenueStatisticsDTO> getDailyRevenueStatistics(LocalDateTime startDate, LocalDateTime endDate);
 
     List<RevenueStatisticsDTO> getMonthlyRevenueStatistics(int year);
+
+    List<RevenueStatisticsDTO> getRevenueStatisticsByYear(int year);
 }

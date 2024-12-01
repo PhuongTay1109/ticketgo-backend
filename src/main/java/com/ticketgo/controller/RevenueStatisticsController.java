@@ -39,4 +39,12 @@ public class RevenueStatisticsController {
         List<RevenueStatisticsDTO> resp = bookingService.getMonthlyRevenueStatistics(year);
         return new ApiResponse(HttpStatus.OK, "Lấy thống kê theo tháng thành công", resp);
     }
+
+    @GetMapping("/statistics-yearly")
+    public ApiResponse getRevenueStatisticsByYear(
+            @RequestParam int year) {
+        List<RevenueStatisticsDTO> resp = bookingService.getRevenueStatisticsByYear(year);
+        return new ApiResponse(HttpStatus.OK, "Lấy thống kê theo năm thành công", resp);
+    }
+
 }
