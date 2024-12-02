@@ -1,12 +1,13 @@
 package com.ticketgo;
 
-import com.ticketgo.model.Bus;
-import com.ticketgo.model.Role;
-import com.ticketgo.model.Seat;
+import com.ticketgo.model.*;
 import com.ticketgo.repository.*;
 import com.ticketgo.service.EmailService;
 import com.ticketgo.service.ScheduleService;
+import com.ticketgo.service.TokenService;
+import com.ticketgo.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -17,6 +18,7 @@ import java.util.Set;
 
 @SpringBootApplication
 @RequiredArgsConstructor
+@Slf4j
 public class TicketgoBackEndApplication implements CommandLineRunner {
 
     private final BusRepository busRepository;
@@ -28,6 +30,8 @@ public class TicketgoBackEndApplication implements CommandLineRunner {
     private final ScheduleService scheduleService;
     private final TicketRepository ticketRepository;
     private final EmailService emailService;
+    private final TokenService tokenService;
+    private final UserService userService;
 
     public static void main(String[] args) {
         SpringApplication.run(TicketgoBackEndApplication.class, args);
@@ -97,8 +101,20 @@ public class TicketgoBackEndApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        userRepository.updateRoleByEmail(Role.ROLE_BUS_COMPANY, "admin@gmail.com");
-
+//        User user = userService.findByEmail("phuonggteyy@gmail.com");
+//        Token token = tokenService.createToken(user, TokenType.ACTIVATION);
+//        emailService.sendActivationEmail(user.getEmail(), token.getValue())
+//                .thenAccept(success -> {
+//                    if (success) {
+//                        log.info("Email sent successfully!");
+//                    } else {
+//                        log.error("Email sending failed.");
+//                    }
+//                })
+//                .exceptionally(ex -> {
+//                    log.error("Failed to send email: {}", ex.getMessage());
+//                    return null;
+//                });
 //        BusCompany admin = (BusCompany) userRepository.findByEmail("admin@gmail.com").orElseThrow(() -> new UsernameNotFoundException("User not found"));
 //        admin.setRole(Role.ROLE_BUS_COMPANY);
 //        userRepository.save(admin);
