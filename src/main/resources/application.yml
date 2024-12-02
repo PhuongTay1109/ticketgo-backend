@@ -6,6 +6,12 @@ spring:
     url: jdbc:mysql://localhost:3306/ticketgo_db?useSSL=false&useUnicode=true&characterEncoding=UTF-8
     username: root
     password: PhuongTay110903@
+    hikari:
+      maximum-pool-size: 8
+      minimum-idle: 5
+      idle-timeout: 30000
+      max-lifetime: 600000
+      connection-timeout: 30000
   jpa:
     show-sql: false
     hibernate:
