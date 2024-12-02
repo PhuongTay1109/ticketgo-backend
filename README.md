@@ -1,6 +1,10 @@
 SHOW VARIABLES LIKE 'event_scheduler';
 SET GLOBAL event_scheduler = ON;
 
+ALTER EVENT reset_booking_status DISABLE;
+ALTER EVENT reset_status_tickets DISABLE;
+ALTER EVENT reset_ticket_info DISABLE;
+
 CREATE EVENT reset_booking_status
 ON SCHEDULE EVERY 1 day
 DO
