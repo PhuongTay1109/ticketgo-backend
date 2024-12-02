@@ -1,5 +1,3 @@
-CREATE DATABASE  IF NOT EXISTS `ticketgo_db` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci */;
-USE `ticketgo_db`;
 -- MySQL dump 10.13  Distrib 8.0.34, for Win64 (x86_64)
 --
 -- Host: localhost    Database: ticketgo_db
@@ -20,6 +18,7 @@ USE `ticketgo_db`;
 --
 -- Table structure for table `amenities`
 --
+use c6xrudl3udz4683x;
 
 DROP TABLE IF EXISTS `amenities`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -573,4 +572,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-12-02 16:19:43
+-- Dump completed on 2024-12-02 16:47:16

@@ -16,19 +16,8 @@ public class AsyncConfig {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setCorePoolSize(4);
         executor.setMaxPoolSize(10);
-        executor.setQueueCapacity(100);
-        executor.setThreadNamePrefix("email-");
-        executor.initialize();
-        return executor;
-    }
-
-    @Bean(name = "scheduledJobExecutor")
-    public Executor scheduledJobExecutor() {
-        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(2);
-        executor.setMaxPoolSize(5);
         executor.setQueueCapacity(50);
-        executor.setThreadNamePrefix("scheduled-job-");
+        executor.setThreadNamePrefix("email-");
         executor.initialize();
         return executor;
     }
