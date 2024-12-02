@@ -18,8 +18,7 @@
 --
 -- Table structure for table `amenities`
 --
-use c6xrudl3udz4683x;
-
+use jufoisfyvxwphalg;
 DROP TABLE IF EXISTS `amenities`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
@@ -572,4 +571,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-12-02 16:47:16
+-- Dump completed on 2024-12-02 17:40:59
