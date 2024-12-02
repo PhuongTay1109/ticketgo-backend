@@ -7,8 +7,8 @@ import java.time.format.DateTimeFormatter;
 
 public class BookingInfoMapper {
 
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm dd/MM/yyyy");
 
     public static BookingInfoDTO toBookingInfoDTO(BookingInfoDTOTuple tuple) {
         return BookingInfoDTO.builder()

@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.UnsupportedEncodingException;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -26,6 +27,8 @@ import java.util.concurrent.CompletableFuture;
 public class EmailServiceImpl implements EmailService {
     private final JavaMailSender emailSender;
     private BookingService bookingService;
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm dd/MM/yyyy");
 
     @Autowired
     public EmailServiceImpl(JavaMailSender emailSender, @Lazy BookingService bookingService) {
@@ -56,7 +59,7 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
-    @Async
+    @Async("taskExecutor")
     @Transactional
     public void sendBookingInfo(long bookingId) {
         List<BookingInfoDTO> bookingInfoList = bookingService.getBookingInfoList(bookingId);
@@ -86,14 +89,13 @@ public class EmailServiceImpl implements EmailService {
                 emailContent.append("<p><b style='color: #333;'>Địa điểm đón:</b> ").append(info.getPickupLocation()).append("</p>");
                 emailContent.append("<p><b style='color: #333;'>Địa điểm trả:</b> ").append(info.getDropoffLocation()).append("</p>");
 
-                // Add the ticket status here after drop-off location
                 emailContent.append("<p style='font-size: 18px; font-weight: bold; color: #1E90FF;'>Trạng thái vé: Đã xác nhận</p>");
 
                 emailContent.append("</div>");
                 emailContent.append("</div>");
             }
 
-            emailContent.append("<p style='text-align: center; font-size: 14px;'>Nếu có bất kỳ câu hỏi nào, vui lòng liên hệ với chúng tôi qua email này.</p>");
+            emailContent.append("<p style='text-align: center; font-size: 14px;'>Nếu có bất kỳ câu hỏi nào, vui lòng liên hệ với chúng tôi qua email này hoặc gọi hotline: <b style='color: #1E90FF;'>0979552239</b>.</p>");
             emailContent.append("</div>");
             emailContent.append("</body></html>");
 
@@ -114,7 +116,7 @@ public class EmailServiceImpl implements EmailService {
         }
     }
 
-    @Async
+    @Async("taskExecutor")
     @Override
     public void sendResetPasswordEmail(String email, String token) {
         try {

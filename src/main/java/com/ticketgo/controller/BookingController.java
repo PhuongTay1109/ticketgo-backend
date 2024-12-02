@@ -58,9 +58,4 @@ public class BookingController {
                 .ok()
                 .body(ticketService.existsReservedSeatsByCustomer());
     }
-
-//    @GetMapping("/history")
-//    public ApiResponse getBookingHistory() {
-//        return new ApiResponse(HttpStatus.OK, "Lịch sử đặt vé của khách hàng", bookingService.getBookingHistoryForCustomer());
-//    }
 }
