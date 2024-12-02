@@ -129,7 +129,7 @@ public class TicketgoBackEndApplication implements CommandLineRunner {
 //        admin.setBannerUrl("https://static.vexere.com/production/banners/1209/vi_leaderboard_1440x480_1.jpg");
 //        admin.setImageUrl("https://res.cloudinary.com/dj1h07rea/image/upload/v1732419422/03809988294a4197849715dd0850f3b8-free_mnt4dp.png");
 //        userRepository.save(admin);
-        emailService.sendBookingInfo(1);
+//        emailService.sendBookingInfo(1);
 //        BusCompany admin = BusCompany.builder()
 //                .email("admin@gmail.com")
 //                .password(passwordEncoder.encode("your_secure_password")) // Mã hóa mật khẩu
@@ -381,6 +381,116 @@ public class TicketgoBackEndApplication implements CommandLineRunner {
 //            // Save each schedule
 //            scheduleRepository.save(schedule);
 //        }
+//        LocalDateTime startDate = LocalDateTime.of(2024, 12, 31, 23, 30); // Bắt đầu từ ngày 31/12, 23:30
+//
+//// Tìm xe buýt theo ID
+//        int busId = 1; // Sử dụng ID cho tuyến Sài Gòn - Đà Lạt
+//        Bus bus = busRepository.findById((long) busId)
+//                .orElseThrow(() -> new RuntimeException("Bus not found"));
+//
+//// Thời gian khởi hành và đến nơi
+//        LocalDateTime departureTime = startDate;
+//        LocalDateTime arrivalTime = LocalDateTime.of(2025, 1, 1, 7, 30); // Đến Đà Lạt lúc 07:30 ngày 01/01
+//
+//        Schedule schedule = Schedule.builder()
+//                .bus(bus)
+//                .route(routeRepository.findByRouteName("Sài Gòn - Đà Lạt"))
+//                .departureTime(departureTime)
+//                .arrivalTime(arrivalTime)
+//                .price(0.0)
+//                .isVisible(true)
+//                .build();
+//
+//// Pickup stops
+//        Set<RouteStop> stops = new HashSet<>();
+//        stops.add(RouteStop.builder().schedule(schedule).location("VP Tân Bình").stopOrder(1).arrivalTime(departureTime).stopType(StopType.PICKUP).build());
+//        stops.add(RouteStop.builder().schedule(schedule).location("Lăng Cha Cả").stopOrder(2).arrivalTime(departureTime.plusMinutes(10)).stopType(StopType.PICKUP).build());
+//        stops.add(RouteStop.builder().schedule(schedule).location("Ngã Tư Phú Nhuận").stopOrder(3).arrivalTime(departureTime.plusMinutes(15)).stopType(StopType.PICKUP).build());
+//        stops.add(RouteStop.builder().schedule(schedule).location("Chợ Bà Chiểu").stopOrder(4).arrivalTime(departureTime.plusMinutes(20)).stopType(StopType.PICKUP).build());
+//        stops.add(RouteStop.builder().schedule(schedule).location("Ngã tư Bạch Đằng - Đinh Bộ Lĩnh").stopOrder(5).arrivalTime(departureTime.plusMinutes(25)).stopType(StopType.PICKUP).build());
+//        stops.add(RouteStop.builder().schedule(schedule).location("Trạm Bus Metro Quận 2").stopOrder(6).arrivalTime(departureTime.plusMinutes(30)).stopType(StopType.PICKUP).build());
+//        stops.add(RouteStop.builder().schedule(schedule).location("Ngã 4 Tây Hoà (RMK)").stopOrder(7).arrivalTime(departureTime.plusMinutes(35)).stopType(StopType.PICKUP).build());
+//        stops.add(RouteStop.builder().schedule(schedule).location("Ngã tư Bình Thái").stopOrder(8).arrivalTime(departureTime.plusMinutes(36)).stopType(StopType.PICKUP).build());
+//        stops.add(RouteStop.builder().schedule(schedule).location("Văn Phòng Thủ Đức").stopOrder(9).arrivalTime(departureTime.plusMinutes(50)).stopType(StopType.PICKUP).build());
+//        stops.add(RouteStop.builder().schedule(schedule).location("Bến xe Miền Đông Mới").stopOrder(10).arrivalTime(departureTime.plusMinutes(60)).stopType(StopType.PICKUP).build());
+//
+//// Drop-off stops
+//        stops.add(RouteStop.builder().schedule(schedule).location("Ngã 3 Madagui").stopOrder(11).arrivalTime(arrivalTime.minusHours(4)).stopType(StopType.DROPOFF).build());
+//        stops.add(RouteStop.builder().schedule(schedule).location("Coop Mart Bảo Lộc").stopOrder(12).arrivalTime(arrivalTime.minusHours(3)).stopType(StopType.DROPOFF).build());
+//        stops.add(RouteStop.builder().schedule(schedule).location("Ngã ba Liên Khương").stopOrder(13).arrivalTime(arrivalTime.minusMinutes(90)).stopType(StopType.DROPOFF).build());
+//        stops.add(RouteStop.builder().schedule(schedule).location("Cao tốc Liên Khương").stopOrder(14).arrivalTime(arrivalTime.minusMinutes(89)).stopType(StopType.DROPOFF).build());
+//        stops.add(RouteStop.builder().schedule(schedule).location("Thu phí Định An - Cao tốc Liên Khương").stopOrder(15).arrivalTime(arrivalTime.minusMinutes(60)).stopType(StopType.DROPOFF).build());
+//        stops.add(RouteStop.builder().schedule(schedule).location("VP Đà Lạt").stopOrder(16).arrivalTime(arrivalTime).stopType(StopType.DROPOFF).build());
+//        stops.add(RouteStop.builder().schedule(schedule).location("Nội thành Đà Lạt (bán kính 7km)").stopOrder(17).arrivalTime(arrivalTime).stopType(StopType.DROPOFF).build());
+//
+//        schedule.setStops(stops);
+//
+//// Lưu lịch trình
+//        scheduleRepository.save(schedule);
+//
+//        for (long i = 13; i <= 14; i++) {
+//            Schedule schedule = scheduleService.findById(i);
+//            Set<Seat> seats = schedule.getBus().getSeats();
+//            double price = 400000.0;
+//            if (i==14)
+//                price=350000.0;
+//            for(Seat seat : seats) {
+//                Ticket ticket = Ticket.builder()
+//                        .seat(seat)
+//                        .schedule(schedule)
+//                        .status(TicketStatus.AVAILABLE)
+//                        .price(price)
+//                        .build();
+//                ticketRepository.save(ticket);
+//            }
+//            schedule.setPrice(price);
+//            scheduleRepository.save(schedule);
+//        }
+
+//        LocalDateTime startDate = LocalDateTime.of(2024, 12, 31, 7, 0); // Chuyến 7:00 sáng ngày 31/12
+//        int busId = 10; // ID xe buýt
+//
+//// Tìm xe buýt theo ID
+//        Bus bus = busRepository.findById((long) busId)
+//                .orElseThrow(() -> new RuntimeException("Bus not found"));
+//
+//        LocalDateTime departureTime = startDate;
+//        LocalDateTime arrivalTime = departureTime.plusHours(7).plusMinutes(30); // Thời gian đến sau 7 giờ 30 phút
+//
+//        Schedule schedule = Schedule.builder()
+//                .bus(bus)
+//                .route(routeRepository.findByRouteName("Sài Gòn - Đà Lạt"))
+//                .departureTime(departureTime)
+//                .arrivalTime(arrivalTime)
+//                .price(0.0)
+//                .isVisible(true)
+//                .build();
+//
+//// Pickup stops
+//        Set<RouteStop> stops = new HashSet<>();
+//        stops.add(RouteStop.builder().schedule(schedule).location("VP Tân Bình").stopOrder(1).arrivalTime(departureTime).stopType(StopType.PICKUP).build());
+//        stops.add(RouteStop.builder().schedule(schedule).location("Lăng Cha Cả").stopOrder(2).arrivalTime(departureTime.plusMinutes(10)).stopType(StopType.PICKUP).build());
+//        stops.add(RouteStop.builder().schedule(schedule).location("Ngã Tư Phú Nhuận").stopOrder(3).arrivalTime(departureTime.plusMinutes(15)).stopType(StopType.PICKUP).build());
+//        stops.add(RouteStop.builder().schedule(schedule).location("Chợ Bà Chiểu").stopOrder(4).arrivalTime(departureTime.plusMinutes(20)).stopType(StopType.PICKUP).build());
+//        stops.add(RouteStop.builder().schedule(schedule).location("Ngã tư Bạch Đằng - Đinh Bộ Lĩnh").stopOrder(5).arrivalTime(departureTime.plusMinutes(25)).stopType(StopType.PICKUP).build());
+//        stops.add(RouteStop.builder().schedule(schedule).location("Trạm Bus Metro Quận 2").stopOrder(6).arrivalTime(departureTime.plusMinutes(30)).stopType(StopType.PICKUP).build());
+//        stops.add(RouteStop.builder().schedule(schedule).location("Ngã 4 Tây Hoà (RMK)").stopOrder(7).arrivalTime(departureTime.plusMinutes(35)).stopType(StopType.PICKUP).build());
+//        stops.add(RouteStop.builder().schedule(schedule).location("Ngã tư Bình Thái").stopOrder(8).arrivalTime(departureTime.plusMinutes(36)).stopType(StopType.PICKUP).build());
+//        stops.add(RouteStop.builder().schedule(schedule).location("Văn Phòng Thủ Đức").stopOrder(9).arrivalTime(departureTime.plusMinutes(37)).stopType(StopType.PICKUP).build());
+//        stops.add(RouteStop.builder().schedule(schedule).location("Bến xe Miền Đông Mới").stopOrder(10).arrivalTime(departureTime.plusMinutes(50)).stopType(StopType.PICKUP).build());
+//
+//// Drop-off stops
+//        stops.add(RouteStop.builder().schedule(schedule).location("Ngã 3 Madagui").stopOrder(11).arrivalTime(arrivalTime.minusMinutes(180)).stopType(StopType.DROPOFF).build());
+//        stops.add(RouteStop.builder().schedule(schedule).location("Coop Mart Bảo Lộc").stopOrder(12).arrivalTime(arrivalTime.minusMinutes(120)).stopType(StopType.DROPOFF).build());
+//        stops.add(RouteStop.builder().schedule(schedule).location("Ngã ba Liên Khương").stopOrder(13).arrivalTime(arrivalTime.minusMinutes(90)).stopType(StopType.DROPOFF).build());
+//        stops.add(RouteStop.builder().schedule(schedule).location("Cao tốc Liên Khương").stopOrder(14).arrivalTime(arrivalTime.minusMinutes(89)).stopType(StopType.DROPOFF).build());
+//        stops.add(RouteStop.builder().schedule(schedule).location("Thu phí Định An - Cao tốc Liên Khương").stopOrder(15).arrivalTime(arrivalTime.minusMinutes(60)).stopType(StopType.DROPOFF).build());
+//        stops.add(RouteStop.builder().schedule(schedule).location("VP Đà Lạt").stopOrder(16).arrivalTime(arrivalTime).stopType(StopType.DROPOFF).build());
+//
+//        schedule.setStops(stops);
+//
+//// Lưu lịch trình
+//        scheduleRepository.save(schedule);
 
     }
 }
