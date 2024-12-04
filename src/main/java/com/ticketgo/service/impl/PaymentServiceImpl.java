@@ -9,6 +9,7 @@ import com.ticketgo.service.AuthenticationService;
 import com.ticketgo.service.BookingService;
 import com.ticketgo.service.PaymentService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +21,7 @@ import java.text.SimpleDateFormat;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class PaymentServiceImpl implements PaymentService {
     private final PaymentRepository paymentRepo;
     private final AuthenticationService authService;
@@ -58,6 +60,8 @@ public class PaymentServiceImpl implements PaymentService {
         Calendar cld = Calendar.getInstance(TimeZone.getTimeZone("Etc/GMT+7"));
         SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
         vnp_Params.put("vnp_CreateDate", formatter.format(cld.getTime()));
+
+        log.info("Create date {}", formatter.format(cld.getTime()));
 
         cld.add(Calendar.MINUTE, 15);
         vnp_Params.put("vnp_ExpireDate", formatter.format(cld.getTime()));
