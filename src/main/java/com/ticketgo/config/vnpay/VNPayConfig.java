@@ -1,12 +1,12 @@
 package com.ticketgo.config.vnpay;
+
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Random;
-
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
 
 public class VNPayConfig {
 
@@ -14,7 +14,7 @@ public class VNPayConfig {
     public static String vnp_HashSecret = "PYBFIPHNTLCNZOYXNRKSQNUONIDFBVVB";
 
     public static String vnp_PayUrl = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
-    public static String vnp_ReturnUrl = "http://localhost:8080/api/v1/payment/vnpay/return";
+    public static String vnp_ReturnUrl = "https://ticketgo-app-a139ba17185b.herokuapp.com/api/v1/payment/vnpay/return";
 
     public static String Sha256(String message) {
         String digest = null;

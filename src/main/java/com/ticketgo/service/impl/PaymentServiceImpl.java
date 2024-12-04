@@ -61,10 +61,12 @@ public class PaymentServiceImpl implements PaymentService {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
         vnp_Params.put("vnp_CreateDate", formatter.format(cld.getTime()));
 
-        log.info("Create date {}", formatter.format(cld.getTime()));
-
         cld.add(Calendar.MINUTE, 15);
         vnp_Params.put("vnp_ExpireDate", formatter.format(cld.getTime()));
+
+        log.info("CreateDate: {}", vnp_Params.get("vnp_CreateDate"));
+        log.info("ExpireDate: {}", vnp_Params.get("vnp_ExpireDate"));
+
 
         List<String> fieldNames = new ArrayList<>(vnp_Params.keySet());
         Collections.sort(fieldNames);
