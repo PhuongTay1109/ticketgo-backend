@@ -15,6 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.TimeZone;
 
 @SpringBootApplication
 @RequiredArgsConstructor
@@ -34,6 +35,7 @@ public class TicketgoBackEndApplication implements CommandLineRunner {
     private final UserService userService;
 
     public static void main(String[] args) {
+        TimeZone.setDefault(TimeZone.getTimeZone("Asia/Ho_Chi_Minh"));
         SpringApplication.run(TicketgoBackEndApplication.class, args);
     }
 
