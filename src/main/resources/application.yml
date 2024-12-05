@@ -28,7 +28,8 @@ app:
 
 # Frontend
 frontend:
-  url: http://localhost:3000
+#  url: http://localhost:3000
+   url: https://ticketgo-black.vercel.app
 
 # JWT private & public key
 jwt:
