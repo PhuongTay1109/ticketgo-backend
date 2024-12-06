@@ -93,7 +93,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
                SUM(b.original_price) AS totalRevenue,
                COUNT(b.booking_id) AS totalTicketsSold
         FROM bookings b
-        WHERE b.status = 'COMPLETED'
+        WHERE b.status = 'COMPLETED' or b.status = 'CONFIRMED'
           AND b.booking_date BETWEEN :startDate AND :endDate
         GROUP BY DATE_FORMAT(b.booking_date, :dateFormat)
     """, nativeQuery = true)
