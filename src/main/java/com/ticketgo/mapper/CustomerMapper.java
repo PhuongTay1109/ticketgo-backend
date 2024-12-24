@@ -1,6 +1,6 @@
 package com.ticketgo.mapper;
 
-import com.ticketgo.dto.request.CustomerRegistrationRequest;
+import com.ticketgo.request.CustomerRegistrationRequest;
 import com.ticketgo.model.Customer;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

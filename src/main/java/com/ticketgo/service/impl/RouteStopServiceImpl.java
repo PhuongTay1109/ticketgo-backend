@@ -1,7 +1,7 @@
 package com.ticketgo.service.impl;
 
 import com.ticketgo.dto.RouteStopDTO;
-import com.ticketgo.dto.response.RouteStopResponse;
+import com.ticketgo.response.RouteStopResponse;
 import com.ticketgo.mapper.RouteStopMapper;
 import com.ticketgo.model.RouteStop;
 import com.ticketgo.model.Schedule;

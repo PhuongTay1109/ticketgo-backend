@@ -1,7 +1,7 @@
 package com.ticketgo.exception;
 
-import com.ticketgo.dto.response.ApiResponse;
-import com.ticketgo.dto.response.ValidationErrorResponse;
+import com.ticketgo.response.ApiResponse;
+import com.ticketgo.response.ValidationErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;

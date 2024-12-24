@@ -1,6 +1,6 @@
 package com.ticketgo.mapper;
 
-import com.ticketgo.dto.response.RouteSearchResponse;
+import com.ticketgo.response.RouteSearchResponse;
 import com.ticketgo.model.Schedule;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

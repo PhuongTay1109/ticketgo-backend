@@ -1,7 +1,7 @@
 package com.ticketgo.controller;
 
 import com.ticketgo.dto.PolicyDTO;
-import com.ticketgo.dto.response.ApiResponse;
+import com.ticketgo.response.ApiResponse;
 import com.ticketgo.service.PolicyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

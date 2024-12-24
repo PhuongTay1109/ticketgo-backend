@@ -1,8 +1,8 @@
 package com.ticketgo.controller;
 
 import com.ticketgo.dto.SeatDTO;
-import com.ticketgo.dto.request.SeatReservationRequest;
-import com.ticketgo.dto.response.ApiResponse;
+import com.ticketgo.request.SeatReservationRequest;
+import com.ticketgo.response.ApiResponse;
 import com.ticketgo.service.SeatService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

@@ -1,4 +1,4 @@
-package com.ticketgo.dto.response;
+package com.ticketgo.response;
 
 import lombok.*;
 

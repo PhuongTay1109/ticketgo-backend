@@ -1,6 +1,6 @@
 package com.ticketgo.service;
 
-import com.ticketgo.dto.request.PaymentRequest;
+import com.ticketgo.request.PaymentRequest;
 import com.ticketgo.model.Payment;
 
 public interface PaymentService {

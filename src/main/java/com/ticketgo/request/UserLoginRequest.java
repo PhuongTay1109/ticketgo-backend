@@ -1,4 +1,4 @@
-package com.ticketgo.dto.request;
+package com.ticketgo.request;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;

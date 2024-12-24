@@ -2,9 +2,9 @@ package com.ticketgo.service;
 
 import com.ticketgo.dto.BookingInfoDTO;
 import com.ticketgo.dto.RevenueStatisticsDTO;
-import com.ticketgo.dto.request.PaymentRequest;
-import com.ticketgo.dto.response.ApiPaginationResponse;
-import com.ticketgo.dto.response.TripInformationResponse;
+import com.ticketgo.request.PaymentRequest;
+import com.ticketgo.response.ApiPaginationResponse;
+import com.ticketgo.response.TripInformationResponse;
 import com.ticketgo.model.Booking;
 
 import java.time.LocalDateTime;

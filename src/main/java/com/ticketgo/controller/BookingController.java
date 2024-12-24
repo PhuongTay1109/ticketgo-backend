@@ -1,11 +1,11 @@
 package com.ticketgo.controller;
 
 import com.ticketgo.dto.CustomerContactInfoDTO;
-import com.ticketgo.dto.request.PriceEstimationRequest;
-import com.ticketgo.dto.response.ApiPaginationResponse;
-import com.ticketgo.dto.response.ApiResponse;
-import com.ticketgo.dto.response.PriceEstimationResponse;
-import com.ticketgo.dto.response.TripInformationResponse;
+import com.ticketgo.request.PriceEstimationRequest;
+import com.ticketgo.response.ApiPaginationResponse;
+import com.ticketgo.response.ApiResponse;
+import com.ticketgo.response.PriceEstimationResponse;
+import com.ticketgo.response.TripInformationResponse;
 import com.ticketgo.service.BookingService;
 import com.ticketgo.service.SeatService;
 import com.ticketgo.service.TicketService;

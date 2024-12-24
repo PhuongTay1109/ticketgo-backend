@@ -1,7 +1,7 @@
 package com.ticketgo.controller;
 
 import com.ticketgo.dto.AmenityDTO;
-import com.ticketgo.dto.response.ApiResponse;
+import com.ticketgo.response.ApiResponse;
 import com.ticketgo.service.AmenityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

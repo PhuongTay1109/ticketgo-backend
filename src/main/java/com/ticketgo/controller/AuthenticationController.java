@@ -1,10 +1,9 @@
 package com.ticketgo.controller;
 
-import com.ticketgo.dto.request.*;
-import com.ticketgo.dto.response.ApiResponse;
-import com.ticketgo.dto.response.UserLoginResponse;
+import com.ticketgo.request.*;
+import com.ticketgo.response.ApiResponse;
+import com.ticketgo.response.UserLoginResponse;
 import com.ticketgo.service.AuthenticationService;
-
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

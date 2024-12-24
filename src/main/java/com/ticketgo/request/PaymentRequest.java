@@ -1,4 +1,4 @@
-package com.ticketgo.dto.request;
+package com.ticketgo.request;
 
 import lombok.Getter;
 import lombok.Setter;

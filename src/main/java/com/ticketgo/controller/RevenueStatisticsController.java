@@ -1,7 +1,7 @@
 package com.ticketgo.controller;
 
 import com.ticketgo.dto.RevenueStatisticsDTO;
-import com.ticketgo.dto.response.ApiResponse;
+import com.ticketgo.response.ApiResponse;
 import com.ticketgo.service.BookingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;

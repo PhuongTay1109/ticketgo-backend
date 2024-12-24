@@ -1,17 +1,14 @@
-package com.ticketgo.dto.response;
+package com.ticketgo.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class PopularRoutesResponse {
-    private String routeImage;
-    private String routeName;
-    private Long price;
+public class RefreshTokenResponse {
+    private String accessToken;
 }

@@ -1,6 +1,6 @@
 package com.ticketgo.controller;
 
-import com.ticketgo.dto.request.PaymentRequest;
+import com.ticketgo.request.PaymentRequest;
 import com.ticketgo.service.BookingService;
 import com.ticketgo.service.EmailService;
 import com.ticketgo.service.PaymentService;

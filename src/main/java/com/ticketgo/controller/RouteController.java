@@ -1,9 +1,9 @@
 package com.ticketgo.controller;
 
 
-import com.ticketgo.dto.request.RouteSearchRequest;
-import com.ticketgo.dto.response.ApiPaginationResponse;
-import com.ticketgo.dto.response.ApiResponse;
+import com.ticketgo.request.RouteSearchRequest;
+import com.ticketgo.response.ApiPaginationResponse;
+import com.ticketgo.response.ApiResponse;
 import com.ticketgo.service.RouteService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

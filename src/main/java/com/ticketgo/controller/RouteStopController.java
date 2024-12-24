@@ -1,8 +1,8 @@
 package com.ticketgo.controller;
 
 import com.ticketgo.dto.RouteStopDTO;
-import com.ticketgo.dto.response.ApiResponse;
-import com.ticketgo.dto.response.RouteStopResponse;
+import com.ticketgo.response.ApiResponse;
+import com.ticketgo.response.RouteStopResponse;
 import com.ticketgo.service.RouteStopService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

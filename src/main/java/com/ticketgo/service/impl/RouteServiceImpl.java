@@ -1,8 +1,8 @@
 package com.ticketgo.service.impl;
 
-import com.ticketgo.dto.response.PopularRoutesResponse;
-import com.ticketgo.dto.response.RouteSearchResponse;
-import com.ticketgo.dto.response.ApiPaginationResponse;
+import com.ticketgo.response.PopularRoutesResponse;
+import com.ticketgo.response.RouteSearchResponse;
+import com.ticketgo.response.ApiPaginationResponse;
 import com.ticketgo.mapper.ScheduleMapper;
 import com.ticketgo.model.Route;
 import com.ticketgo.model.Schedule;

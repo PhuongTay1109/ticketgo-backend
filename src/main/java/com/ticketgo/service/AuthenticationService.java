@@ -1,11 +1,11 @@
 package com.ticketgo.service;
 
-import com.ticketgo.dto.request.CustomerRegistrationRequest;
-import com.ticketgo.dto.request.ForgotPasswordRequest;
-import com.ticketgo.dto.request.ResetPasswordRequest;
-import com.ticketgo.dto.request.UserLoginRequest;
-import com.ticketgo.dto.response.RefreshTokenResponse;
-import com.ticketgo.dto.response.UserLoginResponse;
+import com.ticketgo.request.CustomerRegistrationRequest;
+import com.ticketgo.request.ForgotPasswordRequest;
+import com.ticketgo.request.ResetPasswordRequest;
+import com.ticketgo.request.UserLoginRequest;
+import com.ticketgo.response.RefreshTokenResponse;
+import com.ticketgo.response.UserLoginResponse;
 import com.ticketgo.model.Customer;
 
 public interface AuthenticationService {

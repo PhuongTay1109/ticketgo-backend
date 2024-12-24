@@ -1,9 +1,9 @@
 package com.ticketgo.service.impl;
 
 import com.ticketgo.dto.*;
-import com.ticketgo.dto.request.PaymentRequest;
-import com.ticketgo.dto.response.ApiPaginationResponse;
-import com.ticketgo.dto.response.TripInformationResponse;
+import com.ticketgo.request.PaymentRequest;
+import com.ticketgo.response.ApiPaginationResponse;
+import com.ticketgo.response.TripInformationResponse;
 import com.ticketgo.mapper.BookingHistoryMapper;
 import com.ticketgo.mapper.BookingInfoMapper;
 import com.ticketgo.model.*;

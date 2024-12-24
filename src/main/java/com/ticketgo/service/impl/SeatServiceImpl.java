@@ -1,9 +1,9 @@
 package com.ticketgo.service.impl;
 
 import com.ticketgo.dto.SeatDTO;
-import com.ticketgo.dto.request.SeatReservationRequest;
-import com.ticketgo.dto.request.PriceEstimationRequest;
-import com.ticketgo.dto.response.PriceEstimationResponse;
+import com.ticketgo.request.SeatReservationRequest;
+import com.ticketgo.request.PriceEstimationRequest;
+import com.ticketgo.response.PriceEstimationResponse;
 import com.ticketgo.exception.AppException;
 import com.ticketgo.model.*;
 import com.ticketgo.repository.SeatRepository;

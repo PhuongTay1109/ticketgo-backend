@@ -1,7 +1,7 @@
 package com.ticketgo.service;
 
-import com.ticketgo.dto.response.ApiPaginationResponse;
-import com.ticketgo.dto.response.PopularRoutesResponse;
+import com.ticketgo.response.ApiPaginationResponse;
+import com.ticketgo.response.PopularRoutesResponse;
 
 import java.time.LocalDate;
 import java.util.List;

@@ -1,7 +1,7 @@
 package com.ticketgo.service;
 
 import com.ticketgo.dto.RouteStopDTO;
-import com.ticketgo.dto.response.RouteStopResponse;
+import com.ticketgo.response.RouteStopResponse;
 import com.ticketgo.model.RouteStop;
 
 import java.util.List;

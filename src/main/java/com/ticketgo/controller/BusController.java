@@ -1,6 +1,6 @@
 package com.ticketgo.controller;
 
-import com.ticketgo.dto.response.ApiPaginationResponse;
+import com.ticketgo.response.ApiPaginationResponse;
 import com.ticketgo.service.BusService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;

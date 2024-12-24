@@ -1,8 +1,8 @@
 package com.ticketgo.controller;
 
 import com.ticketgo.dto.UserDTO;
-import com.ticketgo.dto.request.UserUpdateRequest;
-import com.ticketgo.dto.response.ApiResponse;
+import com.ticketgo.request.UserUpdateRequest;
+import com.ticketgo.response.ApiResponse;
 import com.ticketgo.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

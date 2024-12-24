@@ -1,9 +1,9 @@
 package com.ticketgo.service;
 
 import com.ticketgo.dto.SeatDTO;
-import com.ticketgo.dto.request.SeatReservationRequest;
-import com.ticketgo.dto.request.PriceEstimationRequest;
-import com.ticketgo.dto.response.PriceEstimationResponse;
+import com.ticketgo.request.SeatReservationRequest;
+import com.ticketgo.request.PriceEstimationRequest;
+import com.ticketgo.response.PriceEstimationResponse;
 
 import java.util.List;
 import java.util.Map;
