@@ -28,18 +28,13 @@ public class BookingHistoryMapper {
     }
 
     private static String getVietnameseStatus(String status) {
-        switch (status) {
-            case "CONFIRMED":
-                return "Đã xác nhận";
-            case "COMPLETED":
-                return "Hoàn thành";
-            case "CANCELLED":
-                return "Đã hủy";
-            case "REFUNDED":
-                return "Đã hoàn tiền";
-            default:
-                return status;
-        }
+        return switch (status) {
+            case "CONFIRMED" -> "Đã xác nhận";
+            case "COMPLETED" -> "Hoàn thành";
+            case "CANCELLED" -> "Đã hủy";
+            case "REFUNDED" -> "Đã hoàn tiền";
+            default -> status;
+        };
     }
 }
 
