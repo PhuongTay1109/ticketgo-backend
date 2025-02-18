@@ -18,4 +18,6 @@ public interface UserService extends UserDetailsService {
     CustomerContactInfoDTO getCustomerContactIno();
 
     void updateUser(UserUpdateRequest request);
+
+    void changeLockStatus(Long userId);
 }

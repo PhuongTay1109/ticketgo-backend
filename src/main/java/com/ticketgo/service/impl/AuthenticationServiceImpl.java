@@ -1,14 +1,14 @@
 package com.ticketgo.service.impl;
 
-import com.ticketgo.entity.*;
+import com.ticketgo.common.RedisKeys;
+import com.ticketgo.entity.BaseEntity;
+import com.ticketgo.entity.Customer;
+import com.ticketgo.entity.User;
 import com.ticketgo.enums.Provider;
 import com.ticketgo.enums.Role;
 import com.ticketgo.enums.TokenType;
 import com.ticketgo.exception.AppException;
-import com.ticketgo.request.CustomerRegistrationRequest;
-import com.ticketgo.request.ForgotPasswordRequest;
-import com.ticketgo.request.ResetPasswordRequest;
-import com.ticketgo.request.UserLoginRequest;
+import com.ticketgo.request.*;
 import com.ticketgo.response.FacebookUserInfoResponse;
 import com.ticketgo.response.GoogleUserInfoResponse;
 import com.ticketgo.response.RefreshTokenResponse;
@@ -17,6 +17,8 @@ import com.ticketgo.service.*;
 import com.ticketgo.util.JwtUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.redisson.api.RList;
+import org.redisson.api.RedissonClient;
 import org.springframework.http.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -34,6 +36,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final UserService userService;
     private final CustomerService customerService;
     private final EmailService emailService;
+    private final RedissonClient redisson;
 
     private final PasswordEncoder passwordEncoder;
     private final JwtUtils jwtUtil;
@@ -283,6 +286,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         customer.setPassword(passwordEncoder.encode(request.getPassword()));
         customerService.save(customer);
         tokenService.deleteToken(token, TokenType.RESET_PASSWORD);
+    }
+
+    @Override
+    public void logout(UserLogoutRequest request) {
+        String redisKey = RedisKeys.blackListTokenKey;
+        RList<String> blackList = redisson.getList(redisKey);
+        blackList.add(request.getAccessToken());
+        blackList.add(request.getRefreshToken());
     }
 
     private UserLoginResponse getUserLoginResponse(User user) {

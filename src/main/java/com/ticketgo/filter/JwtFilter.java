@@ -1,15 +1,16 @@
 package com.ticketgo.filter;
 
+import com.ticketgo.common.RedisKeys;
 import com.ticketgo.config.security.SecurityWhiteList;
-import com.ticketgo.util.JwtUtils;
 import com.ticketgo.service.UserService;
-
+import com.ticketgo.util.JwtUtils;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-
+import org.redisson.api.RList;
+import org.redisson.api.RedissonClient;
 import org.springframework.http.HttpStatus;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -32,6 +33,7 @@ public class JwtFilter extends OncePerRequestFilter {
     private final JwtUtils jwtUtil;
     private final UserService userService;
     private final HandlerExceptionResolver handlerExceptionResolver;
+    private final RedissonClient redisson;
 
     private static final Set<String> EXCLUDE_URL_PATTERNS = Arrays.stream(SecurityWhiteList.getWhiteList())
                                                                     .collect(Collectors.toSet());
@@ -65,6 +67,11 @@ public class JwtFilter extends OncePerRequestFilter {
             if (username != null && authentication == null) {
                 UserDetails user = userService.loadUserByUsername(username);
 
+                if(checkUser(user.getUsername())) {
+                    response.setStatus(HttpStatus.UNAUTHORIZED.value());
+                    return;
+                }
+
                 if (jwtUtil.isTokenValid(accessToken)) {
                     UsernamePasswordAuthenticationToken token =
                             new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
@@ -79,6 +86,12 @@ public class JwtFilter extends OncePerRequestFilter {
         } catch (Exception exception) {
             handlerExceptionResolver.resolveException(request, response, null, exception);
         }
+    }
+
+    private boolean checkUser(String username) {
+        String redisKey = RedisKeys.blackListUserKey;
+        RList<String> blackList = redisson.getList(redisKey);
+        return blackList.contains(username);
     }
 
     private String resolveToken(@NonNull HttpServletRequest request) {

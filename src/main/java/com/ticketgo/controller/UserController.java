@@ -25,4 +25,14 @@ public class UserController {
         userService.updateUser(request);
         return new ApiResponse(HttpStatus.OK, "Cập nhật thông tin cá nhân thành công", null);
     }
+
+    @PutMapping("/{userId}/change-lock-status")
+    public ApiResponse toggleLockStatus(@PathVariable Long userId) {
+        userService.changeLockStatus(userId);
+        return new ApiResponse(
+                HttpStatus.OK,
+                "Thay đổi trạng thái tài khoản thành công",
+                null
+        );
+    }
 }

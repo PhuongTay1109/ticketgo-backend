@@ -35,6 +35,16 @@ public class AuthenticationController {
         );
     }
 
+    @PostMapping("/logout")
+    public ApiResponse logout(@RequestBody @Valid UserLogoutRequest request) {
+        authenticationService.logout(request);
+        return new ApiResponse(
+                HttpStatus.OK,
+                "Đăng xuất thành công.",
+                null
+        );
+    }
+
     @PostMapping("/forgot-password")
     public ApiResponse forgotPassword(@RequestBody ForgotPasswordRequest request) {
         authenticationService.forgotPassword(request);

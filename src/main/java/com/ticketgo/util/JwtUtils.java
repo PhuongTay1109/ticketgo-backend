@@ -1,7 +1,13 @@
 package com.ticketgo.util;
 
+import com.ticketgo.common.RedisKeys;
 import com.ticketgo.entity.User;
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import lombok.RequiredArgsConstructor;
+import org.redisson.api.RList;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -17,7 +23,10 @@ import java.util.Date;
 import java.util.function.Function;
 
 @Component
+@RequiredArgsConstructor
 public class JwtUtils {
+
+    private final RedissonClient redissonClient;
 
     @Value("${jwt.private.key.path}")
     private String privateKeyPath;
@@ -100,7 +109,13 @@ public class JwtUtils {
         return extractExpiration(token).before(new Date());
     }
 
+    private boolean isTokenInBlackList(String token) {
+        String redisKey = RedisKeys.blackListTokenKey;
+        RList<String> blackList = redissonClient.getList(redisKey);
+        return blackList.contains(token);
+    }
+
     public boolean isTokenValid(String token) {
-        return !isTokenExpired(token);
+        return !isTokenExpired(token) && !isTokenInBlackList(token);
     }
 }
