@@ -46,3 +46,8 @@ cloudinary:
   api-key: 854269645733317
   api-secret: BDjF4Xe77SeLhGROvkvZkwAi928
 
+
+# Redis
+redis:
+  address: redis://127.0.0.1:6379
+  ping-connection-interval: 60000
