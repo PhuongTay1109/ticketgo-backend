@@ -1,7 +1,7 @@
 package com.ticketgo.service;
 
 import com.ticketgo.response.ApiPaginationResponse;
-import com.ticketgo.model.Bus;
+import com.ticketgo.entity.Bus;
 
 public interface BusService {
     Bus findBySchedule(long scheduleId);

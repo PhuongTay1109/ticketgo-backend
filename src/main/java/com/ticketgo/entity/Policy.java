@@ -1,4 +1,4 @@
-package com.ticketgo.model;
+package com.ticketgo.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -8,9 +8,9 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Table(name = "amenities")
+@Table(name = "policies")
 @Entity
-public class Amenity extends BaseEntity {
+public class Policy extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -20,8 +20,9 @@ public class Amenity extends BaseEntity {
     private BusCompany busCompany;
 
     @Column(nullable = false)
-    private String name;
+    private String policyType;
 
-    @Column(columnDefinition = "TEXT")
-    private String description;
+    @Column(columnDefinition = "TEXT", nullable = false)
+    private String policyContent;
 }
+

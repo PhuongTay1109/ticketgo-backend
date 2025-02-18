@@ -1,7 +1,7 @@
 package com.ticketgo.mapper;
 
 import com.ticketgo.dto.BusDTO;
-import com.ticketgo.model.Bus;
+import com.ticketgo.entity.Bus;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;

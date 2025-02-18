@@ -1,7 +1,7 @@
 package com.ticketgo.mapper;
 
 import com.ticketgo.dto.AmenityDTO;
-import com.ticketgo.model.Amenity;
+import com.ticketgo.entity.Amenity;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 

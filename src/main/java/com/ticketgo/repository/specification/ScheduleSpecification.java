@@ -1,7 +1,7 @@
 package com.ticketgo.repository.specification;
 
-import com.ticketgo.model.Route;
-import com.ticketgo.model.Schedule;
+import com.ticketgo.entity.Route;
+import com.ticketgo.entity.Schedule;
 import jakarta.persistence.criteria.Join;
 import org.springframework.data.jpa.domain.Specification;
 

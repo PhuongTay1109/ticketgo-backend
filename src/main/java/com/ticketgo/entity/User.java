@@ -1,5 +1,7 @@
-package com.ticketgo.model;
+package com.ticketgo.entity;
 
+import com.ticketgo.enums.Provider;
+import com.ticketgo.enums.Role;
 import jakarta.persistence.*;
 import lombok.*;
 

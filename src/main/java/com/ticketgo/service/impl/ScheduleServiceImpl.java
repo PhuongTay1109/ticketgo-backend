@@ -1,6 +1,6 @@
 package com.ticketgo.service.impl;
 
-import com.ticketgo.model.Schedule;
+import com.ticketgo.entity.Schedule;
 import com.ticketgo.repository.ScheduleRepository;
 import com.ticketgo.service.ScheduleService;
 import lombok.RequiredArgsConstructor;

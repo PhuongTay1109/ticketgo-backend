@@ -1,6 +1,6 @@
 package com.ticketgo.util;
 
-import com.ticketgo.model.User;
+import com.ticketgo.entity.User;
 import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;

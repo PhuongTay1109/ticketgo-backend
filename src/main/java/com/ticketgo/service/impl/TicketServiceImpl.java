@@ -1,7 +1,7 @@
 package com.ticketgo.service.impl;
 
-import com.ticketgo.model.Customer;
-import com.ticketgo.model.Ticket;
+import com.ticketgo.entity.Customer;
+import com.ticketgo.entity.Ticket;
 import com.ticketgo.repository.TicketRepository;
 import com.ticketgo.service.AuthenticationService;
 import com.ticketgo.service.TicketService;

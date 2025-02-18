@@ -1,4 +1,4 @@
-package com.ticketgo.model;
+package com.ticketgo.enums;
 
 public enum StopType {
     PICKUP,

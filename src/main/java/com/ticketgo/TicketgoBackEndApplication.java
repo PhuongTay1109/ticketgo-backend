@@ -1,6 +1,6 @@
 package com.ticketgo;
 
-import com.ticketgo.model.*;
+import com.ticketgo.entity.*;
 import com.ticketgo.repository.*;
 import com.ticketgo.service.EmailService;
 import com.ticketgo.service.ScheduleService;

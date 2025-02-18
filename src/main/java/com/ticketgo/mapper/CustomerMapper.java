@@ -1,7 +1,7 @@
 package com.ticketgo.mapper;
 
 import com.ticketgo.request.CustomerRegistrationRequest;
-import com.ticketgo.model.Customer;
+import com.ticketgo.entity.Customer;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
@@ -16,8 +16,8 @@ public interface CustomerMapper {
     @Mapping(target = "imageUrl", constant = "https://res.cloudinary.com/dj1h07rea/image/upload/v1728906155/sbcf-default-avatar_iovbch.webp")
     @Mapping(target = "isEnabled", constant = "false")
     @Mapping(target = "isLocked", constant = "false")
-    @Mapping(target = "role", expression = "java(com.ticketgo.model.Role.ROLE_CUSTOMER)")
-    @Mapping(target = "provider", expression = "java(com.ticketgo.model.Provider.LOCAL)")
+    @Mapping(target = "role", expression = "java(com.ticketgo.enums.Role.ROLE_CUSTOMER)")
+    @Mapping(target = "provider", expression = "java(com.ticketgo.enums.Provider.LOCAL)")
     Customer toCustomer(CustomerRegistrationRequest request, PasswordEncoder passwordEncoder);
 }
 

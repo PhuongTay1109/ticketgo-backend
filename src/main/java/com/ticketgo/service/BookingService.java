@@ -5,7 +5,7 @@ import com.ticketgo.dto.RevenueStatisticsDTO;
 import com.ticketgo.request.PaymentRequest;
 import com.ticketgo.response.ApiPaginationResponse;
 import com.ticketgo.response.TripInformationResponse;
-import com.ticketgo.model.Booking;
+import com.ticketgo.entity.Booking;
 
 import java.time.LocalDateTime;
 import java.util.List;

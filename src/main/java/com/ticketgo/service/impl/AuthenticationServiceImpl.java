@@ -1,5 +1,10 @@
 package com.ticketgo.service.impl;
 
+import com.ticketgo.entity.*;
+import com.ticketgo.enums.Provider;
+import com.ticketgo.enums.Role;
+import com.ticketgo.enums.TokenType;
+import com.ticketgo.exception.AppException;
 import com.ticketgo.request.CustomerRegistrationRequest;
 import com.ticketgo.request.ForgotPasswordRequest;
 import com.ticketgo.request.ResetPasswordRequest;
@@ -8,25 +13,16 @@ import com.ticketgo.response.FacebookUserInfoResponse;
 import com.ticketgo.response.GoogleUserInfoResponse;
 import com.ticketgo.response.RefreshTokenResponse;
 import com.ticketgo.response.UserLoginResponse;
-import com.ticketgo.exception.AppException;
-import com.ticketgo.mapper.CustomerMapper;
-import com.ticketgo.model.*;
 import com.ticketgo.service.*;
 import com.ticketgo.util.JwtUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-
 import org.springframework.web.client.RestTemplate;
 
 @Slf4j
@@ -54,16 +50,16 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             );
         }
 
-        Customer customer = CustomerMapper.INSTANCE.toCustomer(request, passwordEncoder);
+        Customer customer = BaseEntity.CustomerMapper.INSTANCE.toCustomer(request, passwordEncoder);
         customerService.save(customer);
 
-        Token token = tokenService.createToken(customer, TokenType.ACTIVATION);
-        emailService.sendActivationEmail(email, token.getValue())
+        String token = tokenService.createToken(customer, TokenType.ACTIVATION);
+        emailService.sendActivationEmail(email, token)
                 .thenAccept(success -> {
                     if (success) {
-                        log.info("Email sent successfully!");
+                        log.info("Email sent successfully to: {}", request.getEmail());
                     } else {
-                        log.error("Email sending failed.");
+                        log.error("Email sending failed to: {}", request.getEmail());
                     }
                 })
                 .exceptionally(ex -> {
@@ -75,29 +71,32 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     @Transactional
     public void activateAccount(String token) {
-        Token activationToken = tokenService.findByValue(token);
+        long userId;
+        try {
+            userId = tokenService.getUserId(token, TokenType.ACTIVATION);
+        } catch (Exception e) {
+            throw new AppException("Token không hợp lệ", HttpStatus.BAD_REQUEST);
+        }
 
-        if(tokenService.isExpired(activationToken)) {
-            Customer customer = (Customer) activationToken.getUser();
-            Token newToken = tokenService.createToken(customer, TokenType.ACTIVATION);
-            emailService.sendActivationEmail(customer.getEmail(), newToken.getValue());
-            tokenService.deleteToken(activationToken);
+        if (tokenService.isExpired(token, TokenType.ACTIVATION)) {
+            Customer customer = customerService.findById(userId);
+            String newToken = tokenService.createToken(customer, TokenType.ACTIVATION);
+            emailService.sendActivationEmail(customer.getEmail(), newToken);
+            tokenService.deleteToken(token, TokenType.ACTIVATION);
             throw new AppException(
                     "Đường link đã hết hạn. Một đường link kích hoạt tài khoản mới đã được gửi đến email của bạn.",
                     HttpStatus.GONE
             );
         }
 
-        Customer customer = (Customer) activationToken.getUser();
-
+        Customer customer = customerService.findById(userId);
         if (customer.isEnabled()) {
             throw new AppException("Tài khoản này đã được kích hoạt", HttpStatus.CONFLICT);
         }
 
         customer.setIsEnabled(true);
         customerService.save(customer);
-
-        tokenService.deleteToken(activationToken);
+        tokenService.deleteToken(token, TokenType.ACTIVATION);
     }
 
     @Override
@@ -258,26 +257,32 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                     HttpStatus.BAD_REQUEST);
         }
 
-        Token token = tokenService.createToken(customer, TokenType.RESET_PASSWORD);
-        emailService.sendResetPasswordEmail(email, token.getValue());
+        String token = tokenService.createToken(customer, TokenType.RESET_PASSWORD);
+        emailService.sendResetPasswordEmail(email, token);
     }
 
     @Override
     public void resetPassword(ResetPasswordRequest request) {
-        Token resetPasswordToken = tokenService.findByValue(request.getToken());
+        String token = request.getToken();
+        long userId;
+        try {
+            userId = tokenService.getUserId(token, TokenType.RESET_PASSWORD);
+        } catch (Exception e) {
+            throw new AppException("Token không hợp lệ", HttpStatus.BAD_REQUEST);
+        }
 
-        if(tokenService.isExpired(resetPasswordToken)) {
-            tokenService.deleteToken(resetPasswordToken);
+        if(tokenService.isExpired(token, TokenType.RESET_PASSWORD)) {
+            tokenService.deleteToken(token, TokenType.RESET_PASSWORD);
             throw new AppException(
                     "Đường link đã hết hạn!",
                     HttpStatus.GONE
             );
         }
 
-        Customer customer = (Customer) resetPasswordToken.getUser();
+        Customer customer = customerService.findById(userId);
         customer.setPassword(passwordEncoder.encode(request.getPassword()));
         customerService.save(customer);
-        tokenService.deleteToken(resetPasswordToken);
+        tokenService.deleteToken(token, TokenType.RESET_PASSWORD);
     }
 
     private UserLoginResponse getUserLoginResponse(User user) {

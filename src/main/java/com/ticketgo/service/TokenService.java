@@ -1,15 +1,14 @@
 package com.ticketgo.service;
 
-import com.ticketgo.model.Token;
-import com.ticketgo.model.TokenType;
-import com.ticketgo.model.User;
+import com.ticketgo.entity.User;
+import com.ticketgo.enums.TokenType;
 
 public interface TokenService {
-    Token createToken(User user, TokenType tokenType);
+    String createToken(User user, TokenType tokenType);
 
-    Token findByValue(String token);
+    void deleteToken(String token, TokenType tokenType);
 
-    void deleteToken(Token token);
+    boolean isExpired(String token, TokenType tokenType);
 
-    boolean isExpired(Token token);
+    long getUserId(String token, TokenType tokenType);
 }

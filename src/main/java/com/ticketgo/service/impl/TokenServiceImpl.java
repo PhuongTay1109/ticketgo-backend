@@ -1,52 +1,54 @@
 package com.ticketgo.service.impl;
 
-import com.ticketgo.exception.AppException;
-import com.ticketgo.model.TokenType;
-import com.ticketgo.model.User;
-import com.ticketgo.repository.TokenRepository;
+import com.ticketgo.common.RedisKeys;
+import com.ticketgo.entity.User;
+import com.ticketgo.enums.TokenType;
 import com.ticketgo.service.TokenService;
-import com.ticketgo.model.Token;
-
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+import org.redisson.api.RMapCache;
+import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
 public class TokenServiceImpl implements TokenService {
 
-    private final TokenRepository tokenRepo;
+    private final RedissonClient redisson;
+    private static final long TOKEN_EXPIRATION_TIME = 1;
 
     @Override
-    public Token createToken(User user, TokenType tokenType) {
-        Token token = Token.builder()
-                .user(user)
-                .value(UUID.randomUUID().toString())
-                .tokenType(tokenType)
-                .build();
+    public String createToken(User user, TokenType tokenType) {
+        String redisKey = RedisKeys.tokenKey(tokenType.name());
+        String token = UUID.randomUUID().toString();
 
-        return tokenRepo.save(token);
+        RMapCache<String, String> map = redisson.getMapCache(redisKey);
+        map.put(token, user.getUserId().toString(), TOKEN_EXPIRATION_TIME, TimeUnit.DAYS);
+
+        return token;
     }
 
     @Override
-    public Token findByValue(String token) {
-        return tokenRepo.findByValue(token)
-                .orElseThrow(() -> new AppException(
-                        "Token không hợp lệ",
-                        HttpStatus.BAD_REQUEST
-                ));
+    public void deleteToken(String token, TokenType tokenType) {
+        String redisKey = RedisKeys.tokenKey(tokenType.name());
+        RMapCache<String, String> map = redisson.getMapCache(redisKey);
+        map.remove(token);
     }
 
     @Override
-    public void deleteToken(Token token) {
-        tokenRepo.delete(token);
+    public boolean isExpired(String token, TokenType tokenType) {
+        String redisKey = RedisKeys.tokenKey(tokenType.name());
+        return redisson.getMapCache(redisKey).get(token) == null;
     }
 
     @Override
-    public boolean isExpired(Token token) {
-        return token.getExpiresAt().isBefore(LocalDateTime.now());
+    public long getUserId(String token, TokenType tokenType) {
+
+        String redisKey = RedisKeys.tokenKey(tokenType.name());
+        RMapCache<String, String> map = redisson.getMapCache(redisKey);
+
+        return Long.parseLong(map.get(token));
     }
 }

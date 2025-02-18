@@ -1,6 +1,6 @@
 package com.ticketgo.repository;
 
-import com.ticketgo.model.Bus;
+import com.ticketgo.entity.Bus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;

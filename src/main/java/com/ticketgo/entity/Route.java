@@ -1,12 +1,10 @@
-package com.ticketgo.model;
+package com.ticketgo.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
-import java.time.LocalDateTime;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Getter
 @Setter

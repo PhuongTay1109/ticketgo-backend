@@ -1,12 +1,15 @@
 package com.ticketgo.service.impl;
 
 import com.ticketgo.dto.*;
+import com.ticketgo.enums.BookingStatus;
+import com.ticketgo.enums.PaymentType;
+import com.ticketgo.enums.TicketStatus;
 import com.ticketgo.request.PaymentRequest;
 import com.ticketgo.response.ApiPaginationResponse;
 import com.ticketgo.response.TripInformationResponse;
 import com.ticketgo.mapper.BookingHistoryMapper;
 import com.ticketgo.mapper.BookingInfoMapper;
-import com.ticketgo.model.*;
+import com.ticketgo.entity.*;
 import com.ticketgo.repository.BookingRepository;
 import com.ticketgo.repository.PaymentRepository;
 import com.ticketgo.service.*;

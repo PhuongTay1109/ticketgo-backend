@@ -2,8 +2,8 @@ package com.ticketgo.service.impl;
 
 import com.ticketgo.config.vnpay.VNPayConfig;
 import com.ticketgo.request.PaymentRequest;
-import com.ticketgo.model.Customer;
-import com.ticketgo.model.Payment;
+import com.ticketgo.entity.Customer;
+import com.ticketgo.entity.Payment;
 import com.ticketgo.repository.PaymentRepository;
 import com.ticketgo.service.AuthenticationService;
 import com.ticketgo.service.BookingService;

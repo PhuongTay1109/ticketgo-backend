@@ -4,8 +4,8 @@ import com.ticketgo.response.PopularRoutesResponse;
 import com.ticketgo.response.RouteSearchResponse;
 import com.ticketgo.response.ApiPaginationResponse;
 import com.ticketgo.mapper.ScheduleMapper;
-import com.ticketgo.model.Route;
-import com.ticketgo.model.Schedule;
+import com.ticketgo.entity.Route;
+import com.ticketgo.entity.Schedule;
 
 import com.ticketgo.repository.RouteRepository;
 import com.ticketgo.repository.specification.ScheduleSpecification;

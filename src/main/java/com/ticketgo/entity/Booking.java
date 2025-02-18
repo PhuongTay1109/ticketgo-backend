@@ -1,5 +1,6 @@
-package com.ticketgo.model;
+package com.ticketgo.entity;
 
+import com.ticketgo.enums.BookingStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

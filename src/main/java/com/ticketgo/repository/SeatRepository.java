@@ -1,6 +1,6 @@
 package com.ticketgo.repository;
 
-import com.ticketgo.model.Seat;
+import com.ticketgo.entity.Seat;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -14,8 +14,8 @@ public interface SeatRepository extends JpaRepository<Seat, Long> {
 //               s.seatNumber,
 //               CASE WHEN
 //                    t.status IN (
-//                        com.ticketgo.model.TicketStatus.BOOKED,
-//                        com.ticketgo.model.TicketStatus.RESERVED
+//                        com.ticketgo.enums.TicketStatus.BOOKED,
+//                        com.ticketgo.enums.TicketStatus.RESERVED
 //                    )
 //                    THEN true
 //                    ELSE false END,
@@ -31,7 +31,7 @@ public interface SeatRepository extends JpaRepository<Seat, Long> {
            SELECT COUNT(t)
            FROM Ticket t
            WHERE t.schedule.scheduleId = :scheduleId
-           AND t.status = com.ticketgo.model.TicketStatus.AVAILABLE
+           AND t.status = com.ticketgo.enums.TicketStatus.AVAILABLE
            """)
     int countAvailableSeatsByScheduleId(@Param("scheduleId") Long scheduleId);
 }

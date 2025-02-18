@@ -1,7 +1,7 @@
 package com.ticketgo.service.impl;
 
 import com.ticketgo.dto.HomePageInfoDTO;
-import com.ticketgo.model.BusCompany;
+import com.ticketgo.entity.BusCompany;
 import com.ticketgo.service.HomePageService;
 import com.ticketgo.service.UserService;
 import lombok.RequiredArgsConstructor;

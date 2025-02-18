@@ -1,4 +1,4 @@
-package com.ticketgo.model;
+package com.ticketgo.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;

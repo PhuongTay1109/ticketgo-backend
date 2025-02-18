@@ -2,7 +2,7 @@ package com.ticketgo.service.impl;
 
 import com.ticketgo.response.ApiPaginationResponse;
 import com.ticketgo.mapper.BusMapper;
-import com.ticketgo.model.Bus;
+import com.ticketgo.entity.Bus;
 import com.ticketgo.repository.BusRepository;
 import com.ticketgo.service.BusService;
 import lombok.RequiredArgsConstructor;

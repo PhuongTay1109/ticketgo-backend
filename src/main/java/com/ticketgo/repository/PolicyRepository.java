@@ -1,6 +1,6 @@
 package com.ticketgo.repository;
 
-import com.ticketgo.model.Policy;
+import com.ticketgo.entity.Policy;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

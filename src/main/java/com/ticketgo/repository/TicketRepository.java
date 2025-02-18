@@ -1,8 +1,7 @@
 package com.ticketgo.repository;
 
-import com.ticketgo.model.Ticket;
-import com.ticketgo.model.User;
-import java.util.Optional;
+import com.ticketgo.entity.Ticket;
+import com.ticketgo.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -11,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface TicketRepository extends JpaRepository<Ticket, String> {
@@ -39,7 +39,7 @@ public interface TicketRepository extends JpaRepository<Ticket, String> {
     @Query("""
         SELECT t FROM Ticket t
         WHERE t.customer.userId = :customerId
-        AND t.status = com.ticketgo.model.TicketStatus.RESERVED
+        AND t.status = com.ticketgo.enums.TicketStatus.RESERVED
         """)
     List<Ticket> findReservedTicketsByCustomerId(long customerId);
 
@@ -51,7 +51,7 @@ public interface TicketRepository extends JpaRepository<Ticket, String> {
         SELECT CASE WHEN COUNT(t) > 0 THEN true ELSE false END
         FROM Ticket t
         WHERE t.customer = :customer
-        AND t.status = com.ticketgo.model.TicketStatus.RESERVED
+        AND t.status = com.ticketgo.enums.TicketStatus.RESERVED
     """)
     boolean existsReservedSeatsByCustomer(@Param("customer") User customer);
 
@@ -73,7 +73,7 @@ public interface TicketRepository extends JpaRepository<Ticket, String> {
             THEN false ELSE true END 
             FROM Ticket t WHERE t.seat.seatId = :seatId 
             AND t.schedule.scheduleId = :scheduleId 
-            AND t.status = com.ticketgo.model.TicketStatus.AVAILABLE
+            AND t.status = com.ticketgo.enums.TicketStatus.AVAILABLE
             """)
     boolean isSeatAvailable(@Param("seatId") long seatId, @Param("scheduleId") long scheduleId);
 

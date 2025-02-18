@@ -16,7 +16,6 @@ import org.springframework.context.annotation.Configuration;
 @Setter
 public class RedisConfig {
     private String address;
-    private String password;
     private int pingConnectionInterval;
 
     @Bean(destroyMethod = "shutdown")
@@ -25,8 +24,7 @@ public class RedisConfig {
 
         config
                 .useSingleServer()
-                .setAddress(address)
-                .setPassword(password);
+                .setAddress(address);
 
         config.setCodec(new StringCodec());
 

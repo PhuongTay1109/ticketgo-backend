@@ -1,7 +1,7 @@
 package com.ticketgo.mapper;
 
 import com.ticketgo.dto.RouteStopDTO;
-import com.ticketgo.model.RouteStop;
+import com.ticketgo.entity.RouteStop;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 

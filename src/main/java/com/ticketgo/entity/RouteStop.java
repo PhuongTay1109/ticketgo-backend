@@ -1,6 +1,7 @@
-package com.ticketgo.model;
+package com.ticketgo.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.ticketgo.enums.StopType;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;

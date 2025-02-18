@@ -2,7 +2,7 @@ package com.ticketgo.service.impl;
 
 import com.ticketgo.dto.PolicyDTO;
 import com.ticketgo.mapper.PolicyMapper;
-import com.ticketgo.model.Policy;
+import com.ticketgo.entity.Policy;
 import com.ticketgo.repository.PolicyRepository;
 import com.ticketgo.service.PolicyService;
 import lombok.RequiredArgsConstructor;

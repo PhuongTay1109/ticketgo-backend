@@ -1,6 +1,6 @@
 package com.ticketgo.service;
 
-import com.ticketgo.model.Ticket;
+import com.ticketgo.entity.Ticket;
 
 import java.util.List;
 

@@ -1,7 +1,7 @@
 package com.ticketgo.mapper;
 
 import com.ticketgo.dto.PolicyDTO;
-import com.ticketgo.model.Policy;
+import com.ticketgo.entity.Policy;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;

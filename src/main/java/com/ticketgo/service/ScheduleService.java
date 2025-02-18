@@ -1,6 +1,6 @@
 package com.ticketgo.service;
 
-import com.ticketgo.model.Schedule;
+import com.ticketgo.entity.Schedule;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
