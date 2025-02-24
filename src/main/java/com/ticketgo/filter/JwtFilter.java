@@ -1,6 +1,6 @@
 package com.ticketgo.filter;
 
-import com.ticketgo.common.RedisKeys;
+import com.ticketgo.constant.RedisKeys;
 import com.ticketgo.config.security.SecurityWhiteList;
 import com.ticketgo.service.UserService;
 import com.ticketgo.util.JwtUtils;

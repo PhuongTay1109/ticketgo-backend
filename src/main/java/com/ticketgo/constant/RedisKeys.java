@@ -1,4 +1,4 @@
-package com.ticketgo.common;
+package com.ticketgo.constant;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;

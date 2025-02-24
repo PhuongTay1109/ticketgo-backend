@@ -1,6 +1,6 @@
 package com.ticketgo.controller;
 
-import com.ticketgo.dto.RevenueStatisticsDTO;
+import com.ticketgo.constant.ApiVersion;
 import com.ticketgo.response.ApiResponse;
 import com.ticketgo.service.BookingService;
 import lombok.RequiredArgsConstructor;
@@ -13,10 +13,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/revenues")
+@RequestMapping(ApiVersion.V1 + "/revenues")
 @RequiredArgsConstructor
 public class RevenueStatisticsController {
 
@@ -30,21 +29,28 @@ public class RevenueStatisticsController {
         LocalDateTime startDateTime = startDate.atStartOfDay();
         LocalDateTime endDateTime = endDate.atTime(23, 59, 59);
 
-        List<RevenueStatisticsDTO> resp = bookingService.getDailyRevenueStatistics(startDateTime, endDateTime);
-        return new ApiResponse(HttpStatus.OK, "Lấy thống kê theo ngày thành công", resp);
+        return new ApiResponse(
+                HttpStatus.OK,
+                "Lấy thống kê theo ngày thành công",
+                bookingService.getDailyRevenueStatistics(startDateTime, endDateTime)
+        );
     }
 
     @GetMapping("/statistics-monthly")
     public ApiResponse getRevenueStatisticsByMonth(@RequestParam int year) {
-        List<RevenueStatisticsDTO> resp = bookingService.getMonthlyRevenueStatistics(year);
-        return new ApiResponse(HttpStatus.OK, "Lấy thống kê theo tháng thành công", resp);
+        return new ApiResponse(
+                HttpStatus.OK,
+                "Lấy thống kê theo tháng thành công",
+                bookingService.getMonthlyRevenueStatistics(year)
+        );
     }
 
     @GetMapping("/statistics-yearly")
-    public ApiResponse getRevenueStatisticsByYear(
-            @RequestParam int year) {
-        List<RevenueStatisticsDTO> resp = bookingService.getRevenueStatisticsByYear(year);
-        return new ApiResponse(HttpStatus.OK, "Lấy thống kê theo năm thành công", resp);
+    public ApiResponse getRevenueStatisticsByYear(@RequestParam int year) {
+        return new ApiResponse(
+                HttpStatus.OK,
+                "Lấy thống kê theo năm thành công",
+                bookingService.getRevenueStatisticsByYear(year)
+        );
     }
-
 }

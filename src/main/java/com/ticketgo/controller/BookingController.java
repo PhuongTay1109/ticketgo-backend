@@ -1,11 +1,9 @@
 package com.ticketgo.controller;
 
-import com.ticketgo.dto.CustomerContactInfoDTO;
+import com.ticketgo.constant.ApiVersion;
 import com.ticketgo.request.PriceEstimationRequest;
 import com.ticketgo.response.ApiPaginationResponse;
 import com.ticketgo.response.ApiResponse;
-import com.ticketgo.response.PriceEstimationResponse;
-import com.ticketgo.response.TripInformationResponse;
 import com.ticketgo.service.BookingService;
 import com.ticketgo.service.SeatService;
 import com.ticketgo.service.TicketService;
@@ -16,7 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/bookings")
+@RequestMapping(ApiVersion.V1 + "/bookings")
 @RequiredArgsConstructor
 public class BookingController {
     private final UserService userService;
@@ -26,14 +24,20 @@ public class BookingController {
 
     @GetMapping("/contact-info")
     public ApiResponse getCustomerContactInfo() {
-        CustomerContactInfoDTO resp = userService.getCustomerContactIno();
-        return new ApiResponse(HttpStatus.OK, "Lấy thông tin liên hệ thành công", resp);
+        return new ApiResponse(
+                HttpStatus.OK,
+                "Lấy thông tin liên hệ thành công",
+                userService.getCustomerContactIno()
+        );
     }
 
     @PostMapping("/estimated-prices")
     public ApiResponse getSeatPrice(@RequestBody PriceEstimationRequest request) {
-        PriceEstimationResponse resp = seatService.getSeatPrice(request);
-        return new ApiResponse(HttpStatus.OK, "Lấy thông tin tạm tính thành công", resp);
+        return new ApiResponse(
+                HttpStatus.OK,
+                "Lấy thông tin tạm tính thành công",
+                seatService.getSeatPrice(request)
+        );
     }
 
     @GetMapping("/trip-info")
@@ -41,8 +45,11 @@ public class BookingController {
             @RequestParam Long pickupStopId,
             @RequestParam Long dropOffStopId,
             @RequestParam Long scheduleId) {
-        TripInformationResponse resp = bookingService.getTripInformation(pickupStopId, dropOffStopId, scheduleId);
-        return new ApiResponse(HttpStatus.OK, "Lấy thông tin chuyến đi thành công", resp);
+        return new ApiResponse(
+                HttpStatus.OK,
+                "Lấy thông tin chuyến đi thành công",
+                bookingService.getTripInformation(pickupStopId, dropOffStopId, scheduleId)
+        );
     }
 
     @GetMapping("/history")

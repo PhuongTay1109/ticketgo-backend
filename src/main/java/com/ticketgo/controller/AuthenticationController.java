@@ -1,5 +1,6 @@
 package com.ticketgo.controller;
 
+import com.ticketgo.constant.ApiVersion;
 import com.ticketgo.request.*;
 import com.ticketgo.response.ApiResponse;
 import com.ticketgo.response.UserLoginResponse;
@@ -11,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/auth")
+@RequestMapping(ApiVersion.V1 + "/auth")
 public class AuthenticationController {
     private final AuthenticationService authenticationService;
 
@@ -27,11 +28,10 @@ public class AuthenticationController {
 
     @PostMapping("/login")
     public ApiResponse login(@RequestBody @Valid UserLoginRequest request) {
-        UserLoginResponse resp = authenticationService.login(request);
         return new ApiResponse(
                 HttpStatus.OK,
                 "Đăng nhập thành công.",
-                resp
+                authenticationService.login(request)
         );
     }
 
@@ -67,11 +67,10 @@ public class AuthenticationController {
 
     @PostMapping("/google-login")
     public ApiResponse googleLogin(@RequestBody @Valid OAuthTokenRequest request) {
-        UserLoginResponse resp = authenticationService.googleLogin(request.getToken());
         return new ApiResponse(
                 HttpStatus.OK,
                 "Đăng nhập thành công.",
-                resp
+                authenticationService.googleLogin(request.getToken())
         );
     }
 

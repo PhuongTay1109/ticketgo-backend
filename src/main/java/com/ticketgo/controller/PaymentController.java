@@ -1,5 +1,6 @@
 package com.ticketgo.controller;
 
+import com.ticketgo.constant.ApiVersion;
 import com.ticketgo.request.PaymentRequest;
 import com.ticketgo.service.BookingService;
 import com.ticketgo.service.EmailService;
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-@RequestMapping("/api/v1/payment")
+@RequestMapping(ApiVersion.V1 + "/payment")
 public class PaymentController {
     private final PaymentService paymentService;
     private final BookingService bookingService;

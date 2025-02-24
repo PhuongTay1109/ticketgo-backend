@@ -1,6 +1,6 @@
 package com.ticketgo.util;
 
-import com.ticketgo.common.RedisKeys;
+import com.ticketgo.constant.RedisKeys;
 import com.ticketgo.entity.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

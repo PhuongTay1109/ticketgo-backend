@@ -1,6 +1,6 @@
 package com.ticketgo.controller;
 
-import com.ticketgo.dto.HomePageInfoDTO;
+import com.ticketgo.constant.ApiVersion;
 import com.ticketgo.response.ApiResponse;
 import com.ticketgo.service.HomePageService;
 import lombok.RequiredArgsConstructor;
@@ -11,13 +11,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api/v1/homepage")
+@RequestMapping(ApiVersion.V1 + "/homepage")
 public class HomePageController {
     private final HomePageService homePageService;
 
     @GetMapping("")
     public ApiResponse getHomePageInfo() {
-        HomePageInfoDTO resp = homePageService.getHomePageInfo();
-        return new ApiResponse(HttpStatus.OK, "Lấy thông tin trang chủ thành công", resp);
+        return new ApiResponse(
+                HttpStatus.OK,
+                "Lấy thông tin trang chủ thành công",
+                homePageService.getHomePageInfo()
+        );
     }
 }

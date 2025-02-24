@@ -1,6 +1,7 @@
 package com.ticketgo.controller;
 
 
+import com.ticketgo.constant.ApiVersion;
 import com.ticketgo.request.RouteSearchRequest;
 import com.ticketgo.response.ApiPaginationResponse;
 import com.ticketgo.response.ApiResponse;
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/routes")
+@RequestMapping(ApiVersion.V1 + "/routes")
 @Slf4j
 public class RouteController {
     private final RouteService routeService;
@@ -34,9 +35,10 @@ public class RouteController {
     @GetMapping("/popular")
     public ApiResponse searchRoutes() {
         return new ApiResponse(
-                        HttpStatus.OK,
-                        "Lấy danh sách các tuyến đường phổ biến",
-                        routeService.getPopularRoutes());
+                HttpStatus.OK,
+                "Lấy danh sách các tuyến đường phổ biến",
+                routeService.getPopularRoutes()
+        );
     }
 }
 

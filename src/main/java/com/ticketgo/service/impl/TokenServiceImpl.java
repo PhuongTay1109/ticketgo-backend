@@ -1,6 +1,6 @@
 package com.ticketgo.service.impl;
 
-import com.ticketgo.common.RedisKeys;
+import com.ticketgo.constant.RedisKeys;
 import com.ticketgo.entity.User;
 import com.ticketgo.enums.TokenType;
 import com.ticketgo.service.TokenService;

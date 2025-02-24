@@ -1,6 +1,9 @@
 package com.ticketgo.entity;
 
+import com.ticketgo.enums.PromotionStatus;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -22,7 +25,9 @@ public class Promotion extends BaseEntity {
     private String description;
 
     @Column(nullable = false)
-    private Double discountPercentage;
+    @Min(0)
+    @Max(100)
+    private Integer discountPercentage;
 
     @Column(unique = true)
     private String discountCode;
@@ -32,5 +37,8 @@ public class Promotion extends BaseEntity {
 
     @Column(nullable = false)
     private LocalDateTime endDate;
+
+    @Enumerated(EnumType.STRING)
+    private PromotionStatus status;
 }
 
