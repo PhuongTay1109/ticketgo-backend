@@ -1,8 +1,8 @@
 package com.ticketgo.repository;
 
-import com.ticketgo.dto.BookingHistoryDTOTuple;
-import com.ticketgo.dto.BookingInfoDTOTuple;
-import com.ticketgo.dto.RevenueStatisticsDTOTuple;
+import com.ticketgo.projector.BookingHistoryDTOTuple;
+import com.ticketgo.projector.BookingInfoDTOTuple;
+import com.ticketgo.projector.RevenueStatisticsDTOTuple;
 import com.ticketgo.entity.Booking;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

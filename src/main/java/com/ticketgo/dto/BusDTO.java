@@ -1,8 +1,15 @@
 package com.ticketgo.dto;
 
-import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.*;
 
-@Data
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+@ToString
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class BusDTO {
     private Long busId;
     private String licensePlate;

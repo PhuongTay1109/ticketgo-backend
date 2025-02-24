@@ -1,5 +1,6 @@
 package com.ticketgo.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
 @Getter
@@ -7,6 +8,8 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class BookingHistoryDTO {
     private String ticketCode;
     private String contactName;

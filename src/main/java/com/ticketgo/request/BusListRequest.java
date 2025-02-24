@@ -5,7 +5,5 @@ import lombok.ToString;
 
 @Getter
 @ToString
-public class UserLogoutRequest {
-    private String accessToken;
-    private String refreshToken;
+public class BusListRequest extends BasePageRequest {
 }

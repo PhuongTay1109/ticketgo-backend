@@ -9,6 +9,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RList;
 import org.redisson.api.RedissonClient;
 import org.springframework.http.HttpStatus;
@@ -29,6 +30,7 @@ import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class JwtFilter extends OncePerRequestFilter {
     private final JwtUtils jwtUtil;
     private final UserService userService;
@@ -43,8 +45,14 @@ public class JwtFilter extends OncePerRequestFilter {
         String path = request.getRequestURI();
         AntPathMatcher pathMatcher = new AntPathMatcher();
 
-        return EXCLUDE_URL_PATTERNS.stream()
+        boolean shouldNotFilter=  EXCLUDE_URL_PATTERNS.stream()
                 .anyMatch(pattern -> pathMatcher.match(pattern, path));
+
+        if (shouldNotFilter) {
+            log.info("Path excluded from filtering: {}", path);
+        }
+
+        return shouldNotFilter;
     }
 
     @Override

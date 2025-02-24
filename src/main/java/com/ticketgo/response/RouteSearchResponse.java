@@ -1,16 +1,17 @@
 package com.ticketgo.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class RouteSearchResponse {
     private long scheduleId;
     private String routeName;

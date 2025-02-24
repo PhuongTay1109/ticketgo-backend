@@ -2,9 +2,11 @@ package com.ticketgo.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
+import lombok.ToString;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+@ToString
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ApiPaginationResponse extends ResponseEntity<ApiPaginationResponse.Payload> {
 

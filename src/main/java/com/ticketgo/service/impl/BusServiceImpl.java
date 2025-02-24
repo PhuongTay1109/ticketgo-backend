@@ -1,5 +1,6 @@
 package com.ticketgo.service.impl;
 
+import com.ticketgo.request.BusListRequest;
 import com.ticketgo.response.ApiPaginationResponse;
 import com.ticketgo.mapper.BusMapper;
 import com.ticketgo.entity.Bus;
@@ -26,7 +27,10 @@ public class BusServiceImpl implements BusService {
     }
 
     @Override
-    public ApiPaginationResponse getAllBuses(int pageNumber, int pageSize) {
+    public ApiPaginationResponse getAllBuses(BusListRequest req) {
+        int pageNumber = req.getPageNumber();
+        int pageSize = req.getPageSize();
+
         Page<Bus> busPage = busRepo.findAll(PageRequest.of(pageNumber - 1, pageSize));
 
         ApiPaginationResponse.Pagination pagination = new ApiPaginationResponse.Pagination(

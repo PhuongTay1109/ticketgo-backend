@@ -1,14 +1,12 @@
 package com.ticketgo.mapper;
 
 import com.ticketgo.dto.BookingInfoDTO;
-import com.ticketgo.dto.BookingInfoDTOTuple;
+import com.ticketgo.projector.BookingInfoDTOTuple;
 
-import java.time.format.DateTimeFormatter;
+import static com.ticketgo.util.DateTimeUtils.DATE_FORMATTER;
+import static com.ticketgo.util.DateTimeUtils.DATE_TIME_FORMATTER;
 
 public class BookingInfoMapper {
-
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm dd/MM/yyyy");
 
     public static BookingInfoDTO toBookingInfoDTO(BookingInfoDTOTuple tuple) {
         return BookingInfoDTO.builder()

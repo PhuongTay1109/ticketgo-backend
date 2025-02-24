@@ -1,5 +1,6 @@
 package com.ticketgo.response;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
 import java.util.List;
@@ -9,6 +10,8 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@ToString
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class PriceEstimationResponse {
     private double totalPrice;
     private double unitPrice;

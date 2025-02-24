@@ -1,6 +1,7 @@
 package com.ticketgo.controller;
 
 import com.ticketgo.constant.ApiVersion;
+import com.ticketgo.request.BusListRequest;
 import com.ticketgo.response.ApiPaginationResponse;
 import com.ticketgo.service.BusService;
 import lombok.RequiredArgsConstructor;
@@ -17,8 +18,8 @@ public class BusController {
     private final BusService busService;
 
     @GetMapping()
-    public ApiPaginationResponse getAllBuses(@RequestParam int pageNumber,
-                                             @RequestParam int pageSize) {
-        return busService.getAllBuses(pageNumber, pageSize);
+    public ApiPaginationResponse getAllBuses(@RequestParam BusListRequest request) {
+        return busService.getAllBuses(request);
     }
 }
+

@@ -1,5 +1,6 @@
 package com.ticketgo.response;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -9,6 +10,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@ToString
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class TripInformationResponse {
     private LocalDateTime departureTime;
     private String licensePlate;

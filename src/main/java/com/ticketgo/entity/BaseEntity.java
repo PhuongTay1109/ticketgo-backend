@@ -29,12 +29,15 @@ public abstract class BaseEntity {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
+    private boolean isDeleted;
+
     protected BaseEntity() {}
 
     @PrePersist
     public void prePersist() {
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
+        this.isDeleted = false;
     }
 
     @PreUpdate

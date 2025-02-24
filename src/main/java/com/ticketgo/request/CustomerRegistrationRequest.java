@@ -3,10 +3,12 @@ package com.ticketgo.request;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
+import lombok.ToString;
 
 import java.time.LocalDate;
 
 @Getter
+@ToString
 public class CustomerRegistrationRequest {
     @NotBlank(message =  "Email không được để trống")
     private String email;

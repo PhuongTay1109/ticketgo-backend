@@ -1,17 +1,22 @@
 package com.ticketgo.service.impl;
 
-import com.ticketgo.dto.*;
+import com.ticketgo.dto.BookingHistoryDTO;
+import com.ticketgo.dto.BookingInfoDTO;
+import com.ticketgo.dto.RevenueStatisticsDTO;
+import com.ticketgo.entity.*;
 import com.ticketgo.enums.BookingStatus;
 import com.ticketgo.enums.PaymentType;
 import com.ticketgo.enums.TicketStatus;
+import com.ticketgo.mapper.BookingHistoryMapper;
+import com.ticketgo.mapper.BookingInfoMapper;
+import com.ticketgo.projector.BookingHistoryDTOTuple;
+import com.ticketgo.projector.BookingInfoDTOTuple;
+import com.ticketgo.projector.RevenueStatisticsDTOTuple;
+import com.ticketgo.repository.BookingRepository;
+import com.ticketgo.repository.PaymentRepository;
 import com.ticketgo.request.PaymentRequest;
 import com.ticketgo.response.ApiPaginationResponse;
 import com.ticketgo.response.TripInformationResponse;
-import com.ticketgo.mapper.BookingHistoryMapper;
-import com.ticketgo.mapper.BookingInfoMapper;
-import com.ticketgo.entity.*;
-import com.ticketgo.repository.BookingRepository;
-import com.ticketgo.repository.PaymentRepository;
 import com.ticketgo.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +28,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,11 +43,6 @@ public class BookingServiceImpl implements BookingService {
     private final BusService busService;
     private final PaymentRepository paymentRepo;
     private final AuthenticationService authService;
-
-    private static final DateTimeFormatter DATE_FORMATTER =
-            DateTimeFormatter.ofPattern("dd/MM/yyyy");
-    private static final DateTimeFormatter DATE_TIME_FORMATTER =
-            DateTimeFormatter.ofPattern("HH:mm dd/MM/yyyy");
 
     @Override
     @Transactional

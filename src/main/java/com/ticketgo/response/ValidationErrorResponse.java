@@ -1,9 +1,7 @@
 package com.ticketgo.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.*;
 
 import java.util.Map;
 
@@ -11,6 +9,8 @@ import java.util.Map;
 @NoArgsConstructor
 @Getter
 @Setter
+@ToString
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ValidationErrorResponse {
     private int status;
     private Map<String, String> errors;

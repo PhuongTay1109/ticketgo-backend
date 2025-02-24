@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.UnsupportedEncodingException;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -27,8 +26,6 @@ import java.util.concurrent.CompletableFuture;
 public class EmailServiceImpl implements EmailService {
     private final JavaMailSender emailSender;
     private BookingService bookingService;
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm dd/MM/yyyy");
 
     @Autowired
     public EmailServiceImpl(JavaMailSender emailSender, @Lazy BookingService bookingService) {

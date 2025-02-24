@@ -1,4 +1,4 @@
-package com.ticketgo.dto;
+package com.ticketgo.projector;
 
 import java.time.LocalDateTime;
 

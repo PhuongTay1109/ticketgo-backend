@@ -1,4 +1,4 @@
-package com.ticketgo.dto;
+package com.ticketgo.projector;
 
 public interface RevenueStatisticsDTOTuple {
     String getPeriod();
