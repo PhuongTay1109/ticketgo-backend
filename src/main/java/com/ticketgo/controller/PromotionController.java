@@ -6,6 +6,7 @@ import com.ticketgo.request.PromotionListRequest;
 import com.ticketgo.response.ApiPaginationResponse;
 import com.ticketgo.response.ApiResponse;
 import com.ticketgo.service.PromotionService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -29,12 +30,12 @@ public class PromotionController {
     }
 
     @GetMapping
-    public ApiPaginationResponse getPromotions(PromotionListRequest req) {
+    public ApiPaginationResponse getPromotions(@Valid PromotionListRequest req) {
         return promotionService.getPromotions(req, false);
     }
 
     @GetMapping("/active")
-    public ApiPaginationResponse getActivePromotions(PromotionListRequest req) {
+    public ApiPaginationResponse getActivePromotions(@Valid PromotionListRequest req) {
         return promotionService.getPromotions(req, true);
     }
 

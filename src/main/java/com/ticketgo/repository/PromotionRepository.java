@@ -18,7 +18,8 @@ public interface PromotionRepository extends JpaRepository<Promotion, Long> {
     @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Query("""
         UPDATE Promotion p
-        SET p.isDeleted = true
+        SET p.isDeleted = true,
+            p.status = 'INACTIVE'
         WHERE p.promotionId = :promotionId
     """)
     void softDelete(@Param("promotionId") Long promotionId);

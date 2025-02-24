@@ -41,29 +41,6 @@ public class RequestLogAspect {
                 methodName,
                 Arrays.toString(args));
 
-        long startTime = System.currentTimeMillis();
-        Object result = null;
-
-        try {
-            result = joinPoint.proceed();
-
-            log.info("[RequestLog-RESPONSE] {} {} - {}.{} - Execution time: {} ms - Output: {}",
-                    httpMethod,
-                    requestPath,
-                    className,
-                    methodName,
-                    System.currentTimeMillis() - startTime,
-                    result.toString());
-        } catch (Exception e){
-            log.info("[RequestLog-RESPONSE] {} {} - {}.{} - Execution time: {} ms - Error: {}",
-                    httpMethod,
-                    requestPath,
-                    className,
-                    methodName,
-                    System.currentTimeMillis() - startTime,
-                    e.getMessage());
-        }
-
-        return result;
+        return joinPoint.proceed();
     }
 }

@@ -13,10 +13,10 @@ import org.springframework.data.domain.Sort;
 @ToString
 public class BasePageRequest {
     @Min(value = 1, message = "Page number phải lớn hơn hoặc bằng 0")
-    private int pageNumber;
+    private int pageNumber = 1;
     @Min(value = 1, message = "Page size phải lớn hơn hoặc bằng 1")
     @Max(value = 50, message = "Page size phải nhỏ hơn hoặc bằng 50")
-    private int pageSize;
+    private int pageSize = 10;
 
     private String sortBy;
     private SortDirection sortDirection;
