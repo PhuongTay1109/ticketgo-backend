@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.time.LocalDate;
 import java.util.Set;
@@ -15,6 +16,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Entity
 @Table(name = "buses")
+@SQLRestriction("is_deleted = false")
 public class Bus extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

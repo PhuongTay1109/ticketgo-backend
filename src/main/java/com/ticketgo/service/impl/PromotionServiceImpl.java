@@ -33,6 +33,12 @@ public class PromotionServiceImpl implements PromotionService {
         if (dto.getStartDate().isAfter(dto.getEndDate())) {
             throw new AppException("Ngày bắt đầu không thể sau ngày kết thúc", HttpStatus.BAD_REQUEST);
         }
+
+        promotionRepo.findByDiscountCode(dto.getDiscountCode())
+                .ifPresent(promotion -> {
+                    throw new AppException("Mã giảm giá đã tồn tại", HttpStatus.BAD_REQUEST);
+                });
+
         Promotion promotion = PromotionMapper.INSTANCE.toPromotion(dto);
         promotion.setStatus(PromotionStatus.INACTIVE);
         promotionRepo.save(promotion);
@@ -40,7 +46,7 @@ public class PromotionServiceImpl implements PromotionService {
 
     @Override
     public PromotionDTO getPromotionById(Long id) {
-        Promotion promotion = promotionRepo.findByPromotionIdAndStatus(id, PromotionStatus.ACTIVE);
+        Promotion promotion = promotionRepo.findByPromotionId(id);
         if (promotion != null) {
             return PromotionMapper.INSTANCE.toPromotionDTO(promotion);
         }
@@ -87,6 +93,12 @@ public class PromotionServiceImpl implements PromotionService {
         if (dto.getStartDate().isAfter(dto.getEndDate())) {
             throw new AppException("Ngày bắt đầu không thể sau ngày kết thúc", HttpStatus.BAD_REQUEST);
         }
+
+        promotionRepo.findByDiscountCode(dto.getDiscountCode())
+                .ifPresent(promo -> {
+                    throw new AppException("Mã giảm giá đã tồn tại", HttpStatus.BAD_REQUEST);
+                });
+
         ObjectUtils.copyProperties(dto, promotion);
         promotionRepo.save(promotion);
     }

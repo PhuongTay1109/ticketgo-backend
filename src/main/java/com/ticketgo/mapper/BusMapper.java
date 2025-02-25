@@ -17,6 +17,8 @@ public interface BusMapper {
     @Mapping(target = "expirationDate", expression = "java(formatDate(bus.getExpirationDate()))")
     BusDTO toBusDTO(Bus bus);
 
+    Bus toBus(BusDTO dto);
+
     default String formatDate(java.time.LocalDate date) {
         if (date == null) {
             return null;

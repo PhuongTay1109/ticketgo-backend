@@ -1,37 +1,49 @@
 package com.ticketgo.service.impl;
 
+import com.ticketgo.dto.BusDTO;
+import com.ticketgo.exception.AppException;
 import com.ticketgo.request.BusListRequest;
 import com.ticketgo.response.ApiPaginationResponse;
 import com.ticketgo.mapper.BusMapper;
 import com.ticketgo.entity.Bus;
 import com.ticketgo.repository.BusRepository;
 import com.ticketgo.service.BusService;
+import com.ticketgo.util.ObjectUtils;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class BusServiceImpl implements BusService {
     private final BusRepository busRepo;
 
     @Override
+    @Transactional
     public Bus findBySchedule(long scheduleId) {
         return busRepo.findBySchedule(scheduleId)
-                .orElseThrow(() -> new RuntimeException(
-                                "No bus found for schedule: " + scheduleId));
+                .orElseThrow(() -> {
+                    log.error("No bus found for schedule ID: {}", scheduleId);
+                    return new AppException("Không tìm thấy thông tin xe", HttpStatus.NOT_FOUND);
+                });
     }
 
     @Override
-    public ApiPaginationResponse getAllBuses(BusListRequest req) {
+    @Transactional
+    public ApiPaginationResponse getBuses(BusListRequest req) {
         int pageNumber = req.getPageNumber();
         int pageSize = req.getPageSize();
 
-        Page<Bus> busPage = busRepo.findAll(PageRequest.of(pageNumber - 1, pageSize));
+        Pageable pageable = PageRequest.of(pageNumber - 1, pageSize, req.buildSort());
+        Page<Bus> busPage = busRepo.findAll(pageable);
 
         ApiPaginationResponse.Pagination pagination = new ApiPaginationResponse.Pagination(
                 busPage.getNumber() + 1,
@@ -48,5 +60,40 @@ public class BusServiceImpl implements BusService {
                         .collect(Collectors.toList()),
                 pagination
         );
+    }
+
+    @Override
+    @Transactional
+    public void createBus(BusDTO dto) {
+        busRepo.findByLicensePlate(dto.getLicensePlate())
+                .ifPresent(bus -> {
+                    throw new AppException("Xe với biển số xe này đã tồn tại", HttpStatus.BAD_REQUEST);
+                });
+
+        Bus savedBus = BusMapper.INSTANCE.toBus(dto);
+        busRepo.save(savedBus);
+    }
+
+    @Override
+    @Transactional
+    public BusDTO getBusById(Long id) {
+        return busRepo.findByBusId(id)
+                .map(BusMapper.INSTANCE::toBusDTO)
+                .orElseThrow(() -> new AppException("Không tìm thấy thông tin xe", HttpStatus.NOT_FOUND));
+    }
+
+    @Override
+    @Transactional
+    public void updateBus(Long id, BusDTO dto) {
+        Bus bus = busRepo.findByBusId(id)
+                .orElseThrow(() -> new AppException("Không tìm thấy thông tin xe", HttpStatus.NOT_FOUND));
+        ObjectUtils.copyProperties(dto, bus);
+        busRepo.save(bus);
+    }
+
+    @Override
+    @Transactional
+    public void deleteBus(Long id) {
+        busRepo.softDelete(id);
     }
 }

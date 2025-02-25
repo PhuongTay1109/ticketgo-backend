@@ -6,6 +6,7 @@ import com.ticketgo.response.ApiResponse;
 import com.ticketgo.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -34,6 +35,7 @@ public class UserController {
     }
 
     @PutMapping("/{userId}/change-lock-status")
+    @PreAuthorize("hasRole('BUS_COMPANY')")
     public ApiResponse toggleLockStatus(@PathVariable Long userId) {
         userService.changeLockStatus(userId);
         return new ApiResponse(

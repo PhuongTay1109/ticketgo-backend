@@ -1,11 +1,16 @@
 package com.ticketgo.service;
 
+import com.ticketgo.dto.BusDTO;
+import com.ticketgo.entity.Bus;
 import com.ticketgo.request.BusListRequest;
 import com.ticketgo.response.ApiPaginationResponse;
-import com.ticketgo.entity.Bus;
 
 public interface BusService {
     Bus findBySchedule(long scheduleId);
 
-    ApiPaginationResponse getAllBuses(BusListRequest req) ;
+    ApiPaginationResponse getBuses(BusListRequest req);
+    void createBus(BusDTO dto);
+    BusDTO getBusById(Long id);
+    void updateBus(Long id, BusDTO dto);
+    void deleteBus(Long id);
 }

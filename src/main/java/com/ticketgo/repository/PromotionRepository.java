@@ -10,10 +10,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface PromotionRepository extends JpaRepository<Promotion, Long> {
     Page<Promotion> findByStatus(PromotionStatus status, Pageable pageable);
-    Promotion findByPromotionIdAndStatus(Long promotionId, PromotionStatus status);
 
     @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Query("""
@@ -25,4 +26,6 @@ public interface PromotionRepository extends JpaRepository<Promotion, Long> {
     void softDelete(@Param("promotionId") Long promotionId);
 
     Promotion findByPromotionId(Long id);
+
+    Optional<Promotion> findByDiscountCode(String discountCode);
 }
