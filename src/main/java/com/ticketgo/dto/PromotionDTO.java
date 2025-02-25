@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @ToString
 public class PromotionDTO {
+    private Long promotionId;
     private String description;
     private Integer discountPercentage;
     private String discountCode;
