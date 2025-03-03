@@ -94,11 +94,6 @@ public class PromotionServiceImpl implements PromotionService {
             throw new AppException("Ngày bắt đầu không thể sau ngày kết thúc", HttpStatus.BAD_REQUEST);
         }
 
-        promotionRepo.findByDiscountCode(dto.getDiscountCode())
-                .ifPresent(promo -> {
-                    throw new AppException("Mã giảm giá đã tồn tại", HttpStatus.BAD_REQUEST);
-                });
-
         ObjectUtils.copyProperties(dto, promotion);
         promotionRepo.save(promotion);
     }

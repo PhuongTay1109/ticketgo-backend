@@ -38,6 +38,7 @@ public class SecurityConfig {
                         .requestMatchers(SecurityWhiteList.getWhiteList()).permitAll()
                         .requestMatchers("api/v1/revenues/**").hasRole("BUS_COMPANY")
                         .requestMatchers("api/v1/buses/**").hasRole("BUS_COMPANY")
+                        .requestMatchers("api/v1/accounts/**").hasRole("BUS_COMPANY")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)

@@ -1,6 +1,9 @@
 package com.ticketgo.repository;
 
 import com.ticketgo.entity.Customer;
+import com.ticketgo.enums.Role;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -25,4 +28,6 @@ public interface CustomerRepository extends JpaRepository<Customer,Long> {
             @Param("phoneNumber") String phoneNumber,
             @Param("dateOfBirth") LocalDate dateOfBirth
     );
+
+    Page<Customer> findByRole(Role role, Pageable pageable);
 }

@@ -2,8 +2,8 @@ package com.ticketgo.service;
 
 import com.ticketgo.dto.CustomerContactInfoDTO;
 import com.ticketgo.dto.UserDTO;
-import com.ticketgo.request.UserUpdateRequest;
 import com.ticketgo.entity.User;
+import com.ticketgo.request.UserUpdateRequest;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +18,4 @@ public interface UserService extends UserDetailsService {
     CustomerContactInfoDTO getCustomerContactIno();
 
     void updateUser(UserUpdateRequest request);
-
-    void changeLockStatus(Long userId);
 }
