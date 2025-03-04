@@ -12,6 +12,7 @@ import com.ticketgo.response.ApiPaginationResponse;
 import com.ticketgo.response.AccountInfoResponse;
 import com.ticketgo.service.AccountService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RList;
 import org.redisson.api.RedissonClient;
 import org.springframework.data.domain.Page;
@@ -26,6 +27,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AccountServiceImpl implements AccountService {
 
     private final CustomerRepository customerRepo;
@@ -36,7 +38,7 @@ public class AccountServiceImpl implements AccountService {
     @Transactional
     public void changeLockStatus(Long userId) {
         User user = userRepo.findById(userId)
-                .orElseThrow(() -> new AppException("User không tồn tại", HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new AppException("Tài khoản không tồn tại", HttpStatus.NOT_FOUND));
 
         boolean currentLockedStatus = user.getIsLocked();
         String redisKey = RedisKeys.blackListUserKey;
@@ -52,13 +54,20 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    @Transactional
     public ApiPaginationResponse getAccounts(AccountListRequest req) {
         int pageNumber = req.getPageNumber();
         int pageSize = req.getPageSize();
 
         Pageable pageable = PageRequest.of(pageNumber - 1, pageSize, req.buildSort());
-        Page<Customer> customerPage = customerRepo.findByRole(Role.ROLE_CUSTOMER, pageable);
-
+        String keyword = req.getKeyword();
+        log.info("Searching for keyword: {}", keyword);
+        Page<Customer> customerPage;
+        if (keyword != null && !keyword.isEmpty()) {
+            customerPage = customerRepo.findByRoleAndKeyword(Role.ROLE_CUSTOMER, keyword, pageable);
+        } else {
+            customerPage = customerRepo.findByRole(Role.ROLE_CUSTOMER, pageable);
+        }
         ApiPaginationResponse.Pagination pagination = new ApiPaginationResponse.Pagination(
                 customerPage.getNumber() + 1,
                 customerPage.getSize(),
@@ -82,5 +91,13 @@ public class AccountServiceImpl implements AccountService {
                         .collect(Collectors.toList()),
                 pagination
         );
+    }
+
+    @Override
+    @Transactional
+    public void delete(long id) {
+        User user = userRepo.findById(id)
+                .orElseThrow(() -> new AppException("Tài khoản không tồn tại", HttpStatus.NOT_FOUND));
+        userRepo.softDelete(user);
     }
 }

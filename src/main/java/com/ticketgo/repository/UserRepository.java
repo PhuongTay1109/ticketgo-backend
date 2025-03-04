@@ -19,4 +19,13 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Transactional
     @Query("UPDATE BusCompany b SET b.role = :role WHERE b.email = :email")
     void updateRoleByEmail(@Param("role") Role role, @Param("email") String email);
+
+
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Query("""
+        UPDATE User u
+        SET u.isDeleted = true
+        WHERE u.userId = :id
+    """)
+    void softDelete(User user);
 }

@@ -27,7 +27,17 @@ public class AccountController {
     }
 
     @GetMapping
-    public ApiPaginationResponse getAccounts(@Valid AccountListRequest req) {
+    public ApiPaginationResponse getAccounts(@Valid @ModelAttribute AccountListRequest req) {
         return accountService.getAccounts(req);
+    }
+
+    @DeleteMapping("/{id}")
+    public ApiResponse delete(@PathVariable long id) {
+        accountService.delete(id);
+        return new ApiResponse(
+                HttpStatus.OK,
+                "Xóa tài khoản thành công",
+                null
+        );
     }
 }

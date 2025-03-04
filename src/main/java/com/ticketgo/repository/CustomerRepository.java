@@ -30,4 +30,12 @@ public interface CustomerRepository extends JpaRepository<Customer,Long> {
     );
 
     Page<Customer> findByRole(Role role, Pageable pageable);
+
+    @Query("""
+        SELECT c
+        FROM Customer c
+        WHERE c.role = :role 
+        AND (c.fullName LIKE %:keyword% OR c.email LIKE %:keyword%)
+    """)
+    Page<Customer> findByRoleAndKeyword(Role role, String keyword, Pageable pageable);
 }
