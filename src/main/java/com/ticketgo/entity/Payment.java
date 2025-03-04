@@ -2,14 +2,12 @@ package com.ticketgo.entity;
 
 import com.ticketgo.enums.PaymentType;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
 
+@ToString
 @Getter
 @Setter
 @SuperBuilder(toBuilder=true)

@@ -37,7 +37,7 @@ public class JwtFilter extends OncePerRequestFilter {
     private final HandlerExceptionResolver handlerExceptionResolver;
     private final RedissonClient redisson;
 
-    private static final Set<String> EXCLUDE_URL_PATTERNS = Arrays.stream(SecurityWhiteList.getWhiteList())
+    private static final Set<String> EXCLUDE_URL_PATTERNS = Arrays.stream(SecurityWhiteList.WHITELIST_PATHS)
                                                                     .collect(Collectors.toSet());
 
     @Override

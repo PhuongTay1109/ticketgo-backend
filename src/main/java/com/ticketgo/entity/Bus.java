@@ -9,6 +9,7 @@ import org.hibernate.annotations.SQLRestriction;
 import java.time.LocalDate;
 import java.util.Set;
 
+@ToString
 @Getter
 @Setter
 @SuperBuilder(toBuilder=true)

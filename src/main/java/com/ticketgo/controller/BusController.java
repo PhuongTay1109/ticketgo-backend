@@ -3,6 +3,7 @@ package com.ticketgo.controller;
 import com.ticketgo.constant.ApiVersion;
 import com.ticketgo.dto.BusDTO;
 import com.ticketgo.request.BusListRequest;
+import com.ticketgo.request.BusUpdateRequest;
 import com.ticketgo.response.ApiPaginationResponse;
 import com.ticketgo.response.ApiResponse;
 import com.ticketgo.service.BusService;
@@ -44,8 +45,8 @@ public class BusController {
 
     @PostMapping("/{id}")
     public ApiResponse updateBus(@PathVariable long id,
-                                 @RequestBody BusDTO dto) {
-        busService.updateBus(id, dto);
+                                 @RequestBody BusUpdateRequest req) {
+        busService.updateBus(id, req);
         return new ApiResponse(
                 HttpStatus.OK,
                 "Cập nhật xe thành công",

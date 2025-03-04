@@ -1,7 +1,7 @@
 package com.ticketgo.config.security;
 
 public class SecurityWhiteList {
-    private static final String[] WHITELIST ={
+    public static final String[] WHITELIST_PATHS ={
             "/api/v1/auth/**",
             "/api/v1/routes/**",
             "/api/v1/schedules/**",
@@ -15,8 +15,4 @@ public class SecurityWhiteList {
             "/api/v1/homepage/**",
             "/api/v1/promotions/active"
     };
-
-    public static String[] getWhiteList() {
-        return WHITELIST;
-    }
 }

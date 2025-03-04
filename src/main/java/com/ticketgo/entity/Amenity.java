@@ -3,6 +3,7 @@ package com.ticketgo.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+@ToString
 @Getter
 @Setter
 @AllArgsConstructor

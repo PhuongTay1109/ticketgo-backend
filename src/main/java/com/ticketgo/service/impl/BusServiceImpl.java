@@ -1,12 +1,13 @@
 package com.ticketgo.service.impl;
 
 import com.ticketgo.dto.BusDTO;
-import com.ticketgo.exception.AppException;
-import com.ticketgo.request.BusListRequest;
-import com.ticketgo.response.ApiPaginationResponse;
-import com.ticketgo.mapper.BusMapper;
 import com.ticketgo.entity.Bus;
+import com.ticketgo.exception.AppException;
+import com.ticketgo.mapper.BusMapper;
 import com.ticketgo.repository.BusRepository;
+import com.ticketgo.request.BusListRequest;
+import com.ticketgo.request.BusUpdateRequest;
+import com.ticketgo.response.ApiPaginationResponse;
 import com.ticketgo.service.BusService;
 import com.ticketgo.util.ObjectUtils;
 import lombok.RequiredArgsConstructor;
@@ -84,10 +85,10 @@ public class BusServiceImpl implements BusService {
 
     @Override
     @Transactional
-    public void updateBus(Long id, BusDTO dto) {
+    public void updateBus(Long id, BusUpdateRequest req) {
         Bus bus = busRepo.findByBusId(id)
                 .orElseThrow(() -> new AppException("Không tìm thấy thông tin xe", HttpStatus.NOT_FOUND));
-        ObjectUtils.copyProperties(dto, bus);
+        ObjectUtils.copyProperties(req, bus);
         busRepo.save(bus);
     }
 

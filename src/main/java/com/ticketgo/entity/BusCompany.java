@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
+@ToString
 @Getter
 @Setter
 @SuperBuilder(toBuilder=true)

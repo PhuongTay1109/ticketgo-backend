@@ -35,10 +35,8 @@ public class SecurityConfig {
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(authRequest -> authRequest
-                        .requestMatchers(SecurityWhiteList.getWhiteList()).permitAll()
-                        .requestMatchers("api/v1/revenues/**").hasRole("BUS_COMPANY")
-                        .requestMatchers("api/v1/buses/**").hasRole("BUS_COMPANY")
-                        .requestMatchers("api/v1/accounts/**").hasRole("BUS_COMPANY")
+                        .requestMatchers(SecurityWhiteList.WHITELIST_PATHS).permitAll()
+                        .requestMatchers(SecurityPathList.BUS_COMPANY_PATHS).hasRole("BUS_COMPANY")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)

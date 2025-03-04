@@ -8,6 +8,7 @@ import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
 
+@ToString
 @Getter
 @Setter
 @SuperBuilder(toBuilder = true)

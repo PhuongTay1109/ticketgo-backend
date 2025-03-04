@@ -6,6 +6,7 @@ import lombok.experimental.SuperBuilder;
 
 import java.util.Set;
 
+@ToString
 @Getter
 @Setter
 @SuperBuilder(toBuilder=true)

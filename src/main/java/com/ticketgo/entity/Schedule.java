@@ -1,15 +1,13 @@
 package com.ticketgo.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
 import java.util.Set;
 
+@ToString
 @Getter
 @Setter
 @SuperBuilder(toBuilder=true)
@@ -29,6 +27,10 @@ public class Schedule extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "route_id")
     private Route route;
+
+    @ManyToOne
+    @JoinColumn(name = "driver_id")
+    private Driver driver;
 
     @Column(nullable = false)
     private LocalDateTime departureTime;
