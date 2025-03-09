@@ -2,6 +2,7 @@ package com.ticketgo.service.impl;
 
 import com.ticketgo.dto.BusDTO;
 import com.ticketgo.entity.Bus;
+import com.ticketgo.entity.Seat;
 import com.ticketgo.exception.AppException;
 import com.ticketgo.mapper.BusMapper;
 import com.ticketgo.repository.BusRepository;
@@ -19,6 +20,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -72,6 +75,9 @@ public class BusServiceImpl implements BusService {
                 });
 
         Bus savedBus = BusMapper.INSTANCE.toBus(dto);
+        savedBus.setSeats(dto.getTotalSeats() == 22
+                ? initialize22Seats(savedBus)
+                : initialize34Seats(savedBus));
         busRepo.save(savedBus);
     }
 
@@ -96,5 +102,67 @@ public class BusServiceImpl implements BusService {
     @Transactional
     public void deleteBus(Long id) {
         busRepo.softDelete(id);
+    }
+
+    private Set<Seat> initialize22Seats(Bus bus) {
+        String[][][] seatStructure = {
+                { // Floor 1: Ghế A và B
+                        {"1A", "1B"}, {"2A", "2B"}, {"3A", "3B"},
+                        {"4A", "4B"}, {"5A", "5B"}, {"6A", ""}
+                },
+                { // Floor 2: Ghế C và D
+                        {"1C", "1D"}, {"2C", "2D"}, {"3C", "3D"},
+                        {"4C", "4D"}, {"5C", "5D"}, {"6C", ""}
+                }
+        };
+
+        Set<Seat> seats = new HashSet<>();
+        for (int floor = 0; floor < seatStructure.length; floor++) {
+            for (String[] row : seatStructure[floor]) {
+                for (String seat : row) {
+                    if (!seat.isEmpty()) {
+                        Seat seatEntity = new Seat();
+                        seatEntity.setBus(bus);
+                        seatEntity.setFloor(floor + 1);
+                        seatEntity.setSeatNumber(seat);
+                        seatEntity.setRow(Integer.parseInt(seat.substring(0, 1))); // Số hàng
+                        seatEntity.setCol(seat.substring(1)); // Cột (ví dụ: A, B, C, D)
+                        seats.add(seatEntity);
+                    }
+                }
+            }
+        }
+        return seats;
+    }
+
+    private Set<Seat> initialize34Seats(Bus bus) {
+        String[][][] seatStructure = {
+                { // Floor 1: Ghế A, B, C
+                        {"1A", "1B", "1C"}, {"2A", "2B", "2C"}, {"3A", "3B", "3C"},
+                        {"4A", "4B", "4C"}, {"5A", "5B", "5C"}, {"6A", "6B"}
+                },
+                { // Floor 2: Ghế D, E, F
+                        {"1D", "1E", "1F"}, {"2D", "2E", "2F"}, {"3D", "3E", "3F"},
+                        {"4D", "4E", "4F"}, {"5D", "5E", "5F"}, {"6D", "6E"}
+                }
+        };
+
+        Set<Seat> seats = new HashSet<>();
+        for (int floor = 0; floor < seatStructure.length; floor++) {
+            for (String[] row : seatStructure[floor]) {
+                for (String seat : row) {
+                    if (!seat.isEmpty()) {
+                        Seat seatEntity = new Seat();
+                        seatEntity.setBus(bus);
+                        seatEntity.setFloor(floor + 1);
+                        seatEntity.setSeatNumber(seat);
+                        seatEntity.setRow(Integer.parseInt(seat.substring(0, 1))); // Số hàng
+                        seatEntity.setCol(seat.substring(1)); // Cột (ví dụ: A, B, C, D, E, F)
+                        seats.add(seatEntity);
+                    }
+                }
+            }
+        }
+        return seats;
     }
 }
