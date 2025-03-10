@@ -12,4 +12,6 @@ public interface DriverService {
     DriverDTO get(Long id);
     void update(Long id, DriverUpdateRequest req);
     void delete(Long id);
+
+    DriverDTO getDriverForSchedule(Long scheduleId);
 }

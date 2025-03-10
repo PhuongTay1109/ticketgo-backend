@@ -4,7 +4,6 @@ public class SecurityWhiteList {
     public static final String[] WHITELIST_PATHS ={
             "/api/v1/auth/**",
             "/api/v1/routes/**",
-            "/api/v1/schedules/**",
             "/api/v1/route-stops/**",
             "/api/v1/seats",
             "/api/v1/policies/**",

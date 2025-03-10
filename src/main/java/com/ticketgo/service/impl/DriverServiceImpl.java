@@ -5,6 +5,7 @@ import com.ticketgo.entity.Driver;
 import com.ticketgo.exception.AppException;
 import com.ticketgo.mapper.DriverMapper;
 import com.ticketgo.repository.DriverRepository;
+import com.ticketgo.repository.ScheduleRepository;
 import com.ticketgo.request.DriverCreateRequest;
 import com.ticketgo.request.DriverListRequest;
 import com.ticketgo.request.DriverUpdateRequest;
@@ -27,6 +28,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class DriverServiceImpl implements DriverService {
     private final DriverRepository driverRepo;
+    private final ScheduleRepository scheduleRepo;
 
     @Override
     @Transactional
@@ -84,5 +86,13 @@ public class DriverServiceImpl implements DriverService {
         driverRepo.findById(id)
                 .orElseThrow(() -> new AppException("Không tìm thấy thông tin tài xế", HttpStatus.NOT_FOUND));
         driverRepo.softDelete(id);
+    }
+
+    @Override
+    @Transactional
+    public DriverDTO getDriverForSchedule(Long scheduleId) {
+        Long driverId = scheduleRepo.getDriverIdByScheduleId(scheduleId);
+        log.info("Find driverId {} for scheduleId {}", driverId, scheduleId);
+        return this.get(driverId);
     }
 }

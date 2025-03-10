@@ -27,5 +27,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
         SET u.isDeleted = true
         WHERE u.userId = :id
     """)
-    void softDelete(User user);
+    void softDelete(Long id);
 }

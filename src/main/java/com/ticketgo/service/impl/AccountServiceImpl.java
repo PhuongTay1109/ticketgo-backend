@@ -96,8 +96,8 @@ public class AccountServiceImpl implements AccountService {
     @Override
     @Transactional
     public void delete(long id) {
-        User user = userRepo.findById(id)
+        userRepo.findById(id)
                 .orElseThrow(() -> new AppException("Tài khoản không tồn tại", HttpStatus.NOT_FOUND));
-        userRepo.softDelete(user);
+        userRepo.softDelete(id);
     }
 }

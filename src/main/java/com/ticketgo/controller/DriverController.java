@@ -24,11 +24,21 @@ public class DriverController {
     }
 
     @GetMapping("/{id}")
-    public ApiResponse get(@PathVariable long id) {
+    public ApiResponse getDriverForSchedule(@PathVariable long id) {
         return new ApiResponse(
                 HttpStatus.OK,
                 "Lấy thông tin tài xế thành công",
                 driverService.get(id)
+        );
+    }
+
+
+    @GetMapping("/schedule")
+    public ApiResponse getDriverForSchedule(@RequestParam Long scheduleId) {
+        return new ApiResponse(
+                HttpStatus.OK,
+                "Lấy thông tin tài xế thành công",
+                driverService.getDriverForSchedule(scheduleId)
         );
     }
 
