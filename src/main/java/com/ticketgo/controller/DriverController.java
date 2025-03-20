@@ -32,6 +32,16 @@ public class DriverController {
         );
     }
 
+//    @GetMapping("/available")
+//    public ApiResponse getAvailableDrivers(@RequestParam LocalDateTime departureTime,
+//                                           @RequestParam LocalDateTime arrivalTime) {
+//        return new ApiResponse(
+//                HttpStatus.OK,
+//                "Danh sách tài xế khả dụng",
+//                driverService.getAvailableDrivers(departureTime, arrivalTime)
+//        );
+//    }
+
 
     @GetMapping("/schedule")
     public ApiResponse getDriverForSchedule(@RequestParam Long scheduleId) {

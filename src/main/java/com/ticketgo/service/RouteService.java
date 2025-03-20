@@ -1,5 +1,6 @@
 package com.ticketgo.service;
 
+import com.ticketgo.dto.RouteDTO;
 import com.ticketgo.response.ApiPaginationResponse;
 import com.ticketgo.response.PopularRoutesResponse;
 
@@ -17,4 +18,6 @@ public interface RouteService {
                                        int pageSize);
 
     List<PopularRoutesResponse> getPopularRoutes();
+
+    List<RouteDTO> getRoutes();
 }

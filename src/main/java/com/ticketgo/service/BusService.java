@@ -6,6 +6,9 @@ import com.ticketgo.request.BusListRequest;
 import com.ticketgo.request.BusUpdateRequest;
 import com.ticketgo.response.ApiPaginationResponse;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 public interface BusService {
     Bus findBySchedule(long scheduleId);
 
@@ -14,4 +17,6 @@ public interface BusService {
     BusDTO getBusById(Long id);
     void updateBus(Long id, BusUpdateRequest req);
     void deleteBus(Long id);
+
+    List<BusDTO> getAvailableBuses(LocalDateTime departureTime);
 }

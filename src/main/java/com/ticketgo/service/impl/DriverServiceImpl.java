@@ -21,6 +21,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -94,5 +97,14 @@ public class DriverServiceImpl implements DriverService {
         Long driverId = scheduleRepo.getDriverIdByScheduleId(scheduleId);
         log.info("Find driverId {} for scheduleId {}", driverId, scheduleId);
         return this.get(driverId);
+    }
+
+    @Override
+    public List<DriverDTO> getAvailableDrivers(LocalDateTime departureTime, LocalDateTime arrivalTime) {
+        LocalDateTime adjustedArrivalTime = arrivalTime.plus( Duration.ofDays(1));
+        return driverRepo.findAvailableDrivers(departureTime, adjustedArrivalTime)
+                .stream()
+                .map(DriverMapper.INSTANCE::fromEntityToDTO)
+                .collect(Collectors.toList());
     }
 }

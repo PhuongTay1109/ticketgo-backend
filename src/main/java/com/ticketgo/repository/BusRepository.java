@@ -6,6 +6,8 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -27,4 +29,18 @@ public interface BusRepository extends JpaRepository<Bus, Long> {
     void softDelete(Long id);
 
     Optional<Bus> findByLicensePlate(String licensePlate);
+
+    @Query("""
+    SELECT b FROM Bus b
+    WHERE b.busId NOT IN (
+        SELECT s.bus.busId FROM Schedule s
+        WHERE (
+            (:departureTime BETWEEN s.departureTime AND s.arrivalTime)
+            OR (:arrivalTime BETWEEN s.departureTime AND s.arrivalTime)
+            OR (s.departureTime BETWEEN :departureTime AND :arrivalTime)
+        )
+    )
+    """)
+    List<Bus> findAvailableBuses(LocalDateTime departureTime, LocalDateTime arrivalTime);
+
 }

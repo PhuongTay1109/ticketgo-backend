@@ -33,6 +33,15 @@ public class BusController {
         );
     }
 
+//    @GetMapping("/available")
+//    public ApiResponse getAvailableBuses(@RequestParam LocalDateTime departureTime) {
+//        return new ApiResponse(
+//                HttpStatus.OK,
+//                "Danh sách xe khả dụng",
+//                busService.getAvailableBuses(departureTime)
+//        );
+//    }
+
     @PostMapping
     public ApiResponse createBus(@RequestBody BusDTO dto) {
         busService.createBus(dto);

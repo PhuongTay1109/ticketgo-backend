@@ -2,23 +2,31 @@ package com.ticketgo.service.impl;
 
 import com.ticketgo.entity.*;
 import com.ticketgo.enums.StopType;
+import com.ticketgo.enums.TicketStatus;
+import com.ticketgo.repository.BusRepository;
 import com.ticketgo.repository.ScheduleRepository;
+import com.ticketgo.repository.TicketRepository;
 import com.ticketgo.request.ScheduleCreateRequest;
 import com.ticketgo.service.ScheduleService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ScheduleServiceImpl implements ScheduleService {
     private final ScheduleRepository scheduleRepo;
+    private final TicketRepository ticketRepo;
+    private final BusRepository busRepo;
 
     @Override
     public Schedule findById(long scheduleId) {
@@ -33,6 +41,7 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     @Override
+    @Transactional
     public void create(ScheduleCreateRequest req) {
         Set<RouteStop> stops = new HashSet<>();
 
@@ -81,5 +90,21 @@ public class ScheduleServiceImpl implements ScheduleService {
         schedule.setStops(stops);
 
         scheduleRepo.save(schedule);
+
+        Set<Seat> seats = busRepo.findByBusId(req.getBusId())
+                .orElseThrow(() -> new RuntimeException("Bus with id " + req.getBusId() + " not found"))
+                .getSeats();
+
+        for(Seat seat : seats) {
+            Ticket ticket = Ticket.builder()
+                    .seat(seat)
+                    .schedule(schedule)
+                    .status(TicketStatus.AVAILABLE)
+                    .price(req.getPrice())
+                    .build();
+            ticketRepo.save(ticket);
+        }
+
+        log.info("Schedule created successfully with id: {}", schedule.getScheduleId());
     }
 }

@@ -2,10 +2,12 @@ package com.ticketgo.service.impl;
 
 import com.ticketgo.dto.BusDTO;
 import com.ticketgo.entity.Bus;
+import com.ticketgo.entity.Schedule;
 import com.ticketgo.entity.Seat;
 import com.ticketgo.exception.AppException;
 import com.ticketgo.mapper.BusMapper;
 import com.ticketgo.repository.BusRepository;
+import com.ticketgo.repository.ScheduleRepository;
 import com.ticketgo.request.BusListRequest;
 import com.ticketgo.request.BusUpdateRequest;
 import com.ticketgo.response.ApiPaginationResponse;
@@ -20,7 +22,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -29,6 +33,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class BusServiceImpl implements BusService {
     private final BusRepository busRepo;
+    private final ScheduleRepository scheduleRepo;
 
     @Override
     @Transactional
@@ -102,6 +107,20 @@ public class BusServiceImpl implements BusService {
     @Transactional
     public void deleteBus(Long id) {
         busRepo.softDelete(id);
+    }
+
+    @Override
+    public List<BusDTO> getAvailableBuses(LocalDateTime departureTime) {
+        List<Long> busIds = busRepo.findAll().stream().map(Bus::getBusId).toList();
+        Schedule latestPreviousDaySchedule = scheduleRepo.findLatestPreviousDaySchedule(
+                busIds,
+                departureTime
+        );
+        Schedule earliestNextDaySchedule = scheduleRepo.findEarliestNextDaySchedule(
+                busIds,
+                departureTime
+        );
+        return List.of();
     }
 
     private Set<Seat> initialize22Seats(Bus bus) {

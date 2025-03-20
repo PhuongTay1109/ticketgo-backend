@@ -33,11 +33,20 @@ public class RouteController {
     }
 
     @GetMapping("/popular")
-    public ApiResponse searchRoutes() {
+    public ApiResponse searchPopularRoutes() {
         return new ApiResponse(
                 HttpStatus.OK,
                 "Lấy danh sách các tuyến đường phổ biến",
                 routeService.getPopularRoutes()
+        );
+    }
+
+    @GetMapping("")
+    public ApiResponse searchRoutes() {
+        return new ApiResponse(
+                HttpStatus.OK,
+                "Lấy danh sách các tuyến đường.",
+                routeService.getRoutes()
         );
     }
 }

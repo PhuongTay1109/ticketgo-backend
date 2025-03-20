@@ -1,14 +1,15 @@
 package com.ticketgo.service.impl;
 
-import com.ticketgo.response.PopularRoutesResponse;
-import com.ticketgo.response.RouteSearchResponse;
-import com.ticketgo.response.ApiPaginationResponse;
-import com.ticketgo.mapper.ScheduleMapper;
+import com.ticketgo.dto.RouteDTO;
 import com.ticketgo.entity.Route;
 import com.ticketgo.entity.Schedule;
-
+import com.ticketgo.mapper.RouteMapper;
+import com.ticketgo.mapper.ScheduleMapper;
 import com.ticketgo.repository.RouteRepository;
 import com.ticketgo.repository.specification.ScheduleSpecification;
+import com.ticketgo.response.ApiPaginationResponse;
+import com.ticketgo.response.PopularRoutesResponse;
+import com.ticketgo.response.RouteSearchResponse;
 import com.ticketgo.service.RouteService;
 import com.ticketgo.service.ScheduleService;
 import com.ticketgo.service.SeatService;
@@ -85,4 +86,12 @@ public class RouteServiceImpl implements RouteService {
                           200000L))
                 .toList();
     }
+
+    @Override
+    public List<RouteDTO> getRoutes() {
+        return routeRepo.findAll().stream()
+                .map(RouteMapper.INSTANCE::fromEntityToDTO)
+                .toList();
+    }
+
 }
