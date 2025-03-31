@@ -67,6 +67,7 @@ public class BookingController {
                 .body(ticketService.existsReservedSeatsByCustomer());
     }
 
+
     @PostMapping("/info")
     public ApiResponse saveBookingInfo(@RequestBody SaveBookingInfoRequest request) {
         bookingService.saveBookingInfo(request);

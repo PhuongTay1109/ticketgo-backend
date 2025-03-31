@@ -1,23 +1,27 @@
 package com.ticketgo.service.impl;
 
 import com.ticketgo.config.vnpay.VNPayConfig;
-import com.ticketgo.request.PaymentRequest;
 import com.ticketgo.entity.Customer;
 import com.ticketgo.entity.Payment;
 import com.ticketgo.repository.PaymentRepository;
+import com.ticketgo.request.PaymentRequest;
 import com.ticketgo.service.AuthenticationService;
 import com.ticketgo.service.BookingService;
 import com.ticketgo.service.PaymentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.redisson.api.RBucket;
+import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.*;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
+
+import static com.ticketgo.constant.RedisKeys.vnPayUrlKey;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +30,8 @@ public class PaymentServiceImpl implements PaymentService {
     private final PaymentRepository paymentRepo;
     private final AuthenticationService authService;
     private final BookingService bookingService;
+
+    private final RedissonClient redisson;
 
     @Override
     @Transactional
@@ -49,7 +55,7 @@ public class PaymentServiceImpl implements PaymentService {
         vnp_Params.put("vnp_Amount", amount);
         vnp_Params.put("vnp_CurrCode", "VND");
         vnp_Params.put("vnp_TxnRef", vnp_TxnRef);
-        vnp_Params.put("vnp_OrderInfo", String.valueOf(bookingId));
+        vnp_Params.put("vnp_OrderInfo", bookingId + "-" + customer.getUserId() + "-" + request.getScheduleId());
         vnp_Params.put("vnp_OrderType", "250000");
         vnp_Params.put("vnp_ReturnUrl", VNPayConfig.vnp_ReturnUrl);
 
@@ -89,7 +95,15 @@ public class PaymentServiceImpl implements PaymentService {
         String queryUrl = query.toString();
         String vnp_SecureHash = VNPayConfig.hmacSHA512(VNPayConfig.vnp_HashSecret, hashData.toString());
         queryUrl += "&vnp_SecureHash=" + vnp_SecureHash;
-        return VNPayConfig.vnp_PayUrl + "?" + queryUrl;
+
+
+        String url = VNPayConfig.vnp_PayUrl + "?" + queryUrl;
+
+        String cacheKey = vnPayUrlKey(customer.getUserId(), bookingId);
+        RBucket<String> bucket = redisson.getBucket(cacheKey);
+        bucket.set(url, 10, TimeUnit.MINUTES);
+
+        return url;
     }
 
     @Override

@@ -24,4 +24,6 @@ public interface TicketService {
     Ticket findByTicketCode(String ticketCode);
 
     List<Ticket> findAllByBookingId(long bookingId);
+
+    Long getTicketRemainingTime(String ticketCode);
 }

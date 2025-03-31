@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -68,5 +70,14 @@ public class TicketServiceImpl implements TicketService {
     @Override
     public List<Ticket> findAllByBookingId(long bookingId) {
         return ticketRepo.findAllByBooking_BookingId(bookingId);
+    }
+
+    @Override
+    public Long getTicketRemainingTime(String ticketCode) {
+        Ticket ticket = findByTicketCode(ticketCode);
+        if (ticket.getReservedUntil() == null) {
+            return 0L;
+        }
+        return Duration.between(LocalDateTime.now(), ticket.getReservedUntil()).toSeconds();
     }
 }

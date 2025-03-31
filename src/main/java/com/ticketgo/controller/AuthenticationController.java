@@ -17,7 +17,7 @@ public class AuthenticationController {
     private final AuthenticationService authenticationService;
 
     @PostMapping("/register")
-    public ApiResponse registerCutomer(@RequestBody @Valid CustomerRegistrationRequest request) {
+    public ApiResponse registerCustomer(@RequestBody @Valid CustomerRegistrationRequest request) {
         authenticationService.registerCustomer(request);
         return new ApiResponse(
                 HttpStatus.CREATED,

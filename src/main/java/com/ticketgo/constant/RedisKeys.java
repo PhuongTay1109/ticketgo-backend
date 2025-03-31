@@ -17,8 +17,7 @@ public class RedisKeys {
         return "bookingInfo:" + userId + ":" + scheduleId;
     }
 
-    public static String LOCKED_TICKETS = "tickets:locked";
-    public static String SCHEDULE_USER_LOCK(Long scheduleId) {
-        return "scheduleUserLock:" + scheduleId;
+    public static String vnPayUrlKey(Long userId, Long scheduleId) {
+        return "vnPayBooking:" + userId + ":" + scheduleId;
     }
 }

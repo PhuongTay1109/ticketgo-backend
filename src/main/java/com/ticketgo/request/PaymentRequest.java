@@ -15,4 +15,5 @@ public class PaymentRequest {
     private Long dropoffStopId;
     private Long totalPrice;
     private Long customerId;
+    private Long scheduleId;
 }
