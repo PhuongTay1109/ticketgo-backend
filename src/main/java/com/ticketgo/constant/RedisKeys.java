@@ -18,6 +18,6 @@ public class RedisKeys {
     }
 
     public static String vnPayUrlKey(Long userId, Long scheduleId) {
-        return "vnPayBooking:" + userId + ":" + scheduleId;
+        return "vnPayUrl:" + userId + ":" + scheduleId;
     }
 }

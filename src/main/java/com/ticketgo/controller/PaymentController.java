@@ -44,9 +44,11 @@ public class PaymentController {
 
         if (responseCode.equals("00")) {
             String bookingInfoKey = RedisKeys.userBookingInfoKey(customerId, scheduleId);
+            log.info("Booking info key: {}", bookingInfoKey);
             redisson.getBucket(bookingInfoKey).delete();
 
             String vnPayUrlKey = RedisKeys.vnPayUrlKey(customerId, scheduleId);
+            log.info("VNPay URL key: {}", vnPayUrlKey);
             redisson.getBucket(vnPayUrlKey).delete();
 
             bookingService.setConfirmedVNPayBooking(bookingId);

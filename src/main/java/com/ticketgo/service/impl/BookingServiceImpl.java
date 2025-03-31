@@ -72,6 +72,8 @@ public class BookingServiceImpl implements BookingService {
                 .pickupLocation(pickupStop.getLocation())
                 .dropoffTime(dropoffStop.getArrivalTime())
                 .dropoffLocation(dropoffStop.getLocation())
+                .pickupId(pickupStopId)
+                .dropoffId(dropoffStopId)
                 .build();
     }
 

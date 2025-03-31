@@ -1,25 +1,32 @@
 package com.ticketgo.service.impl;
 
+import com.ticketgo.constant.RedisKeys;
+import com.ticketgo.dto.BookingConfirmDTO;
 import com.ticketgo.dto.SeatDTO;
+import com.ticketgo.entity.Bus;
+import com.ticketgo.entity.Customer;
+import com.ticketgo.entity.Seat;
+import com.ticketgo.entity.Ticket;
 import com.ticketgo.enums.TicketStatus;
-import com.ticketgo.request.SeatReservationRequest;
-import com.ticketgo.request.PriceEstimationRequest;
-import com.ticketgo.response.PriceEstimationResponse;
 import com.ticketgo.exception.AppException;
-import com.ticketgo.entity.*;
 import com.ticketgo.repository.SeatRepository;
+import com.ticketgo.request.PriceEstimationRequest;
+import com.ticketgo.request.SeatReservationRequest;
+import com.ticketgo.response.PriceEstimationResponse;
 import com.ticketgo.service.AuthenticationService;
 import com.ticketgo.service.BusService;
 import com.ticketgo.service.SeatService;
-
 import com.ticketgo.service.TicketService;
+import com.ticketgo.util.GsonUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.redisson.api.RedissonClient;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -29,6 +36,7 @@ public class SeatServiceImpl implements SeatService {
     private final TicketService ticketService;
     private final BusService busService;
     private final AuthenticationService authService;
+    private final RedissonClient redisson;
 
     @Override
     public Map<String, List<List<SeatDTO>>> getSeatStatusForSchedule(Long scheduleId) {
@@ -105,7 +113,28 @@ public class SeatServiceImpl implements SeatService {
         Customer customer = authService.getAuthorizedCustomer();
         long customerId = customer.getUserId();
 
-        List<String> ticketCodes = request.getTicketCodes();
+        List<String> ticketCodes;
+
+        if (request.getScheduleId() != null) {
+            String key = RedisKeys.userBookingInfoKey(customerId, request.getScheduleId());
+            String json = (String) redisson.getBucket(key).get();
+
+            if (json == null) {
+                log.warn("No booking confirmation found for key: {}", key);
+                throw new AppException("Booking confirmation not found", HttpStatus.NOT_FOUND);
+            }
+
+            log.info("Retrieved booking confirmation from Redis for key: {}", key);
+            BookingConfirmDTO bookingInfo = GsonUtils.fromJson(json, BookingConfirmDTO.class);
+
+            ticketCodes = bookingInfo.getPrices().getSeatNumbers()
+                    .stream()
+                    .map(seatNumber -> String.format("TICKET-%d-%s", request.getScheduleId(), seatNumber))
+                    .collect(Collectors.toList());
+        } else {
+            ticketCodes = request.getTicketCodes();
+        }
+
         for (String ticketCode : ticketCodes) {
             Ticket ticket = ticketService.findByTicketCode(ticketCode);
             if (ticket.getStatus() != TicketStatus.AVAILABLE) {

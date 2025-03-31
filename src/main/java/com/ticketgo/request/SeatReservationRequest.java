@@ -9,4 +9,5 @@ import java.util.List;
 @ToString
 public class SeatReservationRequest {
     private List<String> ticketCodes;
+    private Long scheduleId;
 }

@@ -1,6 +1,7 @@
 package com.ticketgo.service.impl;
 
 import com.ticketgo.config.vnpay.VNPayConfig;
+import com.ticketgo.dto.BookingConfirmDTO;
 import com.ticketgo.entity.Customer;
 import com.ticketgo.entity.Payment;
 import com.ticketgo.repository.PaymentRepository;
@@ -36,6 +37,14 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     @Transactional
     public String createVNPayment(PaymentRequest request) {
+        if(request.getScheduleId() != null) {
+            BookingConfirmDTO bookingInfo = bookingService.getBookingInfo(request.getScheduleId());
+            log.info("Booking info: {}", bookingInfo);
+            request.setDropoffStopId(bookingInfo.getTripInformation().getDropoffId());
+            request.setPickupStopId(bookingInfo.getTripInformation().getPickupId());
+            request.setTotalPrice((long) bookingInfo.getPrices().getTotalPrice());
+        }
+
         Customer customer = authService.getAuthorizedCustomer();
         request.setCustomerId(customer.getUserId());
 
@@ -99,9 +108,9 @@ public class PaymentServiceImpl implements PaymentService {
 
         String url = VNPayConfig.vnp_PayUrl + "?" + queryUrl;
 
-        String cacheKey = vnPayUrlKey(customer.getUserId(), bookingId);
+        String cacheKey = vnPayUrlKey(customer.getUserId(), request.getScheduleId());
         RBucket<String> bucket = redisson.getBucket(cacheKey);
-        bucket.set(url, 10, TimeUnit.MINUTES);
+        bucket.set(url, 15, TimeUnit.MINUTES);
 
         return url;
     }

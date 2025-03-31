@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor(force = true)
 @Builder
 @ToString
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -20,4 +20,6 @@ public class TripInformationResponse {
     private String pickupLocation;
     private LocalDateTime dropoffTime;
     private String dropoffLocation;
+    private final Long dropoffId;
+    private final Long pickupId;
 }
