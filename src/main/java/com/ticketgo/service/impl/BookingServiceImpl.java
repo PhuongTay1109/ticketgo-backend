@@ -1,10 +1,8 @@
 package com.ticketgo.service.impl;
 
+import com.ticketgo.constant.BookingStep;
 import com.ticketgo.constant.RedisKeys;
-import com.ticketgo.dto.BookingConfirmDTO;
-import com.ticketgo.dto.BookingHistoryDTO;
-import com.ticketgo.dto.BookingInfoDTO;
-import com.ticketgo.dto.RevenueStatisticsDTO;
+import com.ticketgo.dto.*;
 import com.ticketgo.entity.*;
 import com.ticketgo.enums.BookingStatus;
 import com.ticketgo.enums.PaymentType;
@@ -17,6 +15,7 @@ import com.ticketgo.projector.BookingInfoDTOTuple;
 import com.ticketgo.projector.RevenueStatisticsDTOTuple;
 import com.ticketgo.repository.BookingRepository;
 import com.ticketgo.repository.PaymentRepository;
+import com.ticketgo.repository.TicketRepository;
 import com.ticketgo.request.PaymentRequest;
 import com.ticketgo.request.PriceEstimationRequest;
 import com.ticketgo.request.SaveBookingInfoRequest;
@@ -27,6 +26,7 @@ import com.ticketgo.service.*;
 import com.ticketgo.util.GsonUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.redisson.api.RBucket;
 import org.redisson.api.RedissonClient;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -53,6 +53,7 @@ public class BookingServiceImpl implements BookingService {
     private final PaymentRepository paymentRepo;
     private final AuthenticationService authService;
     private final SeatService seatService;
+    private final TicketRepository ticketRepo;
 
     private final RedissonClient redisson;
 
@@ -276,7 +277,14 @@ public class BookingServiceImpl implements BookingService {
         String key = RedisKeys.userBookingInfoKey(customerId, request.getScheduleId());
         log.info("Generated Redis key: {}", key);
 
-        redisson.getBucket(key).set(GsonUtils.toJson(bookingConfirm), 30, TimeUnit.MINUTES);
+        RBucket<String> bookingBucket = redisson.getBucket(key);
+
+        if (bookingBucket.isExists()) {
+            log.info("Booking info already exists for key: {}. Deleting old data...", key);
+            bookingBucket.delete();
+        }
+
+        bookingBucket.set(GsonUtils.toJson(bookingConfirm), 30, TimeUnit.MINUTES);
         log.info("Saved booking confirmation to Redis with key: {}", key);
     }
 
@@ -297,5 +305,29 @@ public class BookingServiceImpl implements BookingService {
         log.info("Retrieved booking confirmation from Redis for key: {}", key);
         return GsonUtils.fromJson(json, BookingConfirmDTO.class);
     }
+
+    @Override
+    public BookingStepDTO getBookingStep(Long scheduleId) {
+        Customer customer = authService.getAuthorizedCustomer();
+        long customerId = customer.getUserId();
+        log.info("Fetching booking step for customerId: {}, scheduleId: {}", customerId, scheduleId);
+
+        String vnPayUrlKey = RedisKeys.vnPayUrlKey(customerId, scheduleId);
+        RBucket<String> paymentBucket = redisson.getBucket(vnPayUrlKey);
+        if (paymentBucket.isExists()) {
+            log.info("Payment found in Redis for customerId: {}, scheduleId: {}", customerId, scheduleId);
+            return new BookingStepDTO(BookingStep.PAYMENT.getStep(), paymentBucket.get());
+        }
+
+        boolean existedReservedSeat = ticketRepo.existsReservedSeatsByCustomer(customer);
+        log.info("Reserved seat exists for customerId: {}: {}", customerId, existedReservedSeat);
+        if (existedReservedSeat) {
+            return new BookingStepDTO(BookingStep.HOLD_TICKET.getStep());
+        }
+
+        log.info("No reserved seat or payment found. Returning SELECT_SEAT step.");
+        return new BookingStepDTO(BookingStep.SELECT_SEAT.getStep());
+    }
+
 
 }

@@ -2,6 +2,7 @@ package com.ticketgo.service;
 
 import com.ticketgo.dto.BookingConfirmDTO;
 import com.ticketgo.dto.BookingInfoDTO;
+import com.ticketgo.dto.BookingStepDTO;
 import com.ticketgo.dto.RevenueStatisticsDTO;
 import com.ticketgo.request.PaymentRequest;
 import com.ticketgo.request.SaveBookingInfoRequest;
@@ -34,4 +35,6 @@ public interface BookingService {
     void saveBookingInfo(SaveBookingInfoRequest request);
 
     BookingConfirmDTO getBookingInfo(Long scheduleId);
+
+    BookingStepDTO getBookingStep(Long scheduleId);
 }

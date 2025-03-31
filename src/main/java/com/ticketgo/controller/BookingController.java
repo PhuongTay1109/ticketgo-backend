@@ -67,6 +67,15 @@ public class BookingController {
                 .body(ticketService.existsReservedSeatsByCustomer());
     }
 
+    @GetMapping("/step")
+    public ApiResponse getBookingStep(@RequestParam Long scheduleId) {
+        return new ApiResponse(
+                HttpStatus.OK,
+                "Lấy thông tin bước đặt vé thành công",
+                bookingService.getBookingStep(scheduleId)
+        );
+    }
+
 
     @PostMapping("/info")
     public ApiResponse saveBookingInfo(@RequestBody SaveBookingInfoRequest request) {
