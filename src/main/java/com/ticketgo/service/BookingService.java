@@ -1,8 +1,10 @@
 package com.ticketgo.service;
 
+import com.ticketgo.dto.BookingConfirmDTO;
 import com.ticketgo.dto.BookingInfoDTO;
 import com.ticketgo.dto.RevenueStatisticsDTO;
 import com.ticketgo.request.PaymentRequest;
+import com.ticketgo.request.SaveBookingInfoRequest;
 import com.ticketgo.response.ApiPaginationResponse;
 import com.ticketgo.response.TripInformationResponse;
 import com.ticketgo.entity.Booking;
@@ -28,4 +30,8 @@ public interface BookingService {
     List<RevenueStatisticsDTO> getMonthlyRevenueStatistics(int year);
 
     List<RevenueStatisticsDTO> getRevenueStatisticsByYear(int year);
+
+    void saveBookingInfo(SaveBookingInfoRequest request);
+
+    BookingConfirmDTO getBookingInfo(Long scheduleId);
 }

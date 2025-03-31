@@ -1,5 +1,7 @@
 package com.ticketgo.service.impl;
 
+import com.ticketgo.constant.RedisKeys;
+import com.ticketgo.dto.BookingConfirmDTO;
 import com.ticketgo.dto.BookingHistoryDTO;
 import com.ticketgo.dto.BookingInfoDTO;
 import com.ticketgo.dto.RevenueStatisticsDTO;
@@ -7,6 +9,7 @@ import com.ticketgo.entity.*;
 import com.ticketgo.enums.BookingStatus;
 import com.ticketgo.enums.PaymentType;
 import com.ticketgo.enums.TicketStatus;
+import com.ticketgo.exception.AppException;
 import com.ticketgo.mapper.BookingHistoryMapper;
 import com.ticketgo.mapper.BookingInfoMapper;
 import com.ticketgo.projector.BookingHistoryDTOTuple;
@@ -15,11 +18,16 @@ import com.ticketgo.projector.RevenueStatisticsDTOTuple;
 import com.ticketgo.repository.BookingRepository;
 import com.ticketgo.repository.PaymentRepository;
 import com.ticketgo.request.PaymentRequest;
+import com.ticketgo.request.PriceEstimationRequest;
+import com.ticketgo.request.SaveBookingInfoRequest;
 import com.ticketgo.response.ApiPaginationResponse;
+import com.ticketgo.response.PriceEstimationResponse;
 import com.ticketgo.response.TripInformationResponse;
 import com.ticketgo.service.*;
+import com.ticketgo.util.GsonUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.redisson.api.RedissonClient;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -29,6 +37,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Service
@@ -43,6 +52,9 @@ public class BookingServiceImpl implements BookingService {
     private final BusService busService;
     private final PaymentRepository paymentRepo;
     private final AuthenticationService authService;
+    private final SeatService seatService;
+
+    private final RedissonClient redisson;
 
     @Override
     @Transactional
@@ -237,4 +249,51 @@ public class BookingServiceImpl implements BookingService {
                 ))
                 .collect(Collectors.toList());
     }
+
+    @Override
+    @Transactional
+    public void saveBookingInfo(SaveBookingInfoRequest request) {
+        Customer customer = authService.getAuthorizedCustomer();
+        long customerId = customer.getUserId();
+        log.info("Processing booking confirmation for customerId: {}", customerId);
+
+        PriceEstimationRequest priceReq = new PriceEstimationRequest(request.getTicketCodes());
+        PriceEstimationResponse prices = seatService.getSeatPrice(priceReq);
+        log.info("Retrieved price estimation: {}", GsonUtils.toJson(prices));
+
+        TripInformationResponse tripInfo = getTripInformation(
+                request.getPickupStopId(),
+                request.getDropoffStopId(),
+                request.getScheduleId()
+        );
+        log.info("Retrieved trip information: {}", GsonUtils.toJson(tripInfo));
+
+        BookingConfirmDTO bookingConfirm = new BookingConfirmDTO(prices, tripInfo);
+        log.debug("Constructed BookingConfirmDTO: {}", GsonUtils.toJson(bookingConfirm));
+
+        String key = RedisKeys.userBookingInfoKey(customerId, request.getScheduleId());
+        log.info("Generated Redis key: {}", key);
+
+        redisson.getBucket(key).set(GsonUtils.toJson(bookingConfirm), 30, TimeUnit.MINUTES);
+        log.info("Saved booking confirmation to Redis with key: {}", key);
+    }
+
+    @Override
+    public BookingConfirmDTO getBookingInfo(Long scheduleId) {
+        Customer customer = authService.getAuthorizedCustomer();
+        long customerId = customer.getUserId();
+        log.info("Fetching booking confirmation for customerId: {} and scheduleId: {}", customerId, scheduleId);
+
+        String key = RedisKeys.userBookingInfoKey(customerId, scheduleId);
+        String json = (String) redisson.getBucket(key).get();
+
+        if (json == null) {
+            log.warn("No booking confirmation found for key: {}", key);
+            throw new AppException("Booking confirmation not found", HttpStatus.NOT_FOUND);
+        }
+
+        log.info("Retrieved booking confirmation from Redis for key: {}", key);
+        return GsonUtils.fromJson(json, BookingConfirmDTO.class);
+    }
+
 }

@@ -2,6 +2,7 @@ package com.ticketgo.controller;
 
 import com.ticketgo.constant.ApiVersion;
 import com.ticketgo.request.PriceEstimationRequest;
+import com.ticketgo.request.SaveBookingInfoRequest;
 import com.ticketgo.response.ApiPaginationResponse;
 import com.ticketgo.response.ApiResponse;
 import com.ticketgo.service.BookingService;
@@ -64,5 +65,24 @@ public class BookingController {
         return ResponseEntity
                 .ok()
                 .body(ticketService.existsReservedSeatsByCustomer());
+    }
+
+    @PostMapping("/info")
+    public ApiResponse saveBookingInfo(@RequestBody SaveBookingInfoRequest request) {
+        bookingService.saveBookingInfo(request);
+        return new ApiResponse(
+                HttpStatus.CREATED,
+                "Lưu thông tin xác nhận đặt vé thành công",
+                null
+        );
+    }
+
+    @GetMapping("/info")
+    public ApiResponse getBookingInfo(@RequestParam Long scheduleId) {
+        return new ApiResponse(
+                HttpStatus.OK,
+                "Lấy thông tin xác nhận đặt vé thành công",
+                bookingService.getBookingInfo(scheduleId)
+        );
     }
 }
