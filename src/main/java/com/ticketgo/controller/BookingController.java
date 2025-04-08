@@ -3,12 +3,14 @@ package com.ticketgo.controller;
 import com.ticketgo.constant.ApiVersion;
 import com.ticketgo.request.PriceEstimationRequest;
 import com.ticketgo.request.SaveBookingInfoRequest;
+import com.ticketgo.request.SaveContactInfoRequest;
 import com.ticketgo.response.ApiPaginationResponse;
 import com.ticketgo.response.ApiResponse;
 import com.ticketgo.service.BookingService;
 import com.ticketgo.service.SeatService;
 import com.ticketgo.service.TicketService;
 import com.ticketgo.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +31,25 @@ public class BookingController {
                 HttpStatus.OK,
                 "Lấy thông tin liên hệ thành công",
                 userService.getCustomerContactIno()
+        );
+    }
+
+    @PostMapping("/saveContactInfo")
+    public ApiResponse saveCustomerContactInfo(@Valid @RequestBody SaveContactInfoRequest request) {
+        bookingService.saveCustomerContactInfo(request);
+        return new ApiResponse(
+                HttpStatus.OK,
+                "Lưu thông tin liên hệ thành công",
+                null
+        );
+    }
+
+    @GetMapping("/getSavedContactInfo")
+    public ApiResponse saveCustomerContactInfo(@RequestParam long scheduleId) {
+        return new ApiResponse(
+                HttpStatus.OK,
+                "Lấy thông tin liên hệ thành công",
+                bookingService.getCustomerContactInfo(scheduleId)
         );
     }
 

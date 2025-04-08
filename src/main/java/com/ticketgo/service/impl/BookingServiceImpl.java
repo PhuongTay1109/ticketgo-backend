@@ -19,6 +19,7 @@ import com.ticketgo.repository.TicketRepository;
 import com.ticketgo.request.PaymentRequest;
 import com.ticketgo.request.PriceEstimationRequest;
 import com.ticketgo.request.SaveBookingInfoRequest;
+import com.ticketgo.request.SaveContactInfoRequest;
 import com.ticketgo.response.ApiPaginationResponse;
 import com.ticketgo.response.PriceEstimationResponse;
 import com.ticketgo.response.TripInformationResponse;
@@ -329,5 +330,29 @@ public class BookingServiceImpl implements BookingService {
         return new BookingStepDTO(BookingStep.SELECT_SEAT.getStep());
     }
 
+    @Override
+    public void saveCustomerContactInfo(SaveContactInfoRequest request) {
+        Customer customer = authService.getAuthorizedCustomer();
+        long customerId = customer.getUserId();
 
+        String contactInfoKey = RedisKeys.contactInfoKey(customerId, request.getScheduleId());
+        RBucket<String> contactInfo = redisson.getBucket(contactInfoKey);
+
+        if (contactInfo.isExists()) {
+            log.info("Contact info already exists for key: {}. Deleting old data...", contactInfoKey);
+            contactInfo.delete();
+        }
+
+        contactInfo.set(GsonUtils.toJson(request), 30, TimeUnit.MINUTES);
+    }
+
+    @Override
+    public SaveContactInfoRequest getCustomerContactInfo(long scheduleId) {
+        Customer customer = authService.getAuthorizedCustomer();
+        long customerId = customer.getUserId();
+
+        String contactInfoKey = RedisKeys.contactInfoKey(customerId, scheduleId);
+        String json = (String) redisson.getBucket(contactInfoKey).get();
+        return GsonUtils.fromJson(json, SaveContactInfoRequest.class);
+    }
 }

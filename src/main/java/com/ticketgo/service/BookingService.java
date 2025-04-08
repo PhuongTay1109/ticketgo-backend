@@ -6,6 +6,7 @@ import com.ticketgo.dto.BookingStepDTO;
 import com.ticketgo.dto.RevenueStatisticsDTO;
 import com.ticketgo.request.PaymentRequest;
 import com.ticketgo.request.SaveBookingInfoRequest;
+import com.ticketgo.request.SaveContactInfoRequest;
 import com.ticketgo.response.ApiPaginationResponse;
 import com.ticketgo.response.TripInformationResponse;
 import com.ticketgo.entity.Booking;
@@ -37,4 +38,8 @@ public interface BookingService {
     BookingConfirmDTO getBookingInfo(Long scheduleId);
 
     BookingStepDTO getBookingStep(Long scheduleId);
+
+    void saveCustomerContactInfo(SaveContactInfoRequest request);
+
+    SaveContactInfoRequest getCustomerContactInfo(long scheduleId);
 }

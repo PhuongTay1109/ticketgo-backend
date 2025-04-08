@@ -51,6 +51,10 @@ public class PaymentController {
             log.info("VNPay URL key: {}", vnPayUrlKey);
             redisson.getBucket(vnPayUrlKey).delete();
 
+            String contactInfoKey = RedisKeys.contactInfoKey(customerId, scheduleId);
+            log.info("Contact info key: {}", contactInfoKey);
+            redisson.getBucket(contactInfoKey).delete();
+
             bookingService.setConfirmedVNPayBooking(bookingId);
             emailService.sendBookingInfo(bookingId);
             return ResponseEntity.status(302)

@@ -20,4 +20,8 @@ public class RedisKeys {
     public static String vnPayUrlKey(Long userId, Long scheduleId) {
         return "vnPayUrl:" + userId + ":" + scheduleId;
     }
+
+    public static String contactInfoKey(Long userId, Long scheduleId) {
+        return "contactInfo:" + userId + ":" + scheduleId;
+    }
 }
