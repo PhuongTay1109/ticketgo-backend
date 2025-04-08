@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -44,14 +45,28 @@ public class RouteServiceImpl implements RouteService {
                                               String sortDirection,
                                               int pageNumber,
                                               int pageSize) {
-        Specification<Schedule> spec = Specification
-                .where(ScheduleSpecification.hasDepartureLocation(departureLocation))
-                .and(ScheduleSpecification.hasVisibility())
-                .and(ScheduleSpecification.hasArrivalLocation(arrivalLocation))
-                .and(ScheduleSpecification.hasDepartureDate(departureDate))
-                .and(ScheduleSpecification.withSorting(sortBy, sortDirection));
+        Specification<Schedule> spec = Specification.where(null);
 
-        Pageable pageable = PageRequest.of(pageNumber - 1, pageSize);
+        if (departureLocation != null) {
+            spec = spec.and(ScheduleSpecification.hasDepartureLocation(departureLocation));
+        }
+
+        if (arrivalLocation != null) {
+            spec = spec.and(ScheduleSpecification.hasArrivalLocation(arrivalLocation));
+        }
+
+        if (departureDate != null) {
+            spec = spec.and(ScheduleSpecification.hasDepartureDate(departureDate));
+        }
+        spec = spec.and(ScheduleSpecification.hasVisibility());
+
+        String sortField = (sortBy == null || sortBy.isBlank()) ? "createdAt" : sortBy;
+        Sort.Direction sortDir = (sortDirection == null || sortDirection.isBlank())
+                ? Sort.Direction.DESC
+                : Sort.Direction.fromString(sortDirection);
+
+        Pageable pageable = PageRequest.of(pageNumber - 1, pageSize, Sort.by(sortDir, sortField));
+
         Page<Schedule> schedules = scheduleService.findAll(spec, pageable);
 
         List<RouteSearchResponse> scheduleDTOs = schedules.stream()
