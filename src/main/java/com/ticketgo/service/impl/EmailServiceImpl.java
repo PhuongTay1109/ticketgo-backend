@@ -32,10 +32,14 @@ public class EmailServiceImpl implements EmailService {
     private ScheduleService scheduleService;
 
     @Autowired
-    public EmailServiceImpl(JavaMailSender emailSender, @Lazy BookingService bookingService) {
+    public EmailServiceImpl(JavaMailSender emailSender,
+                            @Lazy BookingService bookingService,
+                            @Lazy ScheduleService scheduleService) {
         this.emailSender = emailSender;
         this.bookingService = bookingService;
+        this.scheduleService = scheduleService;
     }
+
 
     @Value("${app.email.from}")
     private String fromEmail;
@@ -64,6 +68,8 @@ public class EmailServiceImpl implements EmailService {
     @Transactional
     public void sendBookingInfo(long bookingId, long scheduleId) {
         List<BookingInfoDTO> bookingInfoList = bookingService.getBookingInfoList(bookingId);
+        log.info("Booking info list: {}", bookingInfoList.size());
+
         Schedule schedule = scheduleService.findById(scheduleId);
         Driver driver = schedule.getDriver();
         if (!bookingInfoList.isEmpty()) {
