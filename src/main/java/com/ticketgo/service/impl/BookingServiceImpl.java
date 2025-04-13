@@ -15,6 +15,7 @@ import com.ticketgo.projector.BookingInfoDTOTuple;
 import com.ticketgo.projector.RevenueStatisticsDTOTuple;
 import com.ticketgo.repository.BookingRepository;
 import com.ticketgo.repository.PaymentRepository;
+import com.ticketgo.repository.PromotionRepository;
 import com.ticketgo.repository.TicketRepository;
 import com.ticketgo.request.PaymentRequest;
 import com.ticketgo.request.PriceEstimationRequest;
@@ -55,6 +56,7 @@ public class BookingServiceImpl implements BookingService {
     private final AuthenticationService authService;
     private final SeatService seatService;
     private final TicketRepository ticketRepo;
+    private final PromotionRepository promotionRepo;
 
     private final RedissonClient redisson;
 
@@ -81,7 +83,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional
-    public long saveInProgressBooking(PaymentRequest request) {
+    public SavedInProgressInfo saveInProgressBooking(PaymentRequest request) {
         long customerId = request.getCustomerId();
         Customer customer = customerService.findById(customerId);
         RouteStop pickupStop = routeStopService.findById(request.getPickupStopId());
@@ -96,10 +98,24 @@ public class BookingServiceImpl implements BookingService {
         }
         ticketService.saveAll(tickets);
 
+        Double totalPrice = Double.valueOf(request.getTotalPrice());
+        Double discountedPrice = totalPrice;
+        Promotion promotion = null;
+
+        if (request.getPromotionId() != null) {
+            promotion = promotionRepo.findByPromotionId(request.getPromotionId());
+            if (promotion == null) {
+                throw new AppException("Promotion not found", HttpStatus.NOT_FOUND);
+            }
+            int discountedAmount = promotion.getDiscountPercentage();
+            discountedPrice = totalPrice - (totalPrice * discountedAmount / 100);
+        }
+
         Booking booking = Booking.builder()
                 .customer(customer)
                 .bookingDate(LocalDateTime.now())
-                .originalPrice(Double.valueOf(request.getTotalPrice()))
+                .originalPrice(totalPrice)
+                .discountedPrice(discountedPrice)
                 .tickets(tickets)
                 .contactEmail(request.getContactEmail())
                 .contactName(request.getContactName())
@@ -107,6 +123,7 @@ public class BookingServiceImpl implements BookingService {
                 .pickupStop(pickupStop)
                 .dropoffStop(dropoffStop)
                 .status(BookingStatus.IN_PROGRESS)
+                .promotion(promotion)
                 .build();
 
         bookingRepo.save(booking);
@@ -117,7 +134,7 @@ public class BookingServiceImpl implements BookingService {
 
         ticketService.saveAll(tickets);
 
-        return booking.getBookingId();
+        return new SavedInProgressInfo(booking.getBookingId(), discountedPrice);
     }
 
     @Override

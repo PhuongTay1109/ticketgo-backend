@@ -48,7 +48,7 @@ public class PaymentServiceImpl implements PaymentService {
         Customer customer = authService.getAuthorizedCustomer();
         request.setCustomerId(customer.getUserId());
 
-        long bookingId = bookingService.saveInProgressBooking(request);
+        long bookingId = bookingService.saveInProgressBooking(request).getBookingId();
 
         String vnp_Version = "2.1.0";
         String vnp_Command = "pay";
@@ -60,7 +60,8 @@ public class PaymentServiceImpl implements PaymentService {
         vnp_Params.put("vnp_Version", vnp_Version);
         vnp_Params.put("vnp_Command", vnp_Command);
         vnp_Params.put("vnp_TmnCode", vnp_TmnCode);
-        String amount = String.valueOf(request.getTotalPrice() * 100);
+        long paymentAmount = Math.round(bookingService.saveInProgressBooking(request).getPaymentAmount());
+        String amount = String.valueOf(paymentAmount * 100);
         vnp_Params.put("vnp_Amount", amount);
         vnp_Params.put("vnp_CurrCode", "VND");
         vnp_Params.put("vnp_TxnRef", vnp_TxnRef);

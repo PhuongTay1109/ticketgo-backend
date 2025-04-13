@@ -1,9 +1,6 @@
 package com.ticketgo.service;
 
-import com.ticketgo.dto.BookingConfirmDTO;
-import com.ticketgo.dto.BookingInfoDTO;
-import com.ticketgo.dto.BookingStepDTO;
-import com.ticketgo.dto.RevenueStatisticsDTO;
+import com.ticketgo.dto.*;
 import com.ticketgo.request.PaymentRequest;
 import com.ticketgo.request.SaveBookingInfoRequest;
 import com.ticketgo.request.SaveContactInfoRequest;
@@ -16,7 +13,7 @@ import java.util.List;
 
 public interface BookingService {
     TripInformationResponse getTripInformation(long pickupStopId, long dropoffStopId, long scheduleId);
-    long saveInProgressBooking(PaymentRequest request);
+    SavedInProgressInfo saveInProgressBooking(PaymentRequest request);
 
     void setConfirmedVNPayBooking(long bookingId);
     void setFailedVNPayBooking(long bookingId);
