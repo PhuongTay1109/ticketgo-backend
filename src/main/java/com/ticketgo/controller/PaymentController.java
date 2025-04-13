@@ -56,7 +56,7 @@ public class PaymentController {
             redisson.getBucket(contactInfoKey).delete();
 
             bookingService.setConfirmedVNPayBooking(bookingId);
-            emailService.sendBookingInfo(bookingId);
+            emailService.sendBookingInfo(bookingId, scheduleId);
             return ResponseEntity.status(302)
                     .header("Location",
                             frontendUrl + "/thankyou")

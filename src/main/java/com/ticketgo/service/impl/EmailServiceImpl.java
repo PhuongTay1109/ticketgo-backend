@@ -1,8 +1,11 @@
 package com.ticketgo.service.impl;
 
 import com.ticketgo.dto.BookingInfoDTO;
+import com.ticketgo.entity.Driver;
+import com.ticketgo.entity.Schedule;
 import com.ticketgo.service.BookingService;
 import com.ticketgo.service.EmailService;
+import com.ticketgo.service.ScheduleService;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +29,7 @@ import java.util.concurrent.CompletableFuture;
 public class EmailServiceImpl implements EmailService {
     private final JavaMailSender emailSender;
     private BookingService bookingService;
+    private ScheduleService scheduleService;
 
     @Autowired
     public EmailServiceImpl(JavaMailSender emailSender, @Lazy BookingService bookingService) {
@@ -58,8 +62,10 @@ public class EmailServiceImpl implements EmailService {
     @Override
     @Async("taskExecutor")
     @Transactional
-    public void sendBookingInfo(long bookingId) {
+    public void sendBookingInfo(long bookingId, long scheduleId) {
         List<BookingInfoDTO> bookingInfoList = bookingService.getBookingInfoList(bookingId);
+        Schedule schedule = scheduleService.findById(scheduleId);
+        Driver driver = schedule.getDriver();
         if (!bookingInfoList.isEmpty()) {
             String contactEmail = bookingInfoList.get(0).getContactEmail();
 
@@ -85,6 +91,7 @@ public class EmailServiceImpl implements EmailService {
                 emailContent.append("<p><b style='color: #333;'>Thời gian đón dự kiến:</b> ").append(info.getPickupTime()).append("</p>");
                 emailContent.append("<p><b style='color: #333;'>Địa điểm đón:</b> ").append(info.getPickupLocation()).append("</p>");
                 emailContent.append("<p><b style='color: #333;'>Địa điểm trả:</b> ").append(info.getDropoffLocation()).append("</p>");
+                emailContent.append("<p><b style='color: #333;'>Số điện thoại tài xế:</b> ").append(driver.getPhoneNumber()).append("</p>");
 
                 emailContent.append("<p style='font-size: 18px; font-weight: bold; color: #1E90FF;'>Trạng thái vé: Đã xác nhận</p>");
 
