@@ -13,6 +13,7 @@ public interface BookingHistoryDTOTuple {
     String getSeatNumber();
     String getLicensePlate();
     String getContactEmail();
-    Double getPrice();
+    Double getOriginalPrice();
+    Double getDiscountedPrice();
     String getStatus();
 }

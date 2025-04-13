@@ -62,7 +62,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             ds.location AS dropoffLocation,
             st.seat_number AS seatNumber,
             bs.license_plate AS licensePlate,
-            b.original_price AS price,
+            b.original_price AS originalPrice,
+            b.discounted_price AS discountedPrice,
             b.status AS status
         FROM
             bookings b

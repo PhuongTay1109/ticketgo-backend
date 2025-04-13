@@ -20,7 +20,8 @@ public class BookingHistoryMapper {
                 .pickupLocation(tuple.getPickupLocation())
                 .dropoffLocation(tuple.getDropoffLocation())
                 .seatNumber(tuple.getSeatNumber())
-                .price(tuple.getPrice().toString())
+                .originalPrice(tuple.getOriginalPrice().toString())
+                .discountedPrice(tuple.getDiscountedPrice() != null ? tuple.getDiscountedPrice().toString() : null)
                 .licensePlate(tuple.getLicensePlate())
                 .status(getVietnameseStatus(tuple.getStatus()))
                 .build();
