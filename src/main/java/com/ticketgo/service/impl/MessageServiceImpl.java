@@ -7,10 +7,13 @@ import com.ticketgo.entity.User;
 import com.ticketgo.repository.MessageRepository;
 import com.ticketgo.repository.UserRepository;
 import com.ticketgo.response.GetMessageResponse;
+import com.ticketgo.response.MessageResponse;
 import com.ticketgo.service.MessageService;
 import com.ticketgo.service.MessagingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -41,6 +44,16 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public GetMessageResponse getMessages(Long senderId, Long receiverId) {
-        return null;
+        List<Message> messages = messageRepository.findAllBySenderIdAndReceiverId(senderId, receiverId);
+        List<MessageResponse> messageResponses = messages.stream()
+                .map(message -> MessageResponse.builder()
+                        .messageId(message.getMessageId())
+                        .senderId(message.getSender().getUserId())
+                        .receiverId(message.getReceiver().getUserId())
+                        .content(message.getContent())
+                        .sentAt(message.getSentAt())
+                        .build())
+                .toList();
+        return new GetMessageResponse(messageResponses);
     }
 }
