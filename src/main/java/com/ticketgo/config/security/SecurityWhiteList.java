@@ -12,6 +12,7 @@ public class SecurityWhiteList {
             "/v3/api-docs/**",
             "/swagger-ui/**",
             "/api/v1/homepage/**",
-            "/api/v1/promotions/active"
+            "/api/v1/promotions/active",
+            "/ws/**"
     };
 }

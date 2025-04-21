@@ -16,6 +16,11 @@ spring:
     show-sql: true
     hibernate:
       ddl-auto: update
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
 
 # Email
 email:
@@ -51,3 +56,15 @@ cloudinary:
 redis:
   address: redis://127.0.0.1:6379
   ping-connection-interval: 60000
+
+# Rabbit mq
+queue:
+  rabbitmq:
+    socket:
+      host: localhost
+      port: 61613 # STOMP port
+      username: guest
+      password: guest
+      app-dest: /app
+      stomp-broker: /topic
+      sockjs-endpoint: /ws
