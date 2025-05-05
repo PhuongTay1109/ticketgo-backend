@@ -1,0 +1,66 @@
+spring:
+  application:
+    name: ticketgo-back-end
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://mysql:3307/ticketgo_db?useSSL=false&useUnicode=true&characterEncoding=UTF-8
+    username: root
+    password: PhuongTay110903@
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+
+# Email
+email:
+  username: ticketgo0725@gmail.com
+  password: rute dxta kumh xesk
+app:
+  email:
+    from: "contact@ticketgo.com"
+    fromName: "Ticket Go"
+
+# Frontend
+frontend:
+   url: https://ticketgo-black.vercel.app
+
+# JWT private & public key
+jwt:
+  private:
+    key:
+      path: src/main/resources/private_key.pem
+  public:
+    key:
+      path: src/main/resources/public_key.pem
+
+# Cloudinary
+cloudinary:
+  cloud-name: dj1h07rea
+  api-key: 854269645733317
+  api-secret: BDjF4Xe77SeLhGROvkvZkwAi928
+
+
+# Redis
+redis:
+  address: redis://redis:6379
+  ping-connection-interval: 60000
+
+# Rabbit mq
+queue:
+  rabbitmq:
+    socket:
+      host: rabbitmq
+      port: 61613 # STOMP port
+      username: guest
+      password: guest
+      app-dest: /app
+      stomp-broker: /topic
+      sockjs-endpoint: /ws

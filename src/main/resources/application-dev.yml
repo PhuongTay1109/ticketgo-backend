@@ -3,7 +3,7 @@ spring:
     name: ticketgo-back-end
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/ticketgo_db?useSSL=false&useUnicode=true&characterEncoding=UTF-8
+    url: jdbc:mysql://mysql:3306/ticketgo_db?useSSL=false&useUnicode=true&characterEncoding=UTF-8
     username: root
     password: PhuongTay110903@
 #    hikari:
@@ -54,14 +54,14 @@ cloudinary:
 
 # Redis
 redis:
-  address: redis://127.0.0.1:6379
+  address: redis://redis:6379
   ping-connection-interval: 60000
 
 # Rabbit mq
 queue:
   rabbitmq:
     socket:
-      host: localhost
+      host: rabbitmq
       port: 61613 # STOMP port
       username: guest
       password: guest
