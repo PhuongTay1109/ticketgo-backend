@@ -2,17 +2,20 @@ package com.ticketgo.util;
 
 import com.ticketgo.constant.RedisKeys;
 import com.ticketgo.entity.User;
+import com.ticketgo.exception.AppException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RList;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
 import java.security.PrivateKey;
 import java.security.PublicKey;
@@ -24,6 +27,7 @@ import java.util.function.Function;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class JwtUtils {
 
     private final RedissonClient redissonClient;
@@ -34,15 +38,27 @@ public class JwtUtils {
     @Value("${jwt.public.key.path}")
     private String publicKeyPath;
 
+    private static final String ENCRYPT_ALGORITHM = "RSA";
+    public static final String BEGIN_PUBLIC_KEY = "-----BEGIN PUBLIC KEY-----";
+    public static final String END_PUBLIC_KEY = "-----END PUBLIC KEY-----";
+    public static final String BEGIN_PRIVATE_KEY = "-----BEGIN PRIVATE KEY-----";
+    public static final String END_PRIVATE_KEY = "-----END PRIVATE KEY-----";
+    public static final String EMPTY_STRING = "";
+
     private static final long ACCESS_TOKEN_EXPIRATION_TIME = 30 * 60 * 1000; // 30 minutes
     private static final long REFRESH_TOKEN_EXPIRATION_TIME = 24 * 60 * 60 * 1000; // 1 day
 
     private PrivateKey getPrivateKey() {
         try {
-            String privateKeyPEM = new String(Files.readAllBytes(Paths.get(privateKeyPath)));
+            InputStream inputStream  = getClass().getClassLoader().getResourceAsStream(privateKeyPath);
+            if (inputStream == null) {
+                log.error("Failed to load private key: {}", privateKeyPath);
+                throw new AppException("Private key file not found", HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+            String privateKeyPEM = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
             privateKeyPEM =
-                    privateKeyPEM.replace("-----BEGIN PRIVATE KEY-----", "")
-                            .replace("-----END PRIVATE KEY-----", "")
+                    privateKeyPEM.replace(BEGIN_PRIVATE_KEY, EMPTY_STRING)
+                            .replace(END_PRIVATE_KEY, EMPTY_STRING)
                             .replaceAll("\\s+", "");
 
             byte[] encoded = Base64.getDecoder().decode(privateKeyPEM);
@@ -56,10 +72,15 @@ public class JwtUtils {
 
     private PublicKey getPublicKey() {
         try {
-            String publicKeyPEM = new String(Files.readAllBytes(Paths.get(publicKeyPath)));
+            InputStream inputStream  = getClass().getClassLoader().getResourceAsStream(publicKeyPath);
+            if (inputStream == null) {
+                log.error("Failed to load public key: {}", publicKeyPath);
+                throw new AppException("Public key file not found", HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+            String publicKeyPEM = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
             publicKeyPEM =
-                    publicKeyPEM.replace("-----BEGIN PUBLIC KEY-----", "")
-                            .replace("-----END PUBLIC KEY-----", "")
+                    publicKeyPEM.replace(BEGIN_PUBLIC_KEY, EMPTY_STRING)
+                            .replace(END_PUBLIC_KEY, EMPTY_STRING)
                             .replaceAll("\\s+", "");
 
             byte[] encoded = Base64.getDecoder().decode(publicKeyPEM);

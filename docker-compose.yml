@@ -8,6 +8,7 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: PhuongTay110903@
       MYSQL_DATABASE: ticketgo_db
+      TZ: Asia/Ho_Chi_Minh
     ports:
       - "3307:3306"
     volumes:

@@ -36,10 +36,10 @@ frontend:
 jwt:
   private:
     key:
-      path: src/main/resources/private_key.pem
+      path: private_key.pem
   public:
     key:
-      path: src/main/resources/public_key.pem
+      path: public_key.pem
 
 # Cloudinary
 cloudinary:
