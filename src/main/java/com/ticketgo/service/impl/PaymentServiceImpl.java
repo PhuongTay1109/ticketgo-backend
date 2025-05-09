@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RBucket;
 import org.redisson.api.RedissonClient;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,6 +34,9 @@ public class PaymentServiceImpl implements PaymentService {
     private final BookingService bookingService;
 
     private final RedissonClient redisson;
+
+    @Value("${vnpay.return-url}")
+    private String vnPayReturnUrl;
 
     @Override
     @Transactional
@@ -67,7 +71,7 @@ public class PaymentServiceImpl implements PaymentService {
         vnp_Params.put("vnp_TxnRef", vnp_TxnRef);
         vnp_Params.put("vnp_OrderInfo", bookingId + "-" + customer.getUserId() + "-" + request.getScheduleId());
         vnp_Params.put("vnp_OrderType", "250000");
-        vnp_Params.put("vnp_ReturnUrl", VNPayConfig.vnp_ReturnUrl);
+        vnp_Params.put("vnp_ReturnUrl", vnPayReturnUrl + "/api/v1/payment/vnpay/return");
 
         String locate = "vn";
         vnp_Params.put("vnp_Locale", locate);

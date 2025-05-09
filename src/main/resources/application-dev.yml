@@ -68,3 +68,6 @@ queue:
       app-dest: /app
       stomp-broker: /topic
       sockjs-endpoint: /ws
+
+vnpay:
+  return-url: http://localhost:8080
