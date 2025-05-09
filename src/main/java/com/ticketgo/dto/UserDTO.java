@@ -11,6 +11,7 @@ import lombok.*;
 @ToString
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserDTO {
+    private Long userId;
     private String email;
     private String role;
     private String imageUrl;

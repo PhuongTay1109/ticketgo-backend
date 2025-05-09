@@ -2,6 +2,7 @@ package com.ticketgo.repository;
 
 import com.ticketgo.projector.BookingHistoryDTOTuple;
 import com.ticketgo.projector.BookingInfoDTOTuple;
+import com.ticketgo.projector.CustomerInfoDTOTuple;
 import com.ticketgo.projector.RevenueStatisticsDTOTuple;
 import com.ticketgo.entity.Booking;
 import org.springframework.data.domain.Page;
@@ -102,4 +103,33 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             @Param("dateFormat") String dateFormat,
             @Param("startDate") LocalDateTime startDate,
             @Param("endDate") LocalDateTime endDate);
+
+    @Query(value = "SELECT " +
+            "b.contact_phone as customerPhone, " +
+            "b.contact_name AS customerName, " +
+            "t.seat_id AS seatNumber, " +
+            "pickup_stop.location AS pickupLocation, " +
+            "dropoff_stop.location AS dropoffLocation " +
+            "FROM " +
+            "bookings b " +
+            "INNER JOIN tickets t ON t.booking_id = b.booking_id " +
+            "INNER JOIN route_stops pickup_stop ON pickup_stop.stop_id = b.pickup_stop_id " +
+            "INNER JOIN route_stops dropoff_stop ON dropoff_stop.stop_id = b.dropoff_stop_id " +
+            "INNER JOIN schedules s ON s.schedule_id = t.schedule_id " +
+            "WHERE s.schedule_id = :scheduleId " +
+            "ORDER BY t.seat_id",
+            nativeQuery = true)
+    List<Object[]> findPassengerInfoByScheduleIdNative(@Param("scheduleId") Long scheduleId);
+
+    // Phương thức chuyển đổi kết quả thành DTO
+    default List<CustomerInfoDTOTuple> getPassengerInfoByScheduleId(Long scheduleId) {
+        return findPassengerInfoByScheduleIdNative(scheduleId).stream()
+                .map(result -> new CustomerInfoDTOTuple(
+                        (String) result[0],
+                        (String) result[1],
+                        (Long) result[2],
+                        (String) result[3],
+                        (String) result[4]))
+                .toList();
+    }
 }

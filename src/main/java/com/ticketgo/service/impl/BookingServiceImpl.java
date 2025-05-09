@@ -12,6 +12,7 @@ import com.ticketgo.mapper.BookingHistoryMapper;
 import com.ticketgo.mapper.BookingInfoMapper;
 import com.ticketgo.projector.BookingHistoryDTOTuple;
 import com.ticketgo.projector.BookingInfoDTOTuple;
+import com.ticketgo.projector.CustomerInfoDTOTuple;
 import com.ticketgo.projector.RevenueStatisticsDTOTuple;
 import com.ticketgo.repository.BookingRepository;
 import com.ticketgo.repository.PaymentRepository;
@@ -371,5 +372,10 @@ public class BookingServiceImpl implements BookingService {
         String contactInfoKey = RedisKeys.contactInfoKey(customerId, scheduleId);
         String json = (String) redisson.getBucket(contactInfoKey).get();
         return GsonUtils.fromJson(json, SaveContactInfoRequest.class);
+    }
+
+    @Override
+    public List<CustomerInfoDTOTuple> getPassengerInfoByScheduleId(Long scheduleId) {
+        return bookingRepo.getPassengerInfoByScheduleId(scheduleId);
     }
 }

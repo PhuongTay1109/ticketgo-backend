@@ -1,6 +1,7 @@
 package com.ticketgo.service;
 
 import com.ticketgo.dto.*;
+import com.ticketgo.projector.CustomerInfoDTOTuple;
 import com.ticketgo.request.PaymentRequest;
 import com.ticketgo.request.SaveBookingInfoRequest;
 import com.ticketgo.request.SaveContactInfoRequest;
@@ -39,4 +40,6 @@ public interface BookingService {
     void saveCustomerContactInfo(SaveContactInfoRequest request);
 
     SaveContactInfoRequest getCustomerContactInfo(long scheduleId);
+
+    List<CustomerInfoDTOTuple> getPassengerInfoByScheduleId(Long scheduleId);
 }
