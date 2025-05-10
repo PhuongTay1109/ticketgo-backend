@@ -1,7 +1,10 @@
 package com.ticketgo.service.impl;
 
 import com.ticketgo.constant.Topics;
+import com.ticketgo.dto.ChatUserDTO;
 import com.ticketgo.dto.MessageDTO;
+import com.ticketgo.entity.BusCompany;
+import com.ticketgo.entity.Customer;
 import com.ticketgo.entity.Message;
 import com.ticketgo.entity.User;
 import com.ticketgo.repository.MessageRepository;
@@ -13,6 +16,8 @@ import com.ticketgo.service.MessagingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -55,5 +60,46 @@ public class MessageServiceImpl implements MessageService {
                         .build())
                 .toList();
         return new GetMessageResponse(messageResponses);
+    }
+
+    public List<ChatUserDTO> getChatUsers(Long myId) {
+        List<Long> partnerIds = messageRepository.findChatPartnerIds(myId);
+
+        List<ChatUserDTO> chatUsers = new ArrayList<>();
+        for (Long partnerId : partnerIds) {
+            User user = userRepository.findById(partnerId).orElse(null);
+            if (user == null) continue;
+
+            Message lastMessage = messageRepository
+                    .findConversationMessages(myId, partnerId)
+                    .stream()
+                    .findFirst()
+                    .orElse(null);
+
+            if (lastMessage == null) continue;
+
+            String name = "";
+            String avt = "";
+            if (user instanceof Customer customer) {
+                name = customer.getFullName();
+                avt = customer.getImageUrl();
+            } else if (user instanceof BusCompany busCompany) {
+                name = busCompany.getBusCompanyName();
+                avt = "https://res.cloudinary.com/dj1h07rea/image/upload/v1746855511/avt_cojdbt.jpg";
+            }
+
+            ChatUserDTO cu = new ChatUserDTO();
+            cu.setUserId(partnerId);
+            cu.setName(name);
+            cu.setAvatar(avt);
+            cu.setLastMessage(lastMessage.getContent());
+            cu.setLastMessageTime(lastMessage.getSentAt().toString());
+
+            chatUsers.add(cu);
+        }
+
+        chatUsers.sort(Comparator.comparing(ChatUserDTO::getLastMessageTime).reversed());
+
+        return chatUsers;
     }
 }
