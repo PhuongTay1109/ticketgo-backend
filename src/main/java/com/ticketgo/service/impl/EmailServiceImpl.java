@@ -74,40 +74,96 @@ public class EmailServiceImpl implements EmailService {
         Driver driver = schedule.getDriver();
         if (!bookingInfoList.isEmpty()) {
             String contactEmail = bookingInfoList.get(0).getContactEmail();
+            String contactName = bookingInfoList.get(0).getContactName();
+            String routeName = bookingInfoList.get(0).getRouteName();
+            String departureDate = bookingInfoList.get(0).getDepartureDate();
+            String lisensePlate = bookingInfoList.get(0).getLicensePlate();
+            String pickupTime = bookingInfoList.get(0).getPickupTime();
+            String pickupLocation = bookingInfoList.get(0).getPickupLocation();
+            String dropoffLocation = bookingInfoList.get(0).getDropoffLocation();
 
-            StringBuilder emailContent = new StringBuilder();
-            emailContent.append("<html><body>");
-            emailContent.append("<div style='font-family: Arial, sans-serif; padding: 20px; background-color: #f4f4f4;'>");
+            String seatInfo = "";
 
-            emailContent.append("<h2 style='color: #1E90FF; text-align: center; font-size: 30px; font-weight: bold;'>Thông tin đặt vé của bạn</h2>");
-
-            for (BookingInfoDTO info : bookingInfoList) {
-                emailContent.append("<div style='background-color: white; padding: 20px; margin-bottom: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);'>");
-
-                emailContent.append("<div style='background-color: #286db1; color: white; font-size: 24px; font-weight: bold; padding: 15px; text-align: center; border-radius: 8px 8px 0 0;'>");
-                emailContent.append("<span style='font-weight: bold;'>").append(info.getTicketCode()).append("</span>");
-                emailContent.append("</div>");
-
-                emailContent.append("<div style='background-color: #cee3f5; color: black; padding: 15px; margin-top: 10px; border-radius: 0 0 8px 8px;'>");
-                emailContent.append("<p><b style='color: #333;'>Tên khách hàng:</b> ").append(info.getContactName()).append("</p>");
-                emailContent.append("<p><b style='color: #333;'>Tuyến đường:</b> ").append(info.getRouteName()).append("</p>");
-                emailContent.append("<p><b style='color: #333;'>Ngày khởi hành:</b> ").append(info.getDepartureDate()).append("</p>");
-                emailContent.append("<p><b style='color: #333;'>Số ghế:</b> ").append(info.getSeatNumber()).append("</p>");
-                emailContent.append("<p><b style='color: #333;'>Biển số xe:</b> ").append(info.getLicensePlate()).append("</p>");
-                emailContent.append("<p><b style='color: #333;'>Thời gian đón dự kiến:</b> ").append(info.getPickupTime()).append("</p>");
-                emailContent.append("<p><b style='color: #333;'>Địa điểm đón:</b> ").append(info.getPickupLocation()).append("</p>");
-                emailContent.append("<p><b style='color: #333;'>Địa điểm trả:</b> ").append(info.getDropoffLocation()).append("</p>");
-                emailContent.append("<p><b style='color: #333;'>Số điện thoại tài xế:</b> ").append(driver.getPhoneNumber()).append("</p>");
-
-                emailContent.append("<p style='font-size: 18px; font-weight: bold; color: #1E90FF;'>Trạng thái vé: Đã xác nhận</p>");
-
-                emailContent.append("</div>");
-                emailContent.append("</div>");
+            for (int i = 0; i < bookingInfoList.size(); i++) {
+                BookingInfoDTO info = bookingInfoList.get(i);
+                seatInfo += info.getSeatNumber() + " (Mã vé: " + info.getTicketCode() + ")";
+                if (i < bookingInfoList.size() - 1) {
+                    seatInfo += " , ";
+                }
             }
 
-            emailContent.append("<p style='text-align: center; font-size: 14px;'>Nếu có bất kỳ câu hỏi nào, vui lòng liên hệ với chúng tôi qua email này hoặc gọi hotline: <b style='color: #1E90FF;'>0979552239</b>.</p>");
+            StringBuilder emailContent = new StringBuilder();
+            emailContent.append("<div style=\"font-family: 'Arial', sans-serif; max-width: 700px; margin: 0 auto; border: 1px solid #e1e1e1; border-radius: 8px; overflow: hidden; background-color: #f4f4f9;\">");
+
+            // Header
+            emailContent.append("<div style=\"background-color: #007BFF; padding: 20px; text-align: center; color: white; border-top-left-radius: 8px; border-top-right-radius: 8px;\">");
+            emailContent.append("<h1 style=\"font-size: 24px; margin: 0;\">THÔNG TIN ĐẶT VÉ XE</h1>");
+            emailContent.append("<p style=\"font-size: 14px; margin: 5px 0 0;\">Mã đặt vé: #" + bookingId + "</p>");
             emailContent.append("</div>");
-            emailContent.append("</body></html>");
+
+            // Customer Info
+            emailContent.append("<div style=\"padding: 20px; background-color: #ffffff; border-bottom: 1px solid #e1e1e1;\">");
+            emailContent.append("<h2 style=\"font-size: 18px; color: #333; margin-top: 0;\">Xin chào " + contactName + ",</h2>");
+            emailContent.append("<p style=\"color: #666; font-size: 14px;\">Cảm ơn bạn đã đặt vé với chúng tôi. Dưới đây là thông tin chi tiết chuyến đi của bạn:</p>");
+            emailContent.append("</div>");
+
+            // Trip Details
+            emailContent.append("<div style=\"padding: 20px; background-color: #ffffff;\">");
+
+            // Route Info
+            emailContent.append("<div style=\"margin-bottom: 20px;\">");
+            emailContent.append("<h3 style=\"font-size: 16px; color: #333; margin: 0;\">Chuyến đi: " + routeName + "</h3>");
+            emailContent.append("<p style=\"color: #666; font-size: 14px;\"> Giờ khởi hành: " + departureDate + "</p>");
+            emailContent.append("</div>");
+
+            /// Pickup Info
+            emailContent.append("<div style=\"margin-bottom: 12px;\">");
+            emailContent.append("<p style=\"font-size: 14px; color: #888; margin: 0; font-weight: bold;\">ĐIỂM ĐÓN:</p>");
+            emailContent.append("<p style=\"font-size: 15px; color: #333; margin: 4px 0 0;\">" + pickupLocation + " • Thời gian đón dự kiến: " + pickupTime + "</p>");
+            emailContent.append("</div>");
+
+            // Dropoff Info
+            emailContent.append("<div style=\"margin-bottom: 12px;\">");
+            emailContent.append("<p style=\"font-size: 14px; color: #888; margin: 0; font-weight: bold;\">ĐIỂM TRẢ:</p>");
+            emailContent.append("<p style=\"font-size: 15px; color: #333; margin: 4px 0 0;\">" + dropoffLocation + "</p>");
+            emailContent.append("</div>");
+
+
+            emailContent.append("</div>");
+
+            // Booking Details
+            emailContent.append("<div style=\"padding: 20px; background-color: #ffffff; border-top: 1px solid #e1e1e1;\">");
+            emailContent.append("<h3 style=\"font-size: 16px; color: #333;\">CHI TIẾT ĐẶT VÉ</h3>");
+
+            emailContent.append("<div style=\"margin-bottom: 12px;\">");
+            emailContent.append("<span style=\"font-size: 14px; color: #333; font-weight: bold;\">Số ghế đã đặt: </span>");
+            emailContent.append("<span style=\"font-size: 14px; color: #333;\">" + seatInfo + "</span>");
+            emailContent.append("</div>");
+
+            emailContent.append("<div style=\"margin-bottom: 12px;\">");
+            emailContent.append("<span style=\"font-size: 14px; color: #333; font-weight: bold;\">Biển số xe: </span>");
+            emailContent.append("<span style=\"font-size: 14px; color: #333;\">" + lisensePlate + "</span>");
+            emailContent.append("</div>");
+
+            emailContent.append("<div style=\"margin-bottom: 12px;\">");
+            emailContent.append("<span style=\"font-size: 14px; color: #333; font-weight: bold;\">Liên hệ tài xế: </span>");
+            emailContent.append("<span style=\"font-size: 14px; color: #333;\">" + driver.getPhoneNumber() + "</span>");
+            emailContent.append("</div>");
+
+            emailContent.append("</div>");
+
+            // Status
+            emailContent.append("<div style=\"padding: 20px; background-color: #f2f7f4; text-align: center; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px;\">");
+            emailContent.append("<span style=\"background-color: #28a745; color: white; padding: 10px 20px; border-radius: 20px; font-weight: bold;\">✔ ĐÃ XÁC NHẬN</span>");
+            emailContent.append("</div>");
+
+            // Footer
+            emailContent.append("<div style=\"background-color: #f9f9f9; padding: 15px; text-align: center; font-size: 12px; color: #999; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px;\">");
+            emailContent.append("<p style=\"margin: 0 0 10px 0;\">Nếu có bất kỳ câu hỏi nào, vui lòng liên hệ với chúng tôi qua email này hoặc gọi đến hotline.</p>");
+            emailContent.append("<p style=\"margin: 0; font-weight: bold; color: #007BFF;\">Hotline: 0979552239</p>");
+            emailContent.append("<p style=\"margin: 0; font-weight: bold; color: #007BFF;\"><a href=\"https://ticketgo-black.vercel.app/\" style=\"color: #007BFF; text-decoration: none;\">TicketGo - Đặt vé xe dễ dàng và nhanh chóng </a></p>");
+            emailContent.append("</div>");
+            emailContent.append("</div>");
 
             try {
                 MimeMessage message = emailSender.createMimeMessage();
@@ -115,7 +171,7 @@ public class EmailServiceImpl implements EmailService {
 
                 helper.setFrom(fromEmail, fromName);
                 helper.setTo(contactEmail);
-                helper.setSubject("Thông tin đặt vé của bạn");
+                helper.setSubject("Thông tin đặt vé của bạn - Mã #" + bookingId);
                 helper.setText(emailContent.toString(), true);
 
                 emailSender.send(message);
@@ -170,12 +226,33 @@ public class EmailServiceImpl implements EmailService {
 
     private String getActivationEmailContent(String token) {
         String activationLink = String.format("%s/activate?token=%s", feUrl, token);
-        return """
-               <p>Xin chào,</p>
-               <p>Cảm ơn bạn đã đăng ký với Ticket Go.</p>
-               <p>Vui lòng nhấn vào liên kết bên dưới để xác nhận tài khoản của bạn:</p>
-               <p><a href="%s">Xác nhận tài khoản của tôi</a></p>
-               """.formatted(activationLink);
+        StringBuilder emailContent = new StringBuilder();
+        emailContent.append("<div style=\"font-family: 'Arial', sans-serif; max-width: 700px; margin: 0 auto; border: 1px solid #e1e1e1; border-radius: 8px; overflow: hidden; background-color: #f4f4f9;\">");
+
+        // Header
+        emailContent.append("<div style=\"background-color: #007BFF; padding: 20px; text-align: center; color: white; border-top-left-radius: 8px; border-top-right-radius: 8px;\">");
+        emailContent.append("<h1 style=\"font-size: 24px; margin: 0;\">XÁC NHẬN TÀI KHOẢN</h1>");
+        emailContent.append("</div>");
+
+        // Customer Info
+        emailContent.append("<div style=\"padding: 20px; background-color: #ffffff; border-bottom: 1px solid #e1e1e1;\">");
+        emailContent.append("<h2 style=\"font-size: 18px; color: #333; margin-top: 0;\">Xin chào!" + "</h2>");
+        emailContent.append("<p style=\"color: #666; font-size: 14px;\">Cảm ơn bạn đã đăng ký với Ticket Go. Vui lòng nhấn vào <a href=\"")
+                .append(activationLink)
+                .append("\" style=\"color: #007BFF; text-decoration: none;\">liên kết</a> để xác nhận tài khoản của bạn.</p>");
+
+        emailContent.append("</div>");
+
+        // Footer
+        emailContent.append("<div style=\"background-color: #f9f9f9; padding: 15px; text-align: center; font-size: 12px; color: #999; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px;\">");
+        emailContent.append("<p style=\"margin: 0 0 10px 0;\">Nếu có bất kỳ câu hỏi nào, vui lòng liên hệ với chúng tôi qua email này hoặc gọi đến hotline.</p>");
+        emailContent.append("<p style=\"margin: 0; font-weight: bold; color: #007BFF;\">Hotline: 0979552239</p>");
+        emailContent.append("<p style=\"margin: 0; font-weight: bold; color: #007BFF;\">Hotline: 0979552239</p>");
+        emailContent.append("<p style=\"margin: 0; font-weight: bold; color: #007BFF;\"><a href=\"tel:0979552239\" style=\"color: #007BFF; text-decoration: none;\">TicketGo - Đặt vé xe dễ dàng và nhanh chóng </a></p>");
+        emailContent.append("</div>");
+        emailContent.append("</div>");
+
+        return emailContent.toString();
     }
 
     private String getResetPasswordEmailSubject() {
@@ -184,12 +261,33 @@ public class EmailServiceImpl implements EmailService {
 
     private String getResetPasswordEmailContent(String token) {
         String resetLink = String.format("%s/reset-password?token=%s", feUrl, token);
-        return """
-           <p>Xin chào,</p>
-           <p>Bạn đã yêu cầu đặt lại mật khẩu cho tài khoản Ticket Go.</p>
-           <p>Vui lòng nhấn vào liên kết bên dưới để đặt lại mật khẩu của bạn:</p>
-           <p><a href="%s">Đặt lại mật khẩu của tôi</a></p>
-           <p>Nếu bạn không yêu cầu đặt lại mật khẩu, vui lòng bỏ qua email này.</p>
-           """.formatted(resetLink);
+
+        StringBuilder emailContent = new StringBuilder();
+        emailContent.append("<div style=\"font-family: 'Arial', sans-serif; max-width: 700px; margin: 0 auto; border: 1px solid #e1e1e1; border-radius: 8px; overflow: hidden; background-color: #f4f4f9;\">");
+
+        // Header
+        emailContent.append("<div style=\"background-color: #007BFF; padding: 20px; text-align: center; color: white; border-top-left-radius: 8px; border-top-right-radius: 8px;\">");
+        emailContent.append("<h1 style=\"font-size: 24px; margin: 0;\">XÁC NHẬN TÀI KHOẢN</h1>");
+        emailContent.append("</div>");
+
+        // Customer Info
+        emailContent.append("<div style=\"padding: 20px; background-color: #ffffff; border-bottom: 1px solid #e1e1e1;\">");
+        emailContent.append("<h2 style=\"font-size: 18px; color: #333; margin-top: 0;\">Xin chào!" + "</h2>");
+        emailContent.append("<p style=\"color: #666; font-size: 14px;\">Bạn đã yêu cầu đặt lại mật khẩu cho tài khoản Ticket Go. Vui lòng nhấn vào <a href=\"")
+                .append(resetLink)
+                .append("\" style=\"color: #007BFF; text-decoration: none;\">liên kết</a> để đặt lại mật khẩu của bạn.</p>");
+
+        emailContent.append("</div>");
+
+        // Footer
+        emailContent.append("<div style=\"background-color: #f9f9f9; padding: 15px; text-align: center; font-size: 12px; color: #999; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px;\">");
+        emailContent.append("<p style=\"margin: 0 0 10px 0;\">Nếu có bất kỳ câu hỏi nào, vui lòng liên hệ với chúng tôi qua email này hoặc gọi đến hotline.</p>");
+        emailContent.append("<p style=\"margin: 0; font-weight: bold; color: #007BFF;\">Hotline: 0979552239</p>");
+        emailContent.append("<p style=\"margin: 0; font-weight: bold; color: #007BFF;\">Hotline: 0979552239</p>");
+        emailContent.append("<p style=\"margin: 0; font-weight: bold; color: #007BFF;\"><a href=\"tel:0979552239\" style=\"color: #007BFF; text-decoration: none;\">TicketGo - Đặt vé xe dễ dàng và nhanh chóng </a></p>");
+        emailContent.append("</div>");
+        emailContent.append("</div>");
+
+        return emailContent.toString();
     }
 }

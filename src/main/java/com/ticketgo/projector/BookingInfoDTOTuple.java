@@ -3,6 +3,7 @@ package com.ticketgo.projector;
 import java.time.LocalDateTime;
 
 public interface BookingInfoDTOTuple {
+    Long getBookingId();
     String getTicketCode();
     String getContactName();
     String getRouteName();

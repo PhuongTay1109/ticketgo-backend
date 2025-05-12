@@ -19,6 +19,7 @@ import java.util.List;
 public interface BookingRepository extends JpaRepository<Booking, Long> {
     @Query(value = """
         SELECT
+            b.booking_id AS bookingId,
             t.ticket_code AS ticketCode,
             b.contact_name AS contactName,
             b.contact_email AS contactEmail,

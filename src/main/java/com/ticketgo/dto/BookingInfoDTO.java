@@ -12,6 +12,7 @@ import lombok.*;
 @ToString
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class BookingInfoDTO {
+    private Long bookingId;
     private String ticketCode;
     private String contactName;
     private String routeName;
