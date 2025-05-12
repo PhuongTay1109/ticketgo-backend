@@ -267,7 +267,7 @@ public class EmailServiceImpl implements EmailService {
 
         // Header
         emailContent.append("<div style=\"background-color: #007BFF; padding: 20px; text-align: center; color: white; border-top-left-radius: 8px; border-top-right-radius: 8px;\">");
-        emailContent.append("<h1 style=\"font-size: 24px; margin: 0;\">XÁC NHẬN TÀI KHOẢN</h1>");
+        emailContent.append("<h1 style=\"font-size: 24px; margin: 0;\">ĐẶT LẠI MẬT KHẨU</h1>");
         emailContent.append("</div>");
 
         // Customer Info
