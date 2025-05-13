@@ -14,14 +14,8 @@ import com.ticketgo.projector.BookingHistoryDTOTuple;
 import com.ticketgo.projector.BookingInfoDTOTuple;
 import com.ticketgo.projector.CustomerInfoDTOTuple;
 import com.ticketgo.projector.RevenueStatisticsDTOTuple;
-import com.ticketgo.repository.BookingRepository;
-import com.ticketgo.repository.PaymentRepository;
-import com.ticketgo.repository.PromotionRepository;
-import com.ticketgo.repository.TicketRepository;
-import com.ticketgo.request.PaymentRequest;
-import com.ticketgo.request.PriceEstimationRequest;
-import com.ticketgo.request.SaveBookingInfoRequest;
-import com.ticketgo.request.SaveContactInfoRequest;
+import com.ticketgo.repository.*;
+import com.ticketgo.request.*;
 import com.ticketgo.response.ApiPaginationResponse;
 import com.ticketgo.response.PriceEstimationResponse;
 import com.ticketgo.response.TripInformationResponse;
@@ -58,6 +52,7 @@ public class BookingServiceImpl implements BookingService {
     private final SeatService seatService;
     private final TicketRepository ticketRepo;
     private final PromotionRepository promotionRepo;
+    private final RefundRepository refundRepo;
 
     private final RedissonClient redisson;
 
@@ -377,5 +372,31 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public List<CustomerInfoDTOTuple> getPassengerInfoByScheduleId(Long scheduleId) {
         return bookingRepo.getPassengerInfoByScheduleId(scheduleId);
+    }
+
+    @Override
+    public void cancelBooking(CancelBookingRequest req) {
+        long bookingId = req.getBookingId();
+        Double amount = req.getAmount();
+        String reason = req.getReason();
+
+        // update CANCELLED status for bookings table
+        bookingRepo.updateBookingStatusByBookingId(
+                BookingStatus.CANCELLED,
+                bookingId
+        );
+
+        // release tickets
+        ticketRepo.cancelTicketsByBookingId(bookingId);
+
+        // insert to refund table
+        Refund refund = Refund.builder()
+                .booking(bookingRepo.findById(bookingId).orElseThrow(() -> new RuntimeException("Booking not found")))
+                .amount(amount)
+                .refundedAt(LocalDateTime.now())
+                .reason(reason)
+                .build();
+
+        refundRepo.save(refund);
     }
 }

@@ -89,4 +89,16 @@ public interface TicketRepository extends JpaRepository<Ticket, String> {
                                          @Param("seatId") long seatId);
 
     Optional<Ticket> findByTicketCode(String ticketCode);
+
+    @Modifying
+    @Transactional
+    @Query(value = """
+            UPDATE tickets t
+            SET 
+                t.status = 'AVAILABLE',
+                t.reserved_until = null,
+                t.customer_id = null
+            WHERE t.booking_id = :bookingId
+            """, nativeQuery = true)
+    void cancelTicketsByBookingId(Long bookingId);
 }

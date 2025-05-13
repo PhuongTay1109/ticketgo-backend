@@ -1,6 +1,7 @@
 package com.ticketgo.controller;
 
 import com.ticketgo.constant.ApiVersion;
+import com.ticketgo.request.CancelBookingRequest;
 import com.ticketgo.request.PriceEstimationRequest;
 import com.ticketgo.request.SaveBookingInfoRequest;
 import com.ticketgo.request.SaveContactInfoRequest;
@@ -97,7 +98,6 @@ public class BookingController {
         );
     }
 
-
     @PostMapping("/info")
     public ApiResponse saveBookingInfo(@RequestBody SaveBookingInfoRequest request) {
         bookingService.saveBookingInfo(request);
@@ -114,6 +114,16 @@ public class BookingController {
                 HttpStatus.OK,
                 "Lấy thông tin xác nhận đặt vé thành công",
                 bookingService.getBookingInfo(scheduleId)
+        );
+    }
+
+    @PostMapping("/cancel")
+    public ApiResponse cancelBooking(@RequestBody CancelBookingRequest req) {
+        bookingService.cancelBooking(req);
+        return new ApiResponse(
+                HttpStatus.OK,
+                "Hủy đặt vé thành công",
+                null
         );
     }
 }
