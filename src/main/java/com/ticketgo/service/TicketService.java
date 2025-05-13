@@ -13,7 +13,7 @@ public interface TicketService {
 
     boolean existsReservedSeatsByCustomer();
 
-    void releaseReservedSeatsByCustomer(long customerId);
+    void releaseReservedSeatsByCustomer(long customerId, long scheduleId);
 
     boolean isSeatAvailable( long seatId, long scheduleId);
 

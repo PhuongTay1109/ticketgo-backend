@@ -42,8 +42,8 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
-    public void releaseReservedSeatsByCustomer(long customerId) {
-        ticketRepo.releaseReservedSeatsByCustomer(customerId);
+    public void releaseReservedSeatsByCustomer(long customerId, long scheduleId) {
+        ticketRepo.releaseReservedSeatsByCustomer(customerId, scheduleId);
     }
 
     @Override

@@ -34,8 +34,8 @@ public class SeatController {
     }
 
     @PostMapping("/cancel-reserve")
-    public ApiResponse cancelReserveSeats() {
-        seatService.cancelReservedSeatsByCustomer();
+    public ApiResponse cancelReserveSeats(@RequestParam Long scheduleId) {
+        seatService.cancelReservedSeatsByCustomer(scheduleId);
         return new ApiResponse(
                 HttpStatus.OK,
                 "Hủy các vé đang giữ cho khách hàng thành công",

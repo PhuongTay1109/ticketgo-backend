@@ -64,9 +64,12 @@ public interface TicketRepository extends JpaRepository<Ticket, String> {
                 t.reserved_until = null,
                 t.customer_id = null
             WHERE t.customer_id = :customerId
+            AND t.schedule_id = :scheduleId
             AND t.status = 'RESERVED'
             """, nativeQuery = true)
-    void releaseReservedSeatsByCustomer(@Param("customerId") long customerId);
+    void releaseReservedSeatsByCustomer(
+            @Param("customerId") long customerId,
+            @Param("scheduleId") long scheduleId);
 
     @Query("""
             SELECT CASE WHEN COUNT(t) > 0
