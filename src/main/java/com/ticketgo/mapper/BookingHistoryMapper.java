@@ -38,6 +38,7 @@ public class BookingHistoryMapper {
 
         BookingHistoryDTO dto = new BookingHistoryDTO();
         dto.setBookingId(first.getBookingId());
+        dto.setBookingDate(first.getBookingDate().format(DATE_TIME_FORMATTER));
         dto.setTicketCode(first.getTicketCode());
         dto.setContactName(first.getContactName());
         dto.setRouteName(first.getRouteName());

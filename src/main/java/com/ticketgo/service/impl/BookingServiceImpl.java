@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import java.util.LinkedHashMap;
 
 import static com.ticketgo.util.DateTimeUtils.DATE_TIME_FORMATTER;
 
@@ -199,7 +200,12 @@ public class BookingServiceImpl implements BookingService {
                 bookingRepo.getBookingHistoryForCustomer(customer.getUserId(), pageable);
 
         Map<Long, List<BookingHistoryDTOTuple>> groupedByBookingId = bookingHistoryPage.getContent().stream()
-                .collect(Collectors.groupingBy(BookingHistoryDTOTuple::getBookingId));
+                .collect(Collectors.groupingBy(
+                        BookingHistoryDTOTuple::getBookingId,
+                        LinkedHashMap::new,
+                        Collectors.toList()
+                ));
+
 
         List<BookingHistoryDTO> bookingHistoryDTOs = groupedByBookingId.values().stream()
                 .map(BookingHistoryMapper::toBookingHistoryDTO)

@@ -23,6 +23,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     @Query(value = """
         SELECT
             b.booking_id AS bookingId,
+            b.booking_date as bookingDate,
             t.ticket_code AS ticketCode,
             b.contact_name AS contactName,
             b.contact_email AS contactEmail,
@@ -58,6 +59,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     @Query(value = """
             SELECT
                 b.booking_id AS bookingId,
+                b.booking_date as bookingDate,
             t.ticket_code AS ticketCode,
             b.contact_name AS contactName,
             b.contact_email AS contactEmail,

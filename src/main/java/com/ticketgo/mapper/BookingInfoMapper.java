@@ -13,6 +13,7 @@ public class BookingInfoMapper {
         log.info("Departure date: {}", tuple.getDepartureDate());
         return BookingInfoDTO.builder()
                 .bookingId(tuple.getBookingId())
+                .bookingDate(tuple.getBookingDate().format(DATE_TIME_FORMATTER))
                 .ticketCode(tuple.getTicketCode())
                 .contactName(tuple.getContactName())
                 .contactEmail(tuple.getContactEmail())

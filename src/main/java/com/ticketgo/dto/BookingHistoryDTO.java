@@ -12,6 +12,7 @@ import java.util.List;
 @ToString
 public class BookingHistoryDTO {
     private Long bookingId;
+    private String bookingDate;
     private String ticketCode;
     private String contactName;
     private String routeName;

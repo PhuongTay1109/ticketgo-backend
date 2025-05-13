@@ -81,6 +81,7 @@ public class EmailServiceImpl implements EmailService {
             String pickupTime = bookingInfoList.get(0).getPickupTime();
             String pickupLocation = bookingInfoList.get(0).getPickupLocation();
             String dropoffLocation = bookingInfoList.get(0).getDropoffLocation();
+            String bookingDate = bookingInfoList.get(0).getBookingDate();
 
             String seatInfo = "";
 
@@ -99,6 +100,7 @@ public class EmailServiceImpl implements EmailService {
             emailContent.append("<div style=\"background-color: #007BFF; padding: 20px; text-align: center; color: white; border-top-left-radius: 8px; border-top-right-radius: 8px;\">");
             emailContent.append("<h1 style=\"font-size: 24px; margin: 0;\">THÔNG TIN ĐẶT VÉ XE</h1>");
             emailContent.append("<p style=\"font-size: 14px; margin: 5px 0 0;\">Mã đặt vé: #" + bookingId + "</p>");
+            emailContent.append("<p style=\"font-size: 12px; margin: 5px 0 0;\">Ngày đặt vé: " + bookingDate + "</p>");
             emailContent.append("</div>");
 
             // Customer Info

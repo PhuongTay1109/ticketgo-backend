@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 public interface BookingHistoryDTOTuple {
     Long getBookingId();
+    LocalDateTime getBookingDate();
     String getTicketCode();
     String getContactName();
     String getRouteName();
