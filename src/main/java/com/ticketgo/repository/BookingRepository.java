@@ -91,6 +91,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             route_stops ds ON b.dropoff_stop_id = ds.stop_id
         WHERE
             b.status NOT LIKE "IN_PROGRESS"
+        AND  b.status NOT LIKE "FAILED"
         AND b.customer_id = :customerId
         ORDER BY
             b.booking_date DESC

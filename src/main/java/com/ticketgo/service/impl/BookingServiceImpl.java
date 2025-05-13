@@ -21,6 +21,7 @@ import com.ticketgo.response.ApiPaginationResponse;
 import com.ticketgo.response.PriceEstimationResponse;
 import com.ticketgo.response.TripInformationResponse;
 import com.ticketgo.service.*;
+import com.ticketgo.util.DateTimeUtils;
 import com.ticketgo.util.GsonUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,13 +35,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
-import java.util.LinkedHashMap;
-
-import static com.ticketgo.util.DateTimeUtils.DATE_TIME_FORMATTER;
 
 @Service
 @RequiredArgsConstructor
@@ -58,8 +58,10 @@ public class BookingServiceImpl implements BookingService {
     private final TicketRepository ticketRepo;
     private final PromotionRepository promotionRepo;
     private final RefundRepository refundRepo;
+    private final CanceledBookingHistoryRepository canceledBookingHistoryRepo;
 
     private final RedissonClient redisson;
+    private final RouteRepository routeRepository;
 
     @Override
     @Transactional
@@ -211,15 +213,41 @@ public class BookingServiceImpl implements BookingService {
                 .map(BookingHistoryMapper::toBookingHistoryDTO)
                 .collect(Collectors.toList());
 
-        for(BookingHistoryDTO dto : bookingHistoryDTOs) {
-           if (dto.getStatus().equals("Đã hủy")) {
-               Refund refund = refundRepo.findByBookingId(dto.getBookingId());
-               dto.setRefundAmount(String.valueOf(refund.getAmount()));
-                dto.setRefundReason(refund.getReason());
-                dto.setRefundStatus(getRefundStatus(refund.getStatus()));
-                dto.setRefundDate(refund.getRefundedAt().format(DATE_TIME_FORMATTER));
-           }
-        }
+        List<CanceledBookingHistory> canceledBookingHistories = canceledBookingHistoryRepo.findAllByCustomerId(customer.getUserId());
+
+        List<BookingHistoryDTO> canceledHistoryDTOs = canceledBookingHistories.stream()
+                .map(booking -> {
+                    Refund refund = refundRepo.findByBookingId(booking.getBookingId());
+
+                    BookingHistoryDTO dto = new BookingHistoryDTO();
+                    dto.setBookingId(booking.getBookingId());
+                    dto.setBookingDate(booking.getBookingDate().format(DateTimeUtils.DATE_TIME_FORMATTER));
+                    dto.setSeatInfos(booking.getSeatInfos());
+                    dto.setContactName(booking.getContactName());
+                    dto.setRouteName(booking.getRouteName());
+                    dto.setDepartureDate(booking.getDepartureDate().format(DateTimeUtils.DATE_TIME_FORMATTER));
+                    dto.setPickupTime(booking.getPickupTime().format(DateTimeUtils.DATE_TIME_FORMATTER));
+                    dto.setPickupLocation(booking.getPickupLocation());
+                    dto.setDropoffLocation(booking.getDropoffLocation());
+                    dto.setLicensePlate(booking.getLicensePlate());
+                    dto.setContactEmail(booking.getContactEmail());
+                    dto.setOriginalPrice(String.valueOf(booking.getOriginalPrice()));
+                    dto.setDiscountedPrice(String.valueOf(booking.getDiscountedPrice()));
+                    dto.setStatus("Đã hủy");
+                    dto.setRefundDate(refund.getRefundedAt().format(DateTimeUtils.DATE_TIME_FORMATTER));
+                    dto.setRefundStatus(getRefundStatus(refund.getStatus()));
+                    dto.setRefundAmount(String.valueOf(refund.getAmount()));
+                    dto.setRefundReason(refund.getReason());
+                    return dto;
+                }).toList();
+
+        List<BookingHistoryDTO> combinedHistory = new ArrayList<>();
+
+        combinedHistory.addAll(bookingHistoryDTOs);
+        combinedHistory.addAll(canceledHistoryDTOs);
+
+        combinedHistory.sort((a, b) -> b.getBookingId().compareTo(a.getBookingId()));
+
 
         ApiPaginationResponse.Pagination pagination = new ApiPaginationResponse.Pagination(
                 bookingHistoryPage.getNumber() + 1,
@@ -231,7 +259,7 @@ public class BookingServiceImpl implements BookingService {
         return new ApiPaginationResponse(
                 HttpStatus.OK,
                 "Lịch sử đặt vé của khách hàng",
-                bookingHistoryDTOs,
+                combinedHistory,
                 pagination
         );
     }
@@ -405,10 +433,24 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
+    @Transactional
     public void cancelBooking(CancelBookingRequest req) {
         long bookingId = req.getBookingId();
         Double amount = req.getAmount();
         String reason = req.getReason();
+
+        Booking booking = bookingRepo.findById(bookingId)
+                .orElseThrow(() -> new RuntimeException("Booking not found"));
+
+        List<Ticket> tickets = ticketRepo.findAllByBooking_BookingId(bookingId);
+        String seatInfo="";
+
+        for (int i = 0; i < tickets.size(); i++) {
+            seatInfo += tickets.get(i).getSeat().getSeatNumber() + " (Mã vé: " + tickets.get(0).getTicketCode() + ")";
+            if (i < tickets.size() - 1) {
+                seatInfo += " , ";
+            }
+        }
 
         // update CANCELLED status for bookings table
         bookingRepo.updateBookingStatusByBookingId(
@@ -421,7 +463,7 @@ public class BookingServiceImpl implements BookingService {
 
         // insert to refund table
         Refund refund = Refund.builder()
-                .booking(bookingRepo.findById(bookingId).orElseThrow(() -> new RuntimeException("Booking not found")))
+                .booking(booking)
                 .amount(amount)
                 .refundedAt(LocalDateTime.now())
                 .reason(reason)
@@ -429,5 +471,25 @@ public class BookingServiceImpl implements BookingService {
                 .build();
 
         refundRepo.save(refund);
+
+        // save to history table
+        CanceledBookingHistory history = CanceledBookingHistory.builder()
+                .bookingId(bookingId)
+                .bookingDate(booking.getCreatedAt())
+                .seatInfos(seatInfo)
+                .contactName(booking.getContactName())
+                .routeName(tickets.get(0).getSchedule().getRoute().getRouteName())
+                .departureDate(tickets.get(0).getSchedule().getDepartureTime())
+                .pickupTime(booking.getPickupStop().getArrivalTime())
+                .pickupLocation(booking.getPickupStop().getLocation())
+                .dropoffLocation(booking.getDropoffStop().getLocation())
+                .licensePlate(tickets.get(0).getSeat().getBus().getLicensePlate())
+                .contactEmail(booking.getContactEmail())
+                .originalPrice(booking.getOriginalPrice())
+                .discountedPrice(booking.getDiscountedPrice())
+                .customerId(authService.getAuthorizedCustomer().getUserId())
+                .build();
+
+        canceledBookingHistoryRepo.save(history);
     }
 }

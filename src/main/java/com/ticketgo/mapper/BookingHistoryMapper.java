@@ -4,7 +4,6 @@ import com.ticketgo.dto.BookingHistoryDTO;
 import com.ticketgo.projector.BookingHistoryDTOTuple;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.ticketgo.util.DateTimeUtils.DATE_TIME_FORMATTER;
 
@@ -31,22 +30,24 @@ public class BookingHistoryMapper {
     public static BookingHistoryDTO toBookingHistoryDTO(List<BookingHistoryDTOTuple> tuples) {
         BookingHistoryDTOTuple first = tuples.get(0);
 
-        List<String> seatNumbers = tuples.stream()
-                .map(BookingHistoryDTOTuple::getSeatNumber)
-                .distinct()
-                .collect(Collectors.toList());
+        String seatInfos="";
+        for (int i = 0; i < tuples.size(); i++) {
+            seatInfos += tuples.get(i).getSeatNumber() + " (Mã vé: " + tuples.get(0).getTicketCode() + ")";
+            if (i < tuples.size() - 1) {
+                seatInfos += " , ";
+            }
+        }
 
         BookingHistoryDTO dto = new BookingHistoryDTO();
         dto.setBookingId(first.getBookingId());
         dto.setBookingDate(first.getBookingDate().format(DATE_TIME_FORMATTER));
-        dto.setTicketCode(first.getTicketCode());
+        dto.setSeatInfos(seatInfos);
         dto.setContactName(first.getContactName());
         dto.setRouteName(first.getRouteName());
         dto.setDepartureDate(first.getDepartureDate().format(DATE_TIME_FORMATTER));
         dto.setPickupTime(first.getPickupTime().format(DATE_TIME_FORMATTER));
         dto.setPickupLocation(first.getPickupLocation());
         dto.setDropoffLocation(first.getDropoffLocation());
-        dto.setSeatNumbers(seatNumbers);
         dto.setLicensePlate(first.getLicensePlate());
         dto.setContactEmail(first.getContactEmail());
         dto.setOriginalPrice(first.getOriginalPrice());
@@ -55,7 +56,7 @@ public class BookingHistoryMapper {
         return dto;
     }
 
-    private static String getVietnameseStatus(String status) {
+    public static String getVietnameseStatus(String status) {
         return switch (status) {
             case "CONFIRMED" -> "Đã xác nhận";
             case "COMPLETED" -> "Hoàn thành";

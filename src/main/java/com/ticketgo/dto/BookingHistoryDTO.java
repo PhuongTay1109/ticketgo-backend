@@ -2,8 +2,6 @@ package com.ticketgo.dto;
 
 import lombok.*;
 
-import java.util.List;
-
 @Getter
 @Setter
 @Builder
@@ -13,14 +11,13 @@ import java.util.List;
 public class BookingHistoryDTO {
     private Long bookingId;
     private String bookingDate;
-    private String ticketCode;
+    private String seatInfos;
     private String contactName;
     private String routeName;
     private String departureDate;
     private String pickupTime;
     private String pickupLocation;
     private String dropoffLocation;
-    private List<String> seatNumbers;
     private String licensePlate;
     private String contactEmail;
     private String originalPrice;
