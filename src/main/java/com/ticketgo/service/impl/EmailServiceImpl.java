@@ -247,8 +247,7 @@ public class EmailServiceImpl implements EmailService {
         emailContent.append("<div style=\"background-color: #f9f9f9; padding: 15px; text-align: center; font-size: 12px; color: #999; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px;\">");
         emailContent.append("<p style=\"margin: 0 0 10px 0;\">Nếu có bất kỳ câu hỏi nào, vui lòng liên hệ với chúng tôi qua email này hoặc gọi đến hotline.</p>");
         emailContent.append("<p style=\"margin: 0; font-weight: bold; color: #007BFF;\">Hotline: 0979552239</p>");
-        emailContent.append("<p style=\"margin: 0; font-weight: bold; color: #007BFF;\">Hotline: 0979552239</p>");
-        emailContent.append("<p style=\"margin: 0; font-weight: bold; color: #007BFF;\"><a href=\"tel:0979552239\" style=\"color: #007BFF; text-decoration: none;\">TicketGo - Đặt vé xe dễ dàng và nhanh chóng </a></p>");
+        emailContent.append("<p style=\"margin: 0; font-weight: bold; color: #007BFF;\"><a href=\"https://ticketgo-black.vercel.app/\" style=\"color: #007BFF; text-decoration: none;\">TicketGo - Đặt vé xe dễ dàng và nhanh chóng </a></p>");
         emailContent.append("</div>");
         emailContent.append("</div>");
 
@@ -283,8 +282,7 @@ public class EmailServiceImpl implements EmailService {
         emailContent.append("<div style=\"background-color: #f9f9f9; padding: 15px; text-align: center; font-size: 12px; color: #999; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px;\">");
         emailContent.append("<p style=\"margin: 0 0 10px 0;\">Nếu có bất kỳ câu hỏi nào, vui lòng liên hệ với chúng tôi qua email này hoặc gọi đến hotline.</p>");
         emailContent.append("<p style=\"margin: 0; font-weight: bold; color: #007BFF;\">Hotline: 0979552239</p>");
-        emailContent.append("<p style=\"margin: 0; font-weight: bold; color: #007BFF;\">Hotline: 0979552239</p>");
-        emailContent.append("<p style=\"margin: 0; font-weight: bold; color: #007BFF;\"><a href=\"tel:0979552239\" style=\"color: #007BFF; text-decoration: none;\">TicketGo - Đặt vé xe dễ dàng và nhanh chóng </a></p>");
+        emailContent.append("<p style=\"margin: 0; font-weight: bold; color: #007BFF;\"><a href=\"https://ticketgo-black.vercel.app/\" style=\"color: #007BFF; text-decoration: none;\">TicketGo - Đặt vé xe dễ dàng và nhanh chóng </a></p>");
         emailContent.append("</div>");
         emailContent.append("</div>");
 

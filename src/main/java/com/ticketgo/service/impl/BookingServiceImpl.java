@@ -6,6 +6,7 @@ import com.ticketgo.dto.*;
 import com.ticketgo.entity.*;
 import com.ticketgo.enums.BookingStatus;
 import com.ticketgo.enums.PaymentType;
+import com.ticketgo.enums.RefundStatus;
 import com.ticketgo.enums.TicketStatus;
 import com.ticketgo.exception.AppException;
 import com.ticketgo.mapper.BookingHistoryMapper;
@@ -34,8 +35,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+
+import static com.ticketgo.util.DateTimeUtils.DATE_TIME_FORMATTER;
 
 @Service
 @RequiredArgsConstructor
@@ -190,13 +194,26 @@ public class BookingServiceImpl implements BookingService {
         Pageable pageable = PageRequest.of(pageNumber - 1, pageSize);
 
         Customer customer = authService.getAuthorizedCustomer();
+
         Page<BookingHistoryDTOTuple> bookingHistoryPage =
                 bookingRepo.getBookingHistoryForCustomer(customer.getUserId(), pageable);
 
-        List<BookingHistoryDTO> bookingHistoryDTOs = bookingHistoryPage.getContent()
-                .stream()
+        Map<Long, List<BookingHistoryDTOTuple>> groupedByBookingId = bookingHistoryPage.getContent().stream()
+                .collect(Collectors.groupingBy(BookingHistoryDTOTuple::getBookingId));
+
+        List<BookingHistoryDTO> bookingHistoryDTOs = groupedByBookingId.values().stream()
                 .map(BookingHistoryMapper::toBookingHistoryDTO)
                 .collect(Collectors.toList());
+
+        for(BookingHistoryDTO dto : bookingHistoryDTOs) {
+           if (dto.getStatus().equals("Đã hủy")) {
+               Refund refund = refundRepo.findByBookingId(dto.getBookingId());
+               dto.setRefundAmount(String.valueOf(refund.getAmount()));
+                dto.setRefundReason(refund.getReason());
+                dto.setRefundStatus(getRefundStatus(refund.getStatus()));
+                dto.setRefundDate(refund.getRefundedAt().format(DATE_TIME_FORMATTER));
+           }
+        }
 
         ApiPaginationResponse.Pagination pagination = new ApiPaginationResponse.Pagination(
                 bookingHistoryPage.getNumber() + 1,
@@ -211,6 +228,13 @@ public class BookingServiceImpl implements BookingService {
                 bookingHistoryDTOs,
                 pagination
         );
+    }
+
+    private static String getRefundStatus(RefundStatus status) {
+        return switch (status) {
+            case COMPLETED -> "Đã hoàn tiền";
+            case PENDING  -> "Đang chờ hoàn tiền";
+        };
     }
 
     @Override
@@ -395,6 +419,7 @@ public class BookingServiceImpl implements BookingService {
                 .amount(amount)
                 .refundedAt(LocalDateTime.now())
                 .reason(reason)
+                .status(RefundStatus.PENDING)
                 .build();
 
         refundRepo.save(refund);

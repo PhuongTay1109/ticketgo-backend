@@ -3,28 +3,55 @@ package com.ticketgo.mapper;
 import com.ticketgo.dto.BookingHistoryDTO;
 import com.ticketgo.projector.BookingHistoryDTOTuple;
 
-import static com.ticketgo.util.DateTimeUtils.DATE_FORMATTER;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import static com.ticketgo.util.DateTimeUtils.DATE_TIME_FORMATTER;
 
 public class BookingHistoryMapper {
 
+//    public static BookingHistoryDTO toBookingHistoryDTO(BookingHistoryDTOTuple tuple) {
+//        return BookingHistoryDTO.builder()
+//                .ticketCode(tuple.getTicketCode())
+//                .contactName(tuple.getContactName())
+//                .contactEmail(tuple.getContactEmail())
+//                .routeName(tuple.getRouteName())
+//                .departureDate(tuple.getDepartureDate().format(DATE_FORMATTER))
+//                .pickupTime(tuple.getPickupTime().format(DATE_TIME_FORMATTER))
+//                .pickupLocation(tuple.getPickupLocation())
+//                .dropoffLocation(tuple.getDropoffLocation())
+//                .seatNumber(tuple.getSeatNumber())
+//                .originalPrice(tuple.getOriginalPrice().toString())
+//                .discountedPrice(tuple.getDiscountedPrice() != null ? tuple.getDiscountedPrice().toString() : null)
+//                .licensePlate(tuple.getLicensePlate())
+//                .status(getVietnameseStatus(tuple.getStatus()))
+//                .build();
+//    }
 
-    public static BookingHistoryDTO toBookingHistoryDTO(BookingHistoryDTOTuple tuple) {
-        return BookingHistoryDTO.builder()
-                .ticketCode(tuple.getTicketCode())
-                .contactName(tuple.getContactName())
-                .contactEmail(tuple.getContactEmail())
-                .routeName(tuple.getRouteName())
-                .departureDate(tuple.getDepartureDate().format(DATE_FORMATTER))
-                .pickupTime(tuple.getPickupTime().format(DATE_TIME_FORMATTER))
-                .pickupLocation(tuple.getPickupLocation())
-                .dropoffLocation(tuple.getDropoffLocation())
-                .seatNumber(tuple.getSeatNumber())
-                .originalPrice(tuple.getOriginalPrice().toString())
-                .discountedPrice(tuple.getDiscountedPrice() != null ? tuple.getDiscountedPrice().toString() : null)
-                .licensePlate(tuple.getLicensePlate())
-                .status(getVietnameseStatus(tuple.getStatus()))
-                .build();
+    public static BookingHistoryDTO toBookingHistoryDTO(List<BookingHistoryDTOTuple> tuples) {
+        BookingHistoryDTOTuple first = tuples.get(0);
+
+        List<String> seatNumbers = tuples.stream()
+                .map(BookingHistoryDTOTuple::getSeatNumber)
+                .distinct()
+                .collect(Collectors.toList());
+
+        BookingHistoryDTO dto = new BookingHistoryDTO();
+        dto.setBookingId(first.getBookingId());
+        dto.setTicketCode(first.getTicketCode());
+        dto.setContactName(first.getContactName());
+        dto.setRouteName(first.getRouteName());
+        dto.setDepartureDate(first.getDepartureDate().format(DATE_TIME_FORMATTER));
+        dto.setPickupTime(first.getPickupTime().format(DATE_TIME_FORMATTER));
+        dto.setPickupLocation(first.getPickupLocation());
+        dto.setDropoffLocation(first.getDropoffLocation());
+        dto.setSeatNumbers(seatNumbers);
+        dto.setLicensePlate(first.getLicensePlate());
+        dto.setContactEmail(first.getContactEmail());
+        dto.setOriginalPrice(first.getOriginalPrice());
+        dto.setDiscountedPrice(first.getDiscountedPrice());
+        dto.setStatus(getVietnameseStatus(first.getStatus()));
+        return dto;
     }
 
     private static String getVietnameseStatus(String status) {
