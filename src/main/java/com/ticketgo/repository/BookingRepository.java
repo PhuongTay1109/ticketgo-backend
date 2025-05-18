@@ -113,21 +113,23 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             @Param("endDate") LocalDateTime endDate);
 
     @Query(value = "SELECT " +
-            "b.contact_phone as customerPhone, " +
+            "seats.seat_number AS seatNumber, " +
+            "b.contact_phone AS customerPhone, " +
             "b.contact_name AS customerName, " +
-            "t.seat_number AS seatNumber, " +
             "pickup_stop.location AS pickupLocation, " +
             "dropoff_stop.location AS dropoffLocation " +
-            "FROM " +
-            "bookings b " +
-            "INNER JOIN tickets t ON t.booking_id = b.booking_id " +
-            "INNER JOIN route_stops pickup_stop ON pickup_stop.stop_id = b.pickup_stop_id " +
-            "INNER JOIN route_stops dropoff_stop ON dropoff_stop.stop_id = b.dropoff_stop_id " +
-            "INNER JOIN schedules s ON s.schedule_id = t.schedule_id " +
+            "FROM seats " +
+            "INNER JOIN buses bus ON seats.bus_id = bus.bus_id " +
+            "INNER JOIN schedules s ON s.bus_id = bus.bus_id " +
+            "LEFT JOIN tickets t ON t.seat_id = seats.seat_id AND t.schedule_id = :scheduleId " +
+            "LEFT JOIN bookings b ON b.booking_id = t.booking_id " +
+            "LEFT JOIN route_stops pickup_stop ON pickup_stop.stop_id = b.pickup_stop_id " +
+            "LEFT JOIN route_stops dropoff_stop ON dropoff_stop.stop_id = b.dropoff_stop_id " +
             "WHERE s.schedule_id = :scheduleId " +
-            "ORDER BY t.seat_id",
+            "ORDER BY seats.seat_number",
             nativeQuery = true)
     List<Object[]> findPassengerInfoByScheduleIdNative(@Param("scheduleId") Long scheduleId);
+
 
     // Phương thức chuyển đổi kết quả thành DTO
     default List<CustomerInfoDTOTuple> getPassengerInfoByScheduleId(Long scheduleId) {
@@ -135,7 +137,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
                 .map(result -> new CustomerInfoDTOTuple(
                         (String) result[0],
                         (String) result[1],
-                        (Long) result[2],
+                        (String) result[2],
                         (String) result[3],
                         (String) result[4]))
                 .toList();

@@ -96,7 +96,7 @@ public class EmailServiceImpl implements EmailService {
 
             for (int i = 0; i < bookingInfoList.size(); i++) {
                 BookingInfoDTO info = bookingInfoList.get(i);
-                seatInfo += info.getSeatNumber() + " (Mã vé: " + info.getTicketCode() + ")";
+                seatInfo += info.getSeatNumber();
                 if (i < bookingInfoList.size() - 1) {
                     seatInfo += " , ";
                 }

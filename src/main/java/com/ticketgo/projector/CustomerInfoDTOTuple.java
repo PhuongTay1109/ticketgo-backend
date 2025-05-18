@@ -8,9 +8,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CustomerInfoDTOTuple {
+    private String seatNumber;
     private String customerPhone;
     private String customerName;
-    private Long seatNumber;
     private String pickupLocation;
     private String dropoffLocation;
 }
