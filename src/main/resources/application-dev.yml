@@ -25,7 +25,7 @@ spring:
 # Email
 email:
   username: ticketgo0725@gmail.com
-  password: rute dxta kumh xesk
+  password: uicg srea ftmx xwmm
 app:
   email:
     from: "contact@ticketgo.com"
@@ -71,3 +71,6 @@ queue:
 
 vnpay:
   return-url: http://localhost:8080
+
+host:
+  domain: localhost

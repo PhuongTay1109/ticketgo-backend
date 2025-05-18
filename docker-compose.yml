@@ -28,6 +28,9 @@ services:
     restart: always
     ports:
       - "6379:6379"
+    volumes:
+      - redis-data:/data
+    command: [ "redis-server", "--appendonly", "no", "--slaveof", "no", "one" ]
     networks:
       - spring-ticketgo-network
 
@@ -68,12 +71,15 @@ services:
       SPRING_REDIS_HOST: redis
     ports:
       - "8080:8080"
+      - "8888:8888"
     volumes:
       - ./src/main/resources:/app/config
     networks:
       - spring-ticketgo-network
 volumes:
   mysql_data:
+  redis-data:
+
 
 networks:
    spring-ticketgo-network:

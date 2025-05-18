@@ -5,6 +5,7 @@ import com.ticketgo.entity.Driver;
 import com.ticketgo.entity.Schedule;
 import com.ticketgo.service.BookingService;
 import com.ticketgo.service.EmailService;
+import com.ticketgo.service.GmailService;
 import com.ticketgo.service.ScheduleService;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -54,12 +55,20 @@ public class EmailServiceImpl implements EmailService {
     @Override
     public CompletableFuture<Boolean> sendActivationEmail(String email, String token) {
         try {
-            MimeMessage message = createActivationEmail(email, token);
-            emailSender.send(message);
+//            MimeMessage message = createActivationEmail(email, token);
+//            emailSender.send(message);
+            GmailService.sendEmail(
+                    email,
+                    getActivationEmailSubject(),
+                    getActivationEmailContent(token));
             return CompletableFuture.completedFuture(true);
         } catch (UnsupportedEncodingException | MessagingException e) {
             log.error("Failed to send activation email to {}: {}", email, e.getMessage());
             return CompletableFuture.completedFuture(false);
+        } catch (Exception e) {
+            log.error("Failed to send activation email to {}: {}", email, e.getMessage());
+            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 
@@ -168,18 +177,27 @@ public class EmailServiceImpl implements EmailService {
             emailContent.append("</div>");
 
             try {
-                MimeMessage message = emailSender.createMimeMessage();
-                MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-
-                helper.setFrom(fromEmail, fromName);
-                helper.setTo(contactEmail);
-                helper.setSubject("Thông tin đặt vé của bạn - Mã #" + bookingId);
-                helper.setText(emailContent.toString(), true);
-
-                emailSender.send(message);
-                log.info("Đã gửi email thông tin đặt vé tới: {}", contactEmail);
+//                MimeMessage message = emailSender.createMimeMessage();
+//                MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+//
+//                helper.setFrom(fromEmail, fromName);
+//                helper.setTo(contactEmail);
+//                helper.setSubject("Thông tin đặt vé của bạn - Mã #" + bookingId);
+//                helper.setText(emailContent.toString(), true);
+//
+//                emailSender.send(message);
+//                log.info("Đã gửi email thông tin đặt vé tới: {}", contactEmail);
+                GmailService.sendEmail(
+                        contactEmail,
+                        "Thông tin đặt vé của bạn - Mã #" + bookingId,
+                        emailContent.toString()
+                );
             } catch (MessagingException | UnsupportedEncodingException e) {
                 log.error("Không thể gửi email thông tin đặt vé tới {}: {}", contactEmail, e.getMessage());
+            } catch (Exception e) {
+                log.error("Không thể gửi email thông tin đặt vé tới {}: {}", contactEmail, e.getMessage());
+                e.printStackTrace();
+                throw new RuntimeException(e);
             }
         }
     }
@@ -188,11 +206,20 @@ public class EmailServiceImpl implements EmailService {
     @Override
     public void sendResetPasswordEmail(String email, String token) {
         try {
-            MimeMessage message = createResetPasswordEmail(email, token);
-            emailSender.send(message);
-            log.info("Đã gửi email đặt lại mật khẩu tới: {}", email);
+//            MimeMessage message = createResetPasswordEmail(email, token);
+//            emailSender.send(message);
+//            log.info("Đã gửi email đặt lại mật khẩu tới: {}", email);
+            GmailService.sendEmail(
+                    email,
+                    getResetPasswordEmailSubject(),
+                    getResetPasswordEmailContent(token)
+            );
         } catch (UnsupportedEncodingException | MessagingException e) {
-            log.error("Failed to send activation email to {}: {}", email, e.getMessage());
+            log.error("Failed to send reset password email to {}: {}", email, e.getMessage());
+        } catch (Exception e) {
+            log.error("Failed to send reset password email to {}: {}", email, e.getMessage());
+            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 

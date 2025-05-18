@@ -1,11 +1,9 @@
 package com.ticketgo;
 
-import com.ticketgo.entity.*;
+import com.ticketgo.entity.Bus;
+import com.ticketgo.entity.Seat;
 import com.ticketgo.repository.*;
-import com.ticketgo.service.EmailService;
-import com.ticketgo.service.ScheduleService;
-import com.ticketgo.service.TokenService;
-import com.ticketgo.service.UserService;
+import com.ticketgo.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
@@ -103,6 +101,16 @@ public class TicketgoBackEndApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
+        try {
+            GmailService.sendEmail(
+                    "phuonggteyy@gmail.com",
+                    "Test Email from TicketGo",
+                    "Xin chào, đây là email test từ ứng dụng Spring Boot sử dụng Gmail API."
+            );
+        } catch (Exception e) {
+            System.err.println("Gửi email thất bại: " + e.getMessage());
+            e.printStackTrace();
+        }
 //        User user = userService.findByEmail("phuonggteyy@gmail.com");
 //        Token token = tokenService.createToken(user, TokenType.ACTIVATION);
 //        emailService.sendActivationEmail(user.getEmail(), token.getValue())
@@ -132,8 +140,8 @@ public class TicketgoBackEndApplication implements CommandLineRunner {
 //        admin.setImageUrl("https://res.cloudinary.com/dj1h07rea/image/upload/v1732419422/03809988294a4197849715dd0850f3b8-free_mnt4dp.png");
 ////        userRepository.save(admin);
 //log.info("Sending booking info email...");
-//        emailService.sendBookingInfo(35, 23);
-//        emailService.sendResetPasswordEmail("phuonggteyy@gmail.com", "1234567890");
+        emailService.sendBookingInfo(35, 23);
+        emailService.sendResetPasswordEmail("phuonggteyy@gmail.com", "1234567890");
 //        BusCompany admin = BusCompany.builder()
 //                .email("admin@gmail.com")
 //                .password(passwordEncoder.encode("your_secure_password")) // Mã hóa mật khẩu
