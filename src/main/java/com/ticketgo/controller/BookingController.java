@@ -15,6 +15,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -81,6 +82,25 @@ public class BookingController {
             @RequestParam(defaultValue = "10") int pageSize) {
         return bookingService.getBookingHistoryForCustomer(pageNumber, pageSize);
     }
+
+    @GetMapping("/all-history")
+    @PreAuthorize("hasRole('BUS_COMPANY')")
+    public ApiPaginationResponse getAllBookingHistory(
+            @RequestParam(defaultValue = "1") int pageNumber,
+            @RequestParam(defaultValue = "10") int pageSize,
+            @RequestParam(required = false) Long bookingId,
+            @RequestParam(required = false) String contactName,
+            @RequestParam(required = false) String contactEmail,
+            @RequestParam(required = false) String routeName,
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String refundStatus,
+            @RequestParam(required = false) String fromDate,
+            @RequestParam(required = false) String toDate
+    ) {
+        return bookingService.getAllBookingHistory(pageNumber, pageSize, bookingId, contactName, contactEmail, routeName, status, refundStatus, fromDate, toDate);
+    }
+
+
 
     @GetMapping("/in-progress")
     public ResponseEntity<Boolean> checkInProgressTransaction() {

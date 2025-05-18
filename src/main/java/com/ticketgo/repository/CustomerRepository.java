@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Repository
 public interface CustomerRepository extends JpaRepository<Customer,Long> {
@@ -38,4 +39,11 @@ public interface CustomerRepository extends JpaRepository<Customer,Long> {
         AND (c.fullName LIKE %:keyword% OR c.email LIKE %:keyword%)
     """)
     Page<Customer> findByRoleAndKeyword(Role role, String keyword, Pageable pageable);
+
+    @Query("""
+        select c.userId
+        from Customer c
+        where c.isDeleted = false
+    """)
+    List<Long> getAllCustomerId();
 }

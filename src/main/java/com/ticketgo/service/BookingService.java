@@ -45,4 +45,17 @@ public interface BookingService {
     List<CustomerInfoDTOTuple> getPassengerInfoByScheduleId(Long scheduleId);
 
     void cancelBooking(CancelBookingRequest req);
+
+    ApiPaginationResponse getAllBookingHistory(
+            int pageNumber,
+            int pageSize,
+            Long bookingId,
+            String contactName,
+            String contactEmail,
+            String routeName,
+            String status,
+            String refundStatus,
+            String fromDate,
+            String toDate
+    );
 }

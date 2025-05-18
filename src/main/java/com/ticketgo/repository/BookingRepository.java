@@ -151,4 +151,47 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
         WHERE b.bookingId = :bookingId
     """)
     void updateBookingStatusByBookingId(BookingStatus status, Long bookingId);
+
+    @Query(value = """
+        SELECT
+            b.booking_id AS bookingId,
+            b.booking_date as bookingDate,
+            t.ticket_code AS ticketCode,
+            b.contact_name AS contactName,
+            b.contact_email AS contactEmail,
+            r.route_name AS routeName,
+            s.departure_time AS departureDate,
+            ps.arrival_time AS pickupTime,
+            ps.location AS pickupLocation,
+            ds.location AS dropoffLocation,
+            st.seat_number AS seatNumber,
+            bs.license_plate AS licensePlate,
+            b.original_price AS originalPrice,
+            b.discounted_price AS discountedPrice,
+            b.status AS status
+        FROM
+            bookings b
+        JOIN
+            tickets t ON t.booking_id = b.booking_id
+        JOIN
+            schedules s ON t.schedule_id = s.schedule_id
+        JOIN
+            seats st ON t.seat_id = st.seat_id
+        JOIN
+            buses bs ON st.bus_id = bs.bus_id
+        JOIN
+            routes r ON s.route_id = r.route_id
+        JOIN
+            route_stops ps ON b.pickup_stop_id = ps.stop_id
+        JOIN
+            route_stops ds ON b.dropoff_stop_id = ds.stop_id
+        WHERE
+            b.status NOT LIKE 'IN_PROGRESS'
+        AND  b.status NOT LIKE 'FAILED'
+        AND b.customer_id IN :customerIds
+        ORDER BY
+            b.booking_date DESC
+        """, nativeQuery = true)
+    List<BookingHistoryDTOTuple> getAllBookingHistory(@Param("customerIds") List<Long> customerIds);
+
 }

@@ -34,13 +34,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -62,6 +65,7 @@ public class BookingServiceImpl implements BookingService {
 
     private final RedissonClient redisson;
     private final RouteRepository routeRepository;
+    private final CustomerRepository customerRepository;
 
     @Override
     @Transactional
@@ -448,7 +452,7 @@ public class BookingServiceImpl implements BookingService {
         for (int i = 0; i < tickets.size(); i++) {
             seatInfo += tickets.get(i).getSeat().getSeatNumber();
             if (i < tickets.size() - 1) {
-                seatInfo += " , ";
+                seatInfo += ", ";
             }
         }
 
@@ -492,4 +496,133 @@ public class BookingServiceImpl implements BookingService {
 
         canceledBookingHistoryRepo.save(history);
     }
+
+    @Override
+    public ApiPaginationResponse getAllBookingHistory(
+            int pageNumber,
+            int pageSize,
+            Long bookingId,
+            String contactName,
+            String contactEmail,
+            String routeName,
+            String status,
+            String refundStatus,
+            String fromDate,
+            String toDate
+    ) {
+        List<Long> customerIds = customerRepository.getAllCustomerId();
+        List<BookingHistoryDTOTuple> bookingHistoryPage = bookingRepo.getAllBookingHistory(customerIds);
+
+        Map<Long, List<BookingHistoryDTOTuple>> groupedByBookingId = bookingHistoryPage.stream()
+                .collect(Collectors.groupingBy(
+                        BookingHistoryDTOTuple::getBookingId,
+                        LinkedHashMap::new,
+                        Collectors.toList()
+                ));
+
+        List<BookingHistoryDTO> bookingHistoryDTOs = groupedByBookingId.values().stream()
+                .map(BookingHistoryMapper::toBookingHistoryDTO)
+                .collect(Collectors.toList());
+
+        List<CanceledBookingHistory> canceledBookingHistories = canceledBookingHistoryRepo.findAllCustomer(customerIds);
+        List<BookingHistoryDTO> canceledHistoryDTOs = canceledBookingHistories.stream()
+                .map(booking -> {
+                    Refund refund = refundRepo.findByBookingId(booking.getBookingId());
+
+                    BookingHistoryDTO dto = new BookingHistoryDTO();
+                    dto.setBookingId(booking.getBookingId());
+                    dto.setBookingDate(booking.getBookingDate().format(DateTimeUtils.DATE_TIME_FORMATTER));
+                    dto.setSeatInfos(booking.getSeatInfos());
+                    dto.setContactName(booking.getContactName());
+                    dto.setRouteName(booking.getRouteName());
+                    dto.setDepartureDate(booking.getDepartureDate().format(DateTimeUtils.DATE_TIME_FORMATTER));
+                    dto.setPickupTime(booking.getPickupTime().format(DateTimeUtils.DATE_TIME_FORMATTER));
+                    dto.setPickupLocation(booking.getPickupLocation());
+                    dto.setDropoffLocation(booking.getDropoffLocation());
+                    dto.setLicensePlate(booking.getLicensePlate());
+                    dto.setContactEmail(booking.getContactEmail());
+                    dto.setOriginalPrice(String.valueOf(booking.getOriginalPrice()));
+                    dto.setDiscountedPrice(String.valueOf(booking.getDiscountedPrice()));
+                    dto.setStatus("Đã hủy");
+                    dto.setRefundDate(refund.getRefundedAt().format(DateTimeUtils.DATE_TIME_FORMATTER));
+                    dto.setRefundStatus(getRefundStatus(refund.getStatus()));
+                    dto.setRefundAmount(String.valueOf(refund.getAmount()));
+                    dto.setRefundReason(refund.getReason());
+                    return dto;
+                }).toList();
+
+        List<BookingHistoryDTO> combinedHistory = new ArrayList<>();
+        combinedHistory.addAll(bookingHistoryDTOs);
+        combinedHistory.addAll(canceledHistoryDTOs);
+
+        // --- Lọc dữ liệu theo các điều kiện search ---
+        Stream<BookingHistoryDTO> filtered = combinedHistory.stream();
+
+        if (bookingId != null) {
+            filtered = filtered.filter(b -> b.getBookingId().equals(bookingId));
+        }
+
+        if (contactName != null && !contactName.isBlank()) {
+            filtered = filtered.filter(b -> b.getContactName() != null && b.getContactName().toLowerCase().contains(contactName.toLowerCase()));
+        }
+
+        if (contactEmail != null && !contactEmail.isBlank()) {
+            filtered = filtered.filter(b -> b.getContactEmail() != null && b.getContactEmail().toLowerCase().contains(contactEmail.toLowerCase()));
+        }
+
+        if (routeName != null && !routeName.isBlank()) {
+            filtered = filtered.filter(b -> b.getRouteName() != null && b.getRouteName().toLowerCase().contains(routeName.toLowerCase()));
+        }
+
+        if (status != null && !status.isBlank()) {
+            filtered = filtered.filter(b -> b.getStatus() != null && b.getStatus().equalsIgnoreCase(status));
+        }
+
+        if (refundStatus != null && !refundStatus.isBlank()) {
+            filtered = filtered.filter(b -> refundStatus.equalsIgnoreCase(b.getRefundStatus()));
+        }
+
+        if (fromDate != null && toDate != null) {
+            try {
+                LocalDate from = LocalDate.parse(fromDate);
+                LocalDate to = LocalDate.parse(toDate);
+
+                filtered = filtered.filter(b -> {
+                    LocalDate bookingDate = LocalDate.parse(b.getBookingDate(), DateTimeUtils.DATE_TIME_FORMATTER);
+                    return (bookingDate.isEqual(from) || bookingDate.isAfter(from)) &&
+                            (bookingDate.isEqual(to) || bookingDate.isBefore(to));
+                });
+            } catch (DateTimeParseException ignored) {}
+        }
+
+        List<BookingHistoryDTO> filteredList = filtered
+                .sorted((a, b) -> b.getBookingId().compareTo(a.getBookingId()))
+                .toList();
+
+        // --- Phân trang ---
+        int totalElements = filteredList.size();
+        int totalPages = (int) Math.ceil((double) totalElements / pageSize);
+        int fromIndex = (pageNumber - 1) * pageSize;
+        int toIndex = Math.min(fromIndex + pageSize, totalElements);
+
+        List<BookingHistoryDTO> pagedList = new ArrayList<>();
+        if (fromIndex < totalElements) {
+            pagedList = filteredList.subList(fromIndex, toIndex);
+        }
+
+        ApiPaginationResponse.Pagination pagination = new ApiPaginationResponse.Pagination(
+                pageNumber,
+                pageSize,
+                totalPages,
+                totalElements
+        );
+
+        return new ApiPaginationResponse(
+                HttpStatus.OK,
+                "Lịch sử đặt vé của khách hàng",
+                pagedList,
+                pagination
+        );
+    }
+
 }
