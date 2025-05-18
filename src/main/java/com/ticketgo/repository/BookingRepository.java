@@ -115,7 +115,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     @Query(value = "SELECT " +
             "b.contact_phone as customerPhone, " +
             "b.contact_name AS customerName, " +
-            "t.seat_id AS seatNumber, " +
+            "t.seat_number AS seatNumber, " +
             "pickup_stop.location AS pickupLocation, " +
             "dropoff_stop.location AS dropoffLocation " +
             "FROM " +
