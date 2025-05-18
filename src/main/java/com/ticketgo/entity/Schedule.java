@@ -1,5 +1,6 @@
 package com.ticketgo.entity;
 
+import com.ticketgo.enums.ScheduleStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -43,6 +44,10 @@ public class Schedule extends BaseEntity {
 
     @Column(nullable = false)
     private Boolean isVisible;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private ScheduleStatus status = ScheduleStatus.SCHEDULED;
 
     @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<RouteStop> stops;
