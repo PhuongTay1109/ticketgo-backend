@@ -32,7 +32,7 @@ public class BookingHistoryMapper {
 
         String seatInfos="";
         for (int i = 0; i < tuples.size(); i++) {
-            seatInfos += tuples.get(i).getSeatNumber() + " (Mã vé: " + tuples.get(0).getTicketCode() + ")";
+            seatInfos += tuples.get(i).getSeatNumber() + " (Mã vé: " + tuples.get(i).getTicketCode() + ")";
             if (i < tuples.size() - 1) {
                 seatInfos += " , ";
             }

@@ -28,9 +28,10 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint(sockjsEndpoint)
-                .setAllowedOriginPatterns("*")
+                .setAllowedOriginPatterns("http://localhost:3000", "https://ticketgo-black.vercel.app")
                 .withSockJS();
     }
+
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {

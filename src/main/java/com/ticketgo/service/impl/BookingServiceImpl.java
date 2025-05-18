@@ -446,7 +446,7 @@ public class BookingServiceImpl implements BookingService {
         String seatInfo="";
 
         for (int i = 0; i < tickets.size(); i++) {
-            seatInfo += tickets.get(i).getSeat().getSeatNumber() + " (Mã vé: " + tickets.get(0).getTicketCode() + ")";
+            seatInfo += tickets.get(i).getSeat().getSeatNumber() + " (Mã vé: " + tickets.get(i).getTicketCode() + ")";
             if (i < tickets.size() - 1) {
                 seatInfo += " , ";
             }

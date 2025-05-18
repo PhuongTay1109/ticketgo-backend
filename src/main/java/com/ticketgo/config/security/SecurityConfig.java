@@ -46,9 +46,10 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOriginPatterns(List.of("*"));
+        config.setAllowedOriginPatterns(List.of("http://localhost:3000", "https://ticketgo-black.vercel.app"));
         config.setAllowedMethods(List.of("*"));
         config.setAllowedHeaders(List.of("*"));
+        config.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
         return source;
