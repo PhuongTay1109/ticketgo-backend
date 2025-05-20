@@ -253,11 +253,22 @@ public class BookingServiceImpl implements BookingService {
 
         combinedHistory.sort((a, b) -> b.getBookingId().compareTo(a.getBookingId()));
 
-        for(BookingHistoryDTO history : combinedHistory) {
+        for (BookingHistoryDTO history : combinedHistory) {
             List<Ticket> tickets = ticketRepo.findAllByBooking_BookingId(history.getBookingId());
-            Driver driver =tickets.get(0).getSchedule().getDriver();
-            history.setDriverName(driver.getName());
-            history.setDriverPhone(driver.getPhoneNumber());
+
+            if (tickets != null && !tickets.isEmpty()) {
+                Driver driver = tickets.get(0).getSchedule().getDriver();
+                if (driver != null) {
+                    history.setDriverName(driver.getName());
+                    history.setDriverPhone(driver.getPhoneNumber());
+                } else {
+                    history.setDriverName(null);
+                    history.setDriverPhone(null);
+                }
+            } else {
+                history.setDriverName(null);
+                history.setDriverPhone(null);
+            }
         }
 
 
