@@ -16,6 +16,7 @@ import com.ticketgo.service.MessagingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -57,6 +58,8 @@ public class MessageServiceImpl implements MessageService {
                         .receiverId(message.getReceiver().getUserId())
                         .content(message.getContent())
                         .sentAt(message.getSentAt())
+                        .isRead(message.isRead())
+                        .readAt(message.getReadAt())
                         .build())
                 .toList();
         return new GetMessageResponse(messageResponses);
@@ -102,4 +105,16 @@ public class MessageServiceImpl implements MessageService {
 
         return chatUsers;
     }
+
+    public void markMessageAsRead(Long messageId) {
+        Message message = messageRepository.findById(messageId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy tin nhắn"));
+
+        if (!message.isRead()) {
+            message.setRead(true);
+            message.setReadAt(LocalDateTime.now());
+            messageRepository.save(message);
+        }
+    }
+
 }

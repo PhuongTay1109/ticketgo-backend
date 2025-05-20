@@ -12,4 +12,6 @@ public interface MessageService {
     GetMessageResponse getMessages(Long senderId, Long receiverId);
 
     List<ChatUserDTO> getChatUsers(Long myId);
+
+    void markMessageAsRead(Long messageId);
 }

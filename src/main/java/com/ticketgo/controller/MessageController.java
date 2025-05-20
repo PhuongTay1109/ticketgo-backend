@@ -44,5 +44,12 @@ public class MessageController {
                 messageService.getChatUsers(user.getUserId())
         );
     }
+
+    @PutMapping("/mark-as-read/{messageId}")
+    public ResponseEntity<Void> markAsRead(@PathVariable Long messageId) {
+        messageService.markMessageAsRead(messageId);
+        return ResponseEntity.ok().build();
+    }
+
 }
 

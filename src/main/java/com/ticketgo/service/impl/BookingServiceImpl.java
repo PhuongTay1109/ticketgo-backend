@@ -488,7 +488,6 @@ public class BookingServiceImpl implements BookingService {
         Refund refund = Refund.builder()
                 .booking(booking)
                 .amount(amount)
-                .refundedAt(LocalDateTime.now())
                 .reason(reason)
                 .status(RefundStatus.PENDING)
                 .build();
@@ -574,6 +573,24 @@ public class BookingServiceImpl implements BookingService {
         combinedHistory.addAll(bookingHistoryDTOs);
         combinedHistory.addAll(canceledHistoryDTOs);
 
+        for (BookingHistoryDTO history : combinedHistory) {
+            List<Ticket> tickets = ticketRepo.findAllByBooking_BookingId(history.getBookingId());
+
+            if (tickets != null && !tickets.isEmpty()) {
+                Driver driver = tickets.get(0).getSchedule().getDriver();
+                if (driver != null) {
+                    history.setDriverName(driver.getName());
+                    history.setDriverPhone(driver.getPhoneNumber());
+                } else {
+                    history.setDriverName(null);
+                    history.setDriverPhone(null);
+                }
+            } else {
+                history.setDriverName(null);
+                history.setDriverPhone(null);
+            }
+        }
+
         // --- Lọc dữ liệu theo các điều kiện search ---
         Stream<BookingHistoryDTO> filtered = combinedHistory.stream();
 
@@ -651,5 +668,12 @@ public class BookingServiceImpl implements BookingService {
 
         booking.setStatus(BookingStatus.REFUNDED);
         bookingRepo.save(booking);
+
+        Refund refund = refundRepo.findByBookingId(bookingsId);
+        if (refund != null) {
+            refund.setStatus(RefundStatus.COMPLETED);
+            refund.setRefundedAt(LocalDateTime.now());
+            refundRepo.save(refund);
+        }
     }
 }

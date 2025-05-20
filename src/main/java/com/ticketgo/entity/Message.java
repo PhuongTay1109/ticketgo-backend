@@ -33,6 +33,11 @@ public class Message extends BaseEntity {
     @Column(updatable = false)
     private LocalDateTime sentAt;
 
+    @Column(nullable = false)
+    private boolean isRead = false;
+
+    private LocalDateTime readAt;
+
     @Override
     public void prePersist() {
         super.prePersist();
