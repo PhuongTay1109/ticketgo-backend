@@ -3,13 +3,19 @@ package com.ticketgo.controller;
 import com.ticketgo.constant.ApiVersion;
 import com.ticketgo.request.ScheduleCreateRequest;
 import com.ticketgo.response.ApiResponse;
+import com.ticketgo.response.BusScheduleResponse;
+import com.ticketgo.response.DriverScheduleResponse;
 import com.ticketgo.service.BookingService;
 import com.ticketgo.service.ScheduleService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.YearMonth;
+import java.time.format.DateTimeParseException;
 
 @RestController
 @RequiredArgsConstructor
@@ -50,5 +56,34 @@ public class ScheduleController {
                 "Cập nhật trạng thái chuyến xe thành công",
                 null
         );
+    }
+
+    @GetMapping("/bus/{busId}")
+    @PreAuthorize("hasRole('BUS_COMPANY')")
+    public ResponseEntity<BusScheduleResponse> getBusSchedule(
+            @PathVariable Long busId,
+            @RequestParam String month) {
+
+        try {
+            YearMonth yearMonth = YearMonth.parse(month); // Format: yyyy-MM
+            BusScheduleResponse response = scheduleService.getBusScheduleForMonth(busId, yearMonth);
+            return ResponseEntity.ok(response);
+        } catch (DateTimeParseException e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @GetMapping("/driver/{driverId}")
+    public ResponseEntity<DriverScheduleResponse> getDriverSchedule(
+            @PathVariable Long driverId,
+            @RequestParam String month) {
+
+        try {
+            YearMonth yearMonth = YearMonth.parse(month); // Format: yyyy-MM
+            DriverScheduleResponse response = scheduleService.getDriverScheduleForMonth(driverId, yearMonth);
+            return ResponseEntity.ok(response);
+        } catch (DateTimeParseException e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 }

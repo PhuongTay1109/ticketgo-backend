@@ -28,4 +28,14 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long>, JpaSp
             "AND s.departureTime > :endOfDay " +
             "ORDER BY s.departureTime ASC")
     Schedule findEarliestNextDaySchedule(@Param("busIds") List<Long> busIds, @Param("endOfDay") LocalDateTime endOfDay);
+
+    @Query("SELECT s FROM Schedule s WHERE s.bus.busId = :busId AND s.departureTime BETWEEN :start AND :end")
+    List<Schedule> findSchedulesByBusAndMonth(@Param("busId") Long busId,
+                                              @Param("start") LocalDateTime start,
+                                              @Param("end") LocalDateTime end);
+
+    @Query("SELECT s FROM Schedule s WHERE s.driver.driverId = :driverId AND s.departureTime BETWEEN :start AND :end")
+    List<Schedule> findSchedulesByDriverAndMonth(@Param("driverId") Long driverId,
+                                                 @Param("start") LocalDateTime start,
+                                                 @Param("end") LocalDateTime end);
 }

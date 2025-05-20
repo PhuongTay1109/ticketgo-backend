@@ -1,5 +1,6 @@
 package com.ticketgo.service.impl;
 
+import com.ticketgo.dto.ScheduleDTO;
 import com.ticketgo.entity.*;
 import com.ticketgo.enums.BookingStatus;
 import com.ticketgo.enums.ScheduleStatus;
@@ -11,6 +12,8 @@ import com.ticketgo.repository.BusRepository;
 import com.ticketgo.repository.ScheduleRepository;
 import com.ticketgo.repository.TicketRepository;
 import com.ticketgo.request.ScheduleCreateRequest;
+import com.ticketgo.response.BusScheduleResponse;
+import com.ticketgo.response.DriverScheduleResponse;
 import com.ticketgo.service.ScheduleService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,9 +24,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.YearMonth;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -133,5 +142,33 @@ public class ScheduleServiceImpl implements ScheduleService {
 
         scheduleRepo.save(schedule);
         log.info("Schedule status updated successfully for id: {}", scheduleId);
+    }
+
+    @Override
+    public BusScheduleResponse getBusScheduleForMonth(Long busId, YearMonth month) {
+        LocalDateTime start = month.atDay(1).atStartOfDay();
+        LocalDateTime end = month.atEndOfMonth().atTime(LocalTime.MAX);
+
+        List<Schedule> schedules = scheduleRepo.findSchedulesByBusAndMonth(busId, start, end);
+
+        Map<LocalDate, List<ScheduleDTO>> groupedSchedules = schedules.stream()
+                .map(ScheduleDTO::new)
+                .collect(Collectors.groupingBy(s -> s.getDepartureTime().toLocalDate()));
+
+        return new BusScheduleResponse(busId, month.toString(), groupedSchedules);
+    }
+
+    @Override
+    public DriverScheduleResponse getDriverScheduleForMonth(Long driverId, YearMonth month) {
+        LocalDateTime start = month.atDay(1).atStartOfDay();
+        LocalDateTime end = month.atEndOfMonth().atTime(LocalTime.MAX);
+
+        List<Schedule> schedules = scheduleRepo.findSchedulesByDriverAndMonth(driverId, start, end);
+
+        Map<LocalDate, List<ScheduleDTO>> groupedSchedules = schedules.stream()
+                .map(ScheduleDTO::new)
+                .collect(Collectors.groupingBy(s -> s.getDepartureTime().toLocalDate()));
+
+        return new DriverScheduleResponse(driverId, month.toString(), groupedSchedules);
     }
 }
