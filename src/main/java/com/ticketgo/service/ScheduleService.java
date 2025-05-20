@@ -12,4 +12,6 @@ public interface ScheduleService {
     Page<Schedule> findAll(Specification<Schedule> spec, Pageable pageable);
 
     void create(ScheduleCreateRequest req);
+
+    void updateScheduleStatus(Long scheduleId, String status);
 }

@@ -58,4 +58,6 @@ public interface BookingService {
             String fromDate,
             String toDate
     );
+
+    void updateBookingRefundStatus(Long bookingsId);
 }

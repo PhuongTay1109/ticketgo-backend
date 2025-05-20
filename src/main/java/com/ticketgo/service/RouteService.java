@@ -1,6 +1,7 @@
 package com.ticketgo.service;
 
 import com.ticketgo.dto.RouteDTO;
+import com.ticketgo.request.AddRouteRequest;
 import com.ticketgo.response.ApiPaginationResponse;
 import com.ticketgo.response.PopularRoutesResponse;
 
@@ -20,4 +21,8 @@ public interface RouteService {
     List<PopularRoutesResponse> getPopularRoutes();
 
     List<RouteDTO> getRoutes();
+
+    void createRoute(AddRouteRequest request);
+
+    void updateRoute(AddRouteRequest request);
 }

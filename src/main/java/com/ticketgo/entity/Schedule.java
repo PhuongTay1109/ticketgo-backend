@@ -47,7 +47,7 @@ public class Schedule extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private ScheduleStatus status = ScheduleStatus.SCHEDULED;
+    private ScheduleStatus status;
 
     @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<RouteStop> stops;

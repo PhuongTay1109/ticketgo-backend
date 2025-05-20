@@ -194,4 +194,17 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
         """, nativeQuery = true)
     List<BookingHistoryDTOTuple> getAllBookingHistory(@Param("customerIds") List<Long> customerIds);
 
+    @Modifying
+    @Transactional
+    @Query("""
+        UPDATE Booking b
+        SET b.status = :bookingStatus
+        WHERE b.bookingId IN (
+            SELECT t.booking.bookingId
+            FROM Ticket t
+            WHERE t.schedule.scheduleId = :scheduleId
+        )
+    """)
+    void updateStatusByScheduleId(@Param("scheduleId") Long scheduleId, @Param("bookingStatus") BookingStatus bookingStatus);
+
 }

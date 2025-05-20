@@ -26,6 +26,7 @@ public interface ScheduleMapper {
     @Mapping(target = "availableSeats", source = "availableSeats")
     @Mapping(target = "travelDuration", expression = "java(calculateTravelDuration(schedule))")
     @Mapping(target = "price", source = "price")
+    @Mapping(target = "scheduleStatus", expression = "java(schedule.getStatus().getDisplayName())")
     RouteSearchResponse toRouteSearchResponse(Schedule schedule, int availableSeats, double price);
 
     default String calculateTravelDuration(Schedule schedule) {

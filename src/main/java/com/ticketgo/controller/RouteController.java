@@ -2,6 +2,7 @@ package com.ticketgo.controller;
 
 
 import com.ticketgo.constant.ApiVersion;
+import com.ticketgo.request.AddRouteRequest;
 import com.ticketgo.request.RouteSearchRequest;
 import com.ticketgo.response.ApiPaginationResponse;
 import com.ticketgo.response.ApiResponse;
@@ -47,6 +48,26 @@ public class RouteController {
                 HttpStatus.OK,
                 "Lấy danh sách các tuyến đường.",
                 routeService.getRoutes()
+        );
+    }
+
+    @PostMapping()
+    public ApiResponse createRoute(@RequestBody AddRouteRequest request) {
+        routeService.createRoute(request);
+        return new ApiResponse(
+                HttpStatus.CREATED,
+                "Tạo tuyến đường thành công",
+                null
+        );
+    }
+
+    @PutMapping()
+    public ApiResponse updateRoute(@RequestBody AddRouteRequest request) {
+        routeService.updateRoute(request);
+        return new ApiResponse(
+                HttpStatus.OK,
+                "Cập nhật tuyến đường thành công",
+                null
         );
     }
 }

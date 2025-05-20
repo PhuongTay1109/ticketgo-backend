@@ -66,6 +66,7 @@ public class BookingServiceImpl implements BookingService {
     private final RedissonClient redisson;
     private final RouteRepository routeRepository;
     private final CustomerRepository customerRepository;
+    private final DriverRepository driverRepository;
 
     @Override
     @Transactional
@@ -251,6 +252,13 @@ public class BookingServiceImpl implements BookingService {
         combinedHistory.addAll(canceledHistoryDTOs);
 
         combinedHistory.sort((a, b) -> b.getBookingId().compareTo(a.getBookingId()));
+
+        for(BookingHistoryDTO history : combinedHistory) {
+            List<Ticket> tickets = ticketRepo.findAllByBooking_BookingId(history.getBookingId());
+            Driver driver =tickets.get(0).getSchedule().getDriver();
+            history.setDriverName(driver.getName());
+            history.setDriverPhone(driver.getPhoneNumber());
+        }
 
 
         ApiPaginationResponse.Pagination pagination = new ApiPaginationResponse.Pagination(
@@ -625,4 +633,12 @@ public class BookingServiceImpl implements BookingService {
         );
     }
 
+    @Override
+    public void updateBookingRefundStatus(Long bookingsId) {
+        Booking booking = bookingRepo.findById(bookingsId)
+                .orElseThrow(() -> new RuntimeException("Booking not found"));
+
+        booking.setStatus(BookingStatus.REFUNDED);
+        bookingRepo.save(booking);
+    }
 }

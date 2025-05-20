@@ -1,8 +1,12 @@
 package com.ticketgo.service.impl;
 
 import com.ticketgo.entity.*;
+import com.ticketgo.enums.BookingStatus;
+import com.ticketgo.enums.ScheduleStatus;
 import com.ticketgo.enums.StopType;
 import com.ticketgo.enums.TicketStatus;
+import com.ticketgo.exception.AppException;
+import com.ticketgo.repository.BookingRepository;
 import com.ticketgo.repository.BusRepository;
 import com.ticketgo.repository.ScheduleRepository;
 import com.ticketgo.repository.TicketRepository;
@@ -13,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +32,7 @@ public class ScheduleServiceImpl implements ScheduleService {
     private final ScheduleRepository scheduleRepo;
     private final TicketRepository ticketRepo;
     private final BusRepository busRepo;
+    private final BookingRepository bookingRepository;
 
     @Override
     public Schedule findById(long scheduleId) {
@@ -84,6 +90,7 @@ public class ScheduleServiceImpl implements ScheduleService {
                 .arrivalTime(req.getArrivalTime())
                 .price(req.getPrice())
                 .isVisible(true)
+                .status(ScheduleStatus.SCHEDULED)
                 .build();
 
         stops.forEach(stop -> stop.setSchedule(schedule));
@@ -106,5 +113,25 @@ public class ScheduleServiceImpl implements ScheduleService {
         }
 
         log.info("Schedule created successfully with id: {}", schedule.getScheduleId());
+    }
+
+    @Override
+    public void updateScheduleStatus(Long scheduleId, String status) {
+        Schedule schedule = scheduleRepo.findById(scheduleId)
+                .orElseThrow(() -> new AppException("Schedule with id " + scheduleId + " not found", HttpStatus.NOT_FOUND));
+
+        if (status.equalsIgnoreCase("Đang chạy")) {
+            schedule.setStatus(ScheduleStatus.IN_PROGRESS);
+            schedule.setIsVisible(true);
+        } else if (status.equalsIgnoreCase("Hoàn thành")) {
+            schedule.setStatus(ScheduleStatus.COMPLETED);
+            schedule.setIsVisible(true);
+            bookingRepository.updateStatusByScheduleId(scheduleId, BookingStatus.COMPLETED);
+        } else {
+            throw new IllegalArgumentException("Invalid status: " + status);
+        }
+
+        scheduleRepo.save(schedule);
+        log.info("Schedule status updated successfully for id: {}", scheduleId);
     }
 }

@@ -146,4 +146,15 @@ public class BookingController {
                 null
         );
     }
+
+    @PutMapping("/{bookingsId}/refund")
+    @PreAuthorize("hasRole('BUS_COMPANY')")
+    public ApiResponse updateBookingRefundStatus(@PathVariable Long bookingsId) {
+        bookingService.updateBookingRefundStatus(bookingsId);
+        return new ApiResponse(
+                HttpStatus.OK,
+                "Cập nhật trạng thái hoàn vé thành công",
+                null
+        );
+    }
 }

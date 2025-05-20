@@ -39,4 +39,16 @@ public class ScheduleController {
                 bookingService.getPassengerInfoByScheduleId(scheduleId)
         );
     }
+
+    @PutMapping("/{scheduleId}/status")
+    @PreAuthorize("hasRole('BUS_COMPANY')")
+    public ApiResponse updateScheduleStatus(@PathVariable Long scheduleId,
+                                             @RequestParam("status") String status) {
+        scheduleService.updateScheduleStatus(scheduleId, status);
+        return new ApiResponse(
+                HttpStatus.OK,
+                "Cập nhật trạng thái chuyến xe thành công",
+                null
+        );
+    }
 }

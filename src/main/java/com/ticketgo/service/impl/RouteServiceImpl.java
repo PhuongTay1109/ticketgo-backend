@@ -7,6 +7,7 @@ import com.ticketgo.mapper.RouteMapper;
 import com.ticketgo.mapper.ScheduleMapper;
 import com.ticketgo.repository.RouteRepository;
 import com.ticketgo.repository.specification.ScheduleSpecification;
+import com.ticketgo.request.AddRouteRequest;
 import com.ticketgo.response.ApiPaginationResponse;
 import com.ticketgo.response.PopularRoutesResponse;
 import com.ticketgo.response.RouteSearchResponse;
@@ -107,6 +108,30 @@ public class RouteServiceImpl implements RouteService {
         return routeRepo.findAll().stream()
                 .map(RouteMapper.INSTANCE::fromEntityToDTO)
                 .toList();
+    }
+
+    @Override
+    public void createRoute(AddRouteRequest request) {
+        Route route = Route.builder()
+                .routeName(request.getRouteName())
+                .departureLocation(request.getDepartureLocation())
+                .arrivalLocation(request.getArrivalLocation())
+                .departureAddress("")
+                .arrivalAddress("")
+                .routeImage(request.getRouteImage())
+                .build();
+
+        routeRepo.save(route);
+    }
+
+    @Override
+    public void updateRoute(AddRouteRequest request) {
+        Route route = routeRepo.findById(request.getRouteId())
+                .orElseThrow(() -> new RuntimeException("Route not found"));
+
+        route.setRouteImage(request.getRouteImage());
+
+        routeRepo.save(route);
     }
 
 }

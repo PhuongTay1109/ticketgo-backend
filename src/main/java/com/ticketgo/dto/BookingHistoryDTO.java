@@ -27,4 +27,6 @@ public class BookingHistoryDTO {
     private String refundStatus;
     private String refundReason;
     private String refundDate;
+    private String driverName;
+    private String driverPhone;
 }

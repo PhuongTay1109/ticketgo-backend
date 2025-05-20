@@ -1,6 +1,7 @@
 package com.ticketgo.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.ticketgo.enums.ScheduleStatus;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -27,4 +28,5 @@ public class RouteSearchResponse {
     private double price;
     private int availableSeats;
     private String travelDuration;
+    private String scheduleStatus;
 }
