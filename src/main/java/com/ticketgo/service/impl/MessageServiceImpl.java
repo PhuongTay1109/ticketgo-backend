@@ -97,6 +97,8 @@ public class MessageServiceImpl implements MessageService {
             cu.setAvatar(avt);
             cu.setLastMessage(lastMessage.getContent());
             cu.setLastMessageTime(lastMessage.getSentAt().toString());
+            cu.setIsRead(lastMessage.isRead());
+            cu.setReadAt(lastMessage.getReadAt());
 
             chatUsers.add(cu);
         }

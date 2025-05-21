@@ -13,6 +13,6 @@ public class MessageResponse {
     private Long receiverId;
     private String content;
     private LocalDateTime sentAt;
-    private boolean isRead;
+    private Boolean isRead;
     private LocalDateTime readAt;
 }
