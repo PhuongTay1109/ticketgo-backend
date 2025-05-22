@@ -7,6 +7,8 @@ src/main/resources/credentials.json
 src/main/resources/application-real.yml
 src/main/resources/application-dev.yml
 
+src/main/resources
+
 ### STS ###
 .apt_generated
 .classpath

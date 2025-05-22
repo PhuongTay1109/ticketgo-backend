@@ -14,6 +14,7 @@ public class SecurityWhiteList {
             "/api/v1/homepage/**",
             "/api/v1/promotions/active",
             "/ws/**",
-            "/oauth2callback/**"
+            "/oauth2callback/**",
+            "/api/v1/reviews/**",
     };
 }

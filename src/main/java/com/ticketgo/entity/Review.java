@@ -24,6 +24,10 @@ public class Review extends BaseEntity {
     @Column(nullable = false)
     private Integer rating;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
     private String comment;
 }
 

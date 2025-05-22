@@ -10,4 +10,6 @@ public class ReviewDTO {
     private String travelDate;
     private String route;
     private String reviewDate;
+    private String userName;
+    private String userImg;
 }

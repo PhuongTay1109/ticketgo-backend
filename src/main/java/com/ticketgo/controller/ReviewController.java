@@ -1,11 +1,10 @@
 package com.ticketgo.controller;
 
 import com.ticketgo.constant.ApiVersion;
-import com.ticketgo.dto.ReviewDTO;
-import com.ticketgo.entity.Review;
+import com.ticketgo.request.CreateReviewRequest;
+import com.ticketgo.response.ApiPaginationResponse;
 import com.ticketgo.service.ReviewService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -20,14 +19,15 @@ public class ReviewController {
     private final ReviewService reviewService;
 
     @PostMapping
-    public ResponseEntity<Review> create(@RequestBody Review review) {
-        return ResponseEntity.ok(reviewService.createReview(review));
+    public ResponseEntity<Void> create(@RequestBody CreateReviewRequest req) {
+        reviewService.createReview(req);
+        return ResponseEntity.status(201).build();
     }
 
     @GetMapping
-    public ResponseEntity<Page<ReviewDTO>> getAllReviews(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
+    public ApiPaginationResponse getAllReviews(
+            @RequestParam(defaultValue = "1") int pageNumber,
+            @RequestParam(defaultValue = "10") int pageSize,
             @RequestParam(defaultValue = "createdAt") String sortBy,
             @RequestParam(defaultValue = "desc") String direction
     ) {
@@ -35,9 +35,8 @@ public class ReviewController {
                 ? Sort.by(sortBy).ascending()
                 : Sort.by(sortBy).descending();
 
-        Pageable pageable = PageRequest.of(page, size, sort);
-        Page<ReviewDTO> reviews = reviewService.getReviews(pageable);
-        return ResponseEntity.ok(reviews);
+        Pageable pageable = PageRequest.of(pageNumber - 1, pageSize, sort);
+        return reviewService.getReviews(pageable);
     }
 
 //    @GetMapping("/{id}")
