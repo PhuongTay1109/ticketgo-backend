@@ -4,25 +4,20 @@ import com.ticketgo.dto.ReviewDTO;
 import com.ticketgo.entity.Customer;
 import com.ticketgo.entity.Review;
 import com.ticketgo.entity.Ticket;
-import com.ticketgo.entity.User;
 import com.ticketgo.exception.AppException;
 import com.ticketgo.repository.BookingRepository;
+import com.ticketgo.repository.CustomerRepository;
 import com.ticketgo.repository.ReviewRepository;
-import com.ticketgo.repository.UserRepository;
 import com.ticketgo.request.CreateReviewRequest;
 import com.ticketgo.response.ApiPaginationResponse;
 import com.ticketgo.service.ReviewService;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.Hibernate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Objects;
 
 import static com.ticketgo.util.DateTimeUtils.DATE_TIME_FORMATTER;
 
@@ -32,7 +27,7 @@ public class ReviewServiceImpl implements ReviewService {
 
     private final ReviewRepository reviewRepository;
     private final BookingRepository bookingRepository;
-    private final UserRepository userRepository;
+    private final CustomerRepository customerRepository;
 
     @Override
     public void createReview(CreateReviewRequest req) {
@@ -42,7 +37,7 @@ public class ReviewServiceImpl implements ReviewService {
 
         review.setBooking(bookingRepository.findById(req.getBookingId())
                     .orElseThrow(() -> new AppException("Booking not found", HttpStatus.NOT_FOUND)));
-        review.setUser(userRepository.findById(req.getUserId())
+        review.setUser(customerRepository.findById(req.getUserId())
                     .orElseThrow(() -> new AppException("User not found", HttpStatus.NOT_FOUND)));
 
         reviewRepository.save(review);
@@ -62,17 +57,6 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     public void deleteReview(Long id) {
-       Review review = reviewRepository.findById(id)
-                .orElseThrow(() -> new AppException("Review not found", HttpStatus.NOT_FOUND));
-
-        Authentication authentication =
-                SecurityContextHolder.getContext().getAuthentication();
-        Customer customer = (Customer) authentication.getPrincipal();
-
-        if (!Objects.equals(customer.getUserId(), review.getUser().getUserId())) {
-            throw new AppException("You are not authorized to delete this review", HttpStatus.FORBIDDEN);
-        }
-
         reviewRepository.deleteById(id);
     }
 
@@ -107,16 +91,14 @@ public class ReviewServiceImpl implements ReviewService {
         dto.setRoute(tickets.get(0).getSchedule().getRoute().getRouteName());
         dto.setTravelDate(tickets.get(0).getSchedule().getDepartureTime().format(DATE_TIME_FORMATTER));
 
-        User user = review.getUser();
-        Hibernate.initialize(user); // Force Hibernate to initialize the proxy
+       Long userId = review.getUser().getUserId();
 
-        if (user instanceof Customer customer) {
-            dto.setUserName(customer.getFullName());
-        } else {
-            dto.setUserName("Unknown"); // hoặc xử lý fallback
-        }
+       Customer customer = customerRepository.findById(userId)
+               .orElseThrow(() -> new AppException("User not found", HttpStatus.NOT_FOUND));
 
-        dto.setUserImg(user.getImageUrl());
+       dto.setUserName(customer.getFullName());
+       dto.setUserId(userId);
+        dto.setUserImg(customer.getImageUrl());
         return dto;
     }
 }
