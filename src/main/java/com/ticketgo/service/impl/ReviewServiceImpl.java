@@ -4,6 +4,7 @@ import com.ticketgo.dto.ReviewDTO;
 import com.ticketgo.entity.Customer;
 import com.ticketgo.entity.Review;
 import com.ticketgo.entity.Ticket;
+import com.ticketgo.entity.User;
 import com.ticketgo.exception.AppException;
 import com.ticketgo.repository.BookingRepository;
 import com.ticketgo.repository.ReviewRepository;
@@ -12,6 +13,7 @@ import com.ticketgo.request.CreateReviewRequest;
 import com.ticketgo.response.ApiPaginationResponse;
 import com.ticketgo.service.ReviewService;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.Hibernate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -94,7 +96,7 @@ public class ReviewServiceImpl implements ReviewService {
         return new ApiPaginationResponse(HttpStatus.OK, "Danh sách đánh giá", dtos.getContent(), pagination);
     }
 
-    public ReviewDTO toDto(Review review) {
+    private ReviewDTO toDto(Review review) {
         List<Ticket> tickets = review.getBooking().getTickets();
 
         ReviewDTO dto = new ReviewDTO();
@@ -104,8 +106,17 @@ public class ReviewServiceImpl implements ReviewService {
         dto.setReviewDate(review.getCreatedAt().format(DATE_TIME_FORMATTER));
         dto.setRoute(tickets.get(0).getSchedule().getRoute().getRouteName());
         dto.setTravelDate(tickets.get(0).getSchedule().getDepartureTime().format(DATE_TIME_FORMATTER));
-        dto.setUserName(((Customer) review.getUser()).getFullName());
-        dto.setUserImg(review.getUser().getImageUrl());
+
+        User user = review.getUser();
+        Hibernate.initialize(user); // Force Hibernate to initialize the proxy
+
+        if (user instanceof Customer customer) {
+            dto.setUserName(customer.getFullName());
+        } else {
+            dto.setUserName("Unknown"); // hoặc xử lý fallback
+        }
+
+        dto.setUserImg(user.getImageUrl());
         return dto;
     }
 }

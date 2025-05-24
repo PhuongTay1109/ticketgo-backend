@@ -3,11 +3,13 @@ package com.ticketgo.controller;
 import com.ticketgo.constant.ApiVersion;
 import com.ticketgo.request.CreateReviewRequest;
 import com.ticketgo.response.ApiPaginationResponse;
+import com.ticketgo.response.ApiResponse;
 import com.ticketgo.service.ReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,9 +21,13 @@ public class ReviewController {
     private final ReviewService reviewService;
 
     @PostMapping
-    public ResponseEntity<Void> create(@RequestBody CreateReviewRequest req) {
+    public ApiResponse create(@RequestBody CreateReviewRequest req) {
         reviewService.createReview(req);
-        return ResponseEntity.status(201).build();
+        return new ApiResponse(
+                HttpStatus.OK,
+                "Cảm ơn bạn đã đánh giá!",
+                null
+        );
     }
 
     @GetMapping
