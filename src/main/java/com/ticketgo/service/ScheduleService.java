@@ -21,4 +21,6 @@ public interface ScheduleService {
 
     BusScheduleResponse getBusScheduleForMonth(Long busId, YearMonth month);
     DriverScheduleResponse getDriverScheduleForMonth(Long driverId, YearMonth month);
+
+    void updateDriverForSchedule(Long scheduleId, Long driverId);
 }

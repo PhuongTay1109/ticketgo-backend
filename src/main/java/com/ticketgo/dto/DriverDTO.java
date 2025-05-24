@@ -1,6 +1,5 @@
 package com.ticketgo.dto;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
 @Getter
@@ -9,12 +8,14 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 @ToString
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class DriverDTO {
     private Long driverId;
     private String name;
     private String licenseNumber;
     private String phoneNumber;
     private String imageUrl;
+    private String placeOfIssue;
+    private String issueDate;
+    private String expiryDate;
 }
 

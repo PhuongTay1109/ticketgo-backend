@@ -14,6 +14,7 @@ import com.ticketgo.repository.TicketRepository;
 import com.ticketgo.request.ScheduleCreateRequest;
 import com.ticketgo.response.BusScheduleResponse;
 import com.ticketgo.response.DriverScheduleResponse;
+import com.ticketgo.service.EmailService;
 import com.ticketgo.service.ScheduleService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -42,6 +43,7 @@ public class ScheduleServiceImpl implements ScheduleService {
     private final TicketRepository ticketRepo;
     private final BusRepository busRepo;
     private final BookingRepository bookingRepository;
+    private final EmailService emailService;
 
     @Override
     public Schedule findById(long scheduleId) {
@@ -170,5 +172,21 @@ public class ScheduleServiceImpl implements ScheduleService {
                 .collect(Collectors.groupingBy(s -> s.getDepartureTime().toLocalDate()));
 
         return new DriverScheduleResponse(driverId, month.toString(), groupedSchedules);
+    }
+
+    @Override
+    public void updateDriverForSchedule(Long scheduleId, Long driverId) {
+        Schedule schedule = scheduleRepo.findById(scheduleId)
+                .orElseThrow(() -> new AppException("Schedule with id " + scheduleId + " not found", HttpStatus.NOT_FOUND));
+
+        Driver driver = new Driver();
+        driver.setDriverId(driverId);
+
+        schedule.setDriver(driver);
+        scheduleRepo.save(schedule);
+
+
+
+        log.info("Driver updated successfully for schedule id: {}", scheduleId);
     }
 }

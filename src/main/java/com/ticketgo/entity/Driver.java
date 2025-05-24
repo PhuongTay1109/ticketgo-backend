@@ -5,6 +5,7 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.SQLRestriction;
 
+import java.time.LocalDate;
 import java.util.Set;
 
 @ToString
@@ -26,6 +27,10 @@ public class Driver extends BaseEntity {
 
     @Column(nullable = false, unique = true)
     private String licenseNumber;
+
+    private LocalDate issueDate;
+    private LocalDate expiryDate;
+    private String placeOfIssue;
 
     @Column(nullable = false)
     private String phoneNumber;

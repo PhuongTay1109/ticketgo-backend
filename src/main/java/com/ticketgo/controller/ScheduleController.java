@@ -86,4 +86,20 @@ public class ScheduleController {
             return ResponseEntity.badRequest().build();
         }
     }
+
+    @PutMapping("/{scheduleId}/driver")
+    @PreAuthorize("hasRole('BUS_COMPANY')")
+    public ApiResponse updateDriverForSchedule(
+            @PathVariable Long scheduleId,
+            @RequestParam Long driverId) {
+
+        scheduleService.updateDriverForSchedule(scheduleId, driverId);
+
+        return new ApiResponse(
+                HttpStatus.OK,
+                "Cập nhật tài xế cho chuyến xe thành công",
+                null
+        );
+    }
+
 }
