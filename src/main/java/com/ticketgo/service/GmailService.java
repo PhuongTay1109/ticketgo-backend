@@ -48,8 +48,25 @@ public class GmailService {
         // Check if we already have tokens
         Credential credential = flow.loadCredential(USER_ID);
         if (credential != null && credential.getAccessToken() != null) {
+            // Kiểm tra thời gian sống còn lại của access token
+            Long expiresIn = credential.getExpiresInSeconds();
+            if (expiresIn != null && expiresIn < 60) {
+                // Nếu còn < 60 giây, tự động làm mới access token
+                if (credential.refreshToken()) {
+                    log.info("Access token đã được làm mới.");
+                } else {
+                    log.info("Không thể làm mới access token.");
+                }
+            } else {
+                log.info("Access token còn hạn: " + expiresIn + " giây.");
+            }
+            log.info("Access Token: {}", credential.getAccessToken());
+            log.info("Refresh Token: {}", credential.getRefreshToken());
+            log.info("Expires in: {}", credential.getExpiresInSeconds());
+
             return credential;
         }
+
 
         // FIRST TIME ONLY: Direct user to this URL
         String redirectUri = "https://ticketgo.site/oauth2callback"; // must match the one on Google Console

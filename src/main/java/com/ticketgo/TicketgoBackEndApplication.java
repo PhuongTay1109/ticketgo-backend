@@ -142,8 +142,8 @@ public class TicketgoBackEndApplication implements CommandLineRunner {
 //        admin.setImageUrl("https://res.cloudinary.com/dj1h07rea/image/upload/v1732419422/03809988294a4197849715dd0850f3b8-free_mnt4dp.png");
 ////        userRepository.save(admin);
 //log.info("Sending booking info email...");
-        emailService.sendBookingInfo(35, 23);
-        emailService.sendResetPasswordEmail("phuonggteyy@gmail.com", "1234567890");
+//        emailService.sendBookingInfo(35, 23);
+//        emailService.sendResetPasswordEmail("phuonggteyy@gmail.com", "1234567890");
 //        BusCompany admin = BusCompany.builder()
 //                .email("admin@gmail.com")
 //                .password(passwordEncoder.encode("your_secure_password")) // Mã hóa mật khẩu
