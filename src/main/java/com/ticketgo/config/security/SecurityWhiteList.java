@@ -16,5 +16,6 @@ public class SecurityWhiteList {
             "/ws/**",
             "/oauth2callback/**",
             "/api/v1/reviews/**",
+            "/api/v1/bus-companies/**"
     };
 }
