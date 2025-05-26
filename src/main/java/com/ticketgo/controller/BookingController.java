@@ -100,8 +100,6 @@ public class BookingController {
         return bookingService.getAllBookingHistory(pageNumber, pageSize, bookingId, contactName, contactEmail, routeName, status, refundStatus, fromDate, toDate);
     }
 
-
-
     @GetMapping("/in-progress")
     public ResponseEntity<Boolean> checkInProgressTransaction() {
         return ResponseEntity

@@ -17,4 +17,5 @@ public class PaymentRequest {
     private Long customerId;
     private Long scheduleId;
     private Long promotionId;
+    private Long returnScheduleId;
 }

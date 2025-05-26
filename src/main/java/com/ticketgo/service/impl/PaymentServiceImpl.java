@@ -52,7 +52,28 @@ public class PaymentServiceImpl implements PaymentService {
         Customer customer = authService.getAuthorizedCustomer();
         request.setCustomerId(customer.getUserId());
 
-        long bookingId = bookingService.saveInProgressBooking(request).getBookingId();
+        long bookingId = bookingService.saveInProgressBooking(request, request.getScheduleId()).getBookingId();
+
+        Long returnBookingId = null;
+        PaymentRequest returnRequest = null;
+        if (request.getReturnScheduleId() != null) {
+            BookingConfirmDTO returnBookingInfo = bookingService.getBookingInfo(request.getReturnScheduleId());
+            log.info("Booking info (return): {}", returnBookingInfo);
+
+            returnRequest = new PaymentRequest();
+            returnRequest.setScheduleId(request.getReturnScheduleId());
+            returnRequest.setPickupStopId(returnBookingInfo.getTripInformation().getPickupId());
+            returnRequest.setDropoffStopId(returnBookingInfo.getTripInformation().getDropoffId());
+            returnRequest.setTotalPrice((long) returnBookingInfo.getPrices().getTotalPrice());
+            returnRequest.setCustomerId(customer.getUserId());
+            returnRequest.setContactName(request.getContactName());
+            returnRequest.setContactEmail(request.getContactEmail());
+            returnRequest.setContactPhone(request.getContactPhone());
+            returnRequest.setPromotionId(request.getPromotionId());
+
+            returnBookingId = bookingService.saveInProgressBooking(returnRequest, request.getReturnScheduleId()).getBookingId();
+            log.info("Saved return booking with ID: {}", returnBookingId);
+        }
 
         String vnp_Version = "2.1.0";
         String vnp_Command = "pay";
@@ -64,12 +85,20 @@ public class PaymentServiceImpl implements PaymentService {
         vnp_Params.put("vnp_Version", vnp_Version);
         vnp_Params.put("vnp_Command", vnp_Command);
         vnp_Params.put("vnp_TmnCode", vnp_TmnCode);
-        long paymentAmount = Math.round(bookingService.saveInProgressBooking(request).getPaymentAmount());
+        long paymentAmount = Math.round(bookingService.saveInProgressBooking(request, request.getScheduleId()).getPaymentAmount());
+        if(request.getReturnScheduleId() != null)
+            paymentAmount += Math.round(bookingService.saveInProgressBooking(returnRequest, request.getReturnScheduleId()).getPaymentAmount());
+
         String amount = String.valueOf(paymentAmount * 100);
         vnp_Params.put("vnp_Amount", amount);
         vnp_Params.put("vnp_CurrCode", "VND");
         vnp_Params.put("vnp_TxnRef", vnp_TxnRef);
-        vnp_Params.put("vnp_OrderInfo", bookingId + "-" + customer.getUserId() + "-" + request.getScheduleId());
+        String orderInfo = bookingId + "-" + customer.getUserId() + "-" + request.getScheduleId();
+        if (request.getReturnScheduleId() != null) {
+            orderInfo += "-" + request.getReturnScheduleId();
+            orderInfo += "-" + returnBookingId;
+        }
+        vnp_Params.put("vnp_OrderInfo", orderInfo);
         vnp_Params.put("vnp_OrderType", "250000");
         vnp_Params.put("vnp_ReturnUrl", vnPayReturnUrl + "/api/v1/payment/vnpay/return");
 

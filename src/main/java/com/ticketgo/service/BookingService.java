@@ -15,7 +15,7 @@ import java.util.List;
 
 public interface BookingService {
     TripInformationResponse getTripInformation(long pickupStopId, long dropoffStopId, long scheduleId);
-    SavedInProgressInfo saveInProgressBooking(PaymentRequest request);
+    SavedInProgressInfo saveInProgressBooking(PaymentRequest request, long scheduleId);
 
     void setConfirmedVNPayBooking(long bookingId);
     void setFailedVNPayBooking(long bookingId);

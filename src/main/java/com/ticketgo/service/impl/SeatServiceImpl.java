@@ -113,28 +113,56 @@ public class SeatServiceImpl implements SeatService {
         Customer customer = authService.getAuthorizedCustomer();
         long customerId = customer.getUserId();
 
-        List<String> ticketCodes;
+        List<String> ticketCodes = new ArrayList<>();
 
+        // Xử lý chiều đi
         if (request.getScheduleId() != null) {
             String key = RedisKeys.userBookingInfoKey(customerId, request.getScheduleId());
             String json = (String) redisson.getBucket(key).get();
 
             if (json == null) {
                 log.warn("No booking confirmation found for key: {}", key);
-                throw new AppException("Booking confirmation not found", HttpStatus.NOT_FOUND);
+                throw new AppException("Booking confirmation not found for scheduleId: " + request.getScheduleId(), HttpStatus.NOT_FOUND);
             }
 
             log.info("Retrieved booking confirmation from Redis for key: {}", key);
             BookingConfirmDTO bookingInfo = GsonUtils.fromJson(json, BookingConfirmDTO.class);
 
-            ticketCodes = bookingInfo.getPrices().getSeatNumbers()
+            List<String> departTicketCodes = bookingInfo.getPrices().getSeatNumbers()
                     .stream()
                     .map(seatNumber -> String.format("TICKET-%d-%s", request.getScheduleId(), seatNumber))
                     .collect(Collectors.toList());
-        } else {
+
+            ticketCodes.addAll(departTicketCodes);
+        }
+
+        // Xử lý chiều về (returnScheduleId)
+        if (request.getReturnScheduleId() != null) {
+            String returnKey = RedisKeys.userBookingInfoKey(customerId, request.getReturnScheduleId());
+            String returnJson = (String) redisson.getBucket(returnKey).get();
+
+            if (returnJson == null) {
+                log.warn("No booking confirmation found for return key: {}", returnKey);
+                throw new AppException("Booking confirmation not found for returnScheduleId: " + request.getReturnScheduleId(), HttpStatus.NOT_FOUND);
+            }
+
+            log.info("Retrieved booking confirmation from Redis for return key: {}", returnKey);
+            BookingConfirmDTO returnBookingInfo = GsonUtils.fromJson(returnJson, BookingConfirmDTO.class);
+
+            List<String> returnTicketCodes = returnBookingInfo.getPrices().getSeatNumbers()
+                    .stream()
+                    .map(seatNumber -> String.format("TICKET-%d-%s", request.getReturnScheduleId(), seatNumber))
+                    .collect(Collectors.toList());
+
+            ticketCodes.addAll(returnTicketCodes);
+        }
+
+        // Nếu không có scheduleId thì lấy ticketCodes từ request trực tiếp
+        if (request.getScheduleId() == null && request.getReturnScheduleId() == null) {
             ticketCodes = request.getTicketCodes();
         }
 
+        // Kiểm tra trạng thái vé còn trống
         for (String ticketCode : ticketCodes) {
             Ticket ticket = ticketService.findByTicketCode(ticketCode);
             if (ticket.getStatus() != TicketStatus.AVAILABLE) {
@@ -144,7 +172,8 @@ public class SeatServiceImpl implements SeatService {
             }
         }
 
-        for(String ticketCode : ticketCodes) {
+        // Đặt giữ chỗ cho tất cả các ticket
+        for (String ticketCode : ticketCodes) {
             ticketService.reserveSeats(ticketCode, customerId);
         }
     }

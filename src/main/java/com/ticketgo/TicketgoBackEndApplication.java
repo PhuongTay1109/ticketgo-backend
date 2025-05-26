@@ -3,7 +3,10 @@ package com.ticketgo;
 import com.ticketgo.entity.Bus;
 import com.ticketgo.entity.Seat;
 import com.ticketgo.repository.*;
-import com.ticketgo.service.*;
+import com.ticketgo.service.EmailService;
+import com.ticketgo.service.GmailService;
+import com.ticketgo.service.ScheduleService;
+import com.ticketgo.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
@@ -29,7 +32,6 @@ public class TicketgoBackEndApplication implements CommandLineRunner {
     private final ScheduleService scheduleService;
     private final TicketRepository ticketRepository;
     private final EmailService emailService;
-    private final TokenService tokenService;
     private final UserService userService;
 
     public static void main(String[] args) {

@@ -88,13 +88,13 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional
-    public SavedInProgressInfo saveInProgressBooking(PaymentRequest request) {
+    public SavedInProgressInfo saveInProgressBooking(PaymentRequest request, long scheduleId) {
         long customerId = request.getCustomerId();
         Customer customer = customerService.findById(customerId);
         RouteStop pickupStop = routeStopService.findById(request.getPickupStopId());
         RouteStop dropoffStop = routeStopService.findById(request.getDropoffStopId());
 
-        List<Ticket> tickets = ticketService.findReservedTickets(customerId);
+        List<Ticket> tickets = ticketService.findReservedTickets(customerId, scheduleId);
 
         for (Ticket ticket : tickets) {
             log.info("ticket status {} and seat id {}", ticket.getStatus(), ticket.getSeat().getSeatId());

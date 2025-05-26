@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -157,6 +158,11 @@ public class EmailServiceImpl implements EmailService {
             emailContent.append("</div>");
 
             emailContent.append("<div style=\"margin-bottom: 12px;\">");
+            emailContent.append("<span style=\"font-size: 14px; color: #333; font-weight: bold;\">Tên tài xế: </span>");
+            emailContent.append("<span style=\"font-size: 14px; color: #333;\">" + driver.getName() + "</span>");
+            emailContent.append("</div>");
+
+            emailContent.append("<div style=\"margin-bottom: 12px;\">");
             emailContent.append("<span style=\"font-size: 14px; color: #333; font-weight: bold;\">Liên hệ tài xế: </span>");
             emailContent.append("<span style=\"font-size: 14px; color: #333;\">" + driver.getPhoneNumber() + "</span>");
             emailContent.append("</div>");
@@ -222,6 +228,106 @@ public class EmailServiceImpl implements EmailService {
             throw new RuntimeException(e);
         }
     }
+
+    @Override
+    @Async("taskExecutor")
+    @Transactional
+    public void sendBookingInfoReturn(Long bookingId, Long scheduleId, Long returnBookingId, Long returnScheduleId) {
+        List<BookingInfoDTO> goBookingInfoList = bookingService.getBookingInfoList(bookingId);
+        List<BookingInfoDTO> returnBookingInfoList = bookingService.getBookingInfoList(returnBookingId);
+
+        if (goBookingInfoList.isEmpty() || returnBookingInfoList.isEmpty()) {
+            log.warn("Booking info list for either go or return trip is empty.");
+            return;
+        }
+
+        BookingInfoDTO goInfo = goBookingInfoList.get(0);
+        BookingInfoDTO returnInfo = returnBookingInfoList.get(0);
+
+        String contactEmail = goInfo.getContactEmail();
+        String contactName = goInfo.getContactName();
+        String bookingDate = goInfo.getBookingDate();
+
+        // Chiều đi
+        Schedule goSchedule = scheduleService.findById(scheduleId);
+        Driver goDriver = goSchedule.getDriver();
+        String goSeatInfo = goBookingInfoList.stream().map(BookingInfoDTO::getSeatNumber).collect(Collectors.joining(" , "));
+
+        // Chiều về
+        Schedule returnSchedule = scheduleService.findById(returnScheduleId);
+        Driver returnDriver = returnSchedule.getDriver();
+        String returnSeatInfo = returnBookingInfoList.stream().map(BookingInfoDTO::getSeatNumber).collect(Collectors.joining(" , "));
+
+        StringBuilder emailContent = new StringBuilder();
+        emailContent.append("<div style=\"font-family: 'Arial', sans-serif; max-width: 700px; margin: 0 auto; border: 1px solid #e1e1e1; border-radius: 8px; overflow: hidden; background-color: #f4f4f9;\">");
+
+        // Header
+        emailContent.append("<div style=\"background-color: #007BFF; padding: 20px; text-align: center; color: white; border-top-left-radius: 8px; border-top-right-radius: 8px;\">");
+        emailContent.append("<h1 style=\"font-size: 24px; margin: 0;\">THÔNG TIN ĐẶT VÉ XE</h1>");
+        emailContent.append("<p style=\"font-size: 14px; margin: 5px 0 0;\">Mã đặt vé: #" + bookingId + " / #" + returnBookingId + "</p>");
+        emailContent.append("<p style=\"font-size: 12px; margin: 5px 0 0;\">Ngày đặt vé: " + bookingDate + "</p>");
+        emailContent.append("</div>");
+
+        // Intro
+        emailContent.append("<div style=\"padding: 20px; background-color: #ffffff; border-bottom: 1px solid #e1e1e1;\">");
+        emailContent.append("<h2 style=\"font-size: 18px; color: #333; margin-top: 0;\">Xin chào " + contactName + ",</h2>");
+        emailContent.append("<p style=\"color: #666; font-size: 14px;\">Cảm ơn bạn đã đặt vé với chúng tôi. Dưới đây là thông tin chi tiết chuyến đi của bạn:</p>");
+        emailContent.append("</div>");
+
+        // GO TRIP
+        emailContent.append("<div style=\"padding: 20px; background-color: #ffffff;\">");
+        emailContent.append("<h3 style=\"color: #007BFF;\">Chiều đi: " + goInfo.getRouteName() + "</h3>");
+        emailContent.append("<p><b>Giờ khởi hành:</b> " + goInfo.getDepartureDate() + "</p>");
+        emailContent.append("<p><b>Điểm đón:</b> " + goInfo.getPickupLocation() + "</p>");
+        emailContent.append("<p><b>Thời gian đón dự kiến:</b> " + goInfo.getPickupTime() + "</p>");
+        emailContent.append("<p><b>Điểm trả:</b> " + goInfo.getDropoffLocation() + "</p>");
+        emailContent.append("<p><b>Số ghế:</b> " + goSeatInfo + "</p>");
+        emailContent.append("<p><b>Biển số xe:</b> " + goInfo.getLicensePlate() + "</p>");
+        emailContent.append("<p><b>Tên tài xế:</b> " + goDriver.getName() + "</p>");
+        emailContent.append("<p><b>Liên hệ tài xế:</b> " + goDriver.getPhoneNumber() + "</p>");
+        emailContent.append("</div>");
+
+        // RETURN TRIP
+        emailContent.append("<div style=\"padding: 20px; background-color: #ffffff;\">");
+        emailContent.append("<h3 style=\"color: #007BFF;\">Chiều về: " + returnInfo.getRouteName() + "</h3>");
+        emailContent.append("<p><b>Giờ khởi hành:</b> " + returnInfo.getDepartureDate() + "</p>");;
+        emailContent.append("<p><b>Điểm đón:</b> " + returnInfo.getPickupLocation() + "</p>");
+        emailContent.append("<p><b>Thời gian đón dự kiến:</b> " + goInfo.getPickupTime() + "</p>");
+        emailContent.append("<p><b>Điểm trả:</b> " + returnInfo.getDropoffLocation() + "</p>");
+        emailContent.append("<p><b>Số ghế:</b> " + returnSeatInfo + "</p>");
+        emailContent.append("<p><b>Biển số xe:</b> " + returnInfo.getLicensePlate() + "</p>");
+        emailContent.append("<p><b>Tên tài xế:</b> " + goDriver.getName() + "</p>");
+        emailContent.append("<p><b>Liên hệ tài xế:</b> " + goDriver.getPhoneNumber() + "</p>");
+        emailContent.append("</div>");
+
+        // Confirmation
+        emailContent.append("<div style=\"padding: 20px; background-color: #f2f7f4; text-align: center; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px;\">");
+        emailContent.append("<span style=\"background-color: #28a745; color: white; padding: 10px 20px; border-radius: 20px; font-weight: bold;\">✔ ĐÃ XÁC NHẬN</span>");
+        emailContent.append("</div>");
+
+        // Footer
+        emailContent.append("<div style=\"background-color: #f9f9f9; padding: 15px; text-align: center; font-size: 12px; color: #999; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px;\">");
+        emailContent.append("<p style=\"margin: 0 0 10px 0;\">Nếu có bất kỳ câu hỏi nào, vui lòng liên hệ với chúng tôi qua email này hoặc gọi đến hotline.</p>");
+        emailContent.append("<p style=\"margin: 0; font-weight: bold; color: #007BFF;\">Hotline: 0979552239</p>");
+        emailContent.append("<p style=\"margin: 0; font-weight: bold; color: #007BFF;\"><a href=\"https://ticketgo-black.vercel.app/\" style=\"color: #007BFF; text-decoration: none;\">TicketGo - Đặt vé xe dễ dàng và nhanh chóng</a></p>");
+        emailContent.append("</div>");
+        emailContent.append("</div>");
+
+        try {
+            GmailService.sendEmail(
+                    contactEmail,
+                    "Thông tin đặt vé khứ hồi của bạn - Mã #" + bookingId + " / #" + returnBookingId,
+                    emailContent.toString()
+            );
+        } catch (MessagingException | UnsupportedEncodingException e) {
+            log.error("Không thể gửi email thông tin đặt vé tới {}: {}", contactEmail, e.getMessage());
+        } catch (Exception e) {
+            log.error("Không thể gửi email thông tin đặt vé tới {}: {}", contactEmail, e.getMessage());
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+    }
+
 
     private MimeMessage createResetPasswordEmail(String email, String token)
             throws MessagingException, UnsupportedEncodingException {

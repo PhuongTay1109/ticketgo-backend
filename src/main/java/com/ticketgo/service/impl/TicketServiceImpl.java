@@ -26,8 +26,8 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
-    public List<Ticket> findReservedTickets(long userId) {
-        return ticketRepo.findReservedTicketsByCustomerId(userId);
+    public List<Ticket> findReservedTickets(long userId, long scheduleId) {
+        return ticketRepo.findReservedTicketsByCustomerId(userId, scheduleId);
     }
 
     @Override

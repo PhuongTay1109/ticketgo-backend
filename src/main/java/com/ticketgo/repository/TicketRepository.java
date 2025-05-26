@@ -40,8 +40,9 @@ public interface TicketRepository extends JpaRepository<Ticket, String> {
         SELECT t FROM Ticket t
         WHERE t.customer.userId = :customerId
         AND t.status = com.ticketgo.enums.TicketStatus.RESERVED
+        and t.schedule.scheduleId = :scheduleId
         """)
-    List<Ticket> findReservedTicketsByCustomerId(long customerId);
+    List<Ticket> findReservedTicketsByCustomerId(long customerId, long scheduleId);
 
     List<Ticket> findAllBySchedule_ScheduleId(long scheduleId);
 

@@ -10,4 +10,5 @@ import java.util.List;
 public class SeatReservationRequest {
     private List<String> ticketCodes;
     private Long scheduleId;
+    private Long returnScheduleId;
 }

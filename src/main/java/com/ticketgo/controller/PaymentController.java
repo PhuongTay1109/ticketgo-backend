@@ -41,6 +41,10 @@ public class PaymentController {
         Long bookingId = Long.parseLong(parts[0]);
         Long customerId = Long.parseLong(parts[1]);
         Long scheduleId = Long.parseLong(parts[2]);
+        Long returnScheduleId = parts.length > 3 ? Long.parseLong(parts[3]) : null;
+        Long returnBookingId = parts.length > 4 ? Long.parseLong(parts[4]) : null;
+        log.info("VNPay return response code: {}, bookingId: {}, customerId: {}, scheduleId: {}, returnScheduleId: {}, returnBookingId: {}",
+                responseCode, bookingId, customerId, scheduleId, returnScheduleId, returnBookingId);
 
         if (responseCode.equals("00")) {
             String bookingInfoKey = RedisKeys.userBookingInfoKey(customerId, scheduleId);
@@ -56,7 +60,25 @@ public class PaymentController {
             redisson.getBucket(contactInfoKey).delete();
 
             bookingService.setConfirmedVNPayBooking(bookingId);
-            emailService.sendBookingInfo(bookingId, scheduleId);
+            if (returnScheduleId == null) {
+                emailService.sendBookingInfo(bookingId, scheduleId);
+            } else if (returnBookingId != null) {
+                String returnBookingInfoKey = RedisKeys.userBookingInfoKey(customerId, returnScheduleId);
+                log.info("Return booking info key: {}", returnBookingInfoKey);
+                redisson.getBucket(returnBookingInfoKey).delete();
+
+                String returnVnPayUrlKey = RedisKeys.vnPayUrlKey(customerId, returnScheduleId);
+                log.info("Return VNPay URL key: {}", returnVnPayUrlKey);
+                redisson.getBucket(returnVnPayUrlKey).delete();
+
+                String returnContactInfoKey = RedisKeys.contactInfoKey(customerId, returnScheduleId);
+                log.info("Return contact info key: {}", returnContactInfoKey);
+                redisson.getBucket(returnContactInfoKey).delete();
+
+                bookingService.setConfirmedVNPayBooking(returnBookingId);
+                emailService.sendBookingInfoReturn(bookingId, scheduleId, returnBookingId, returnScheduleId);
+            }
+
             return ResponseEntity.status(302)
                     .header("Location",
                             frontendUrl + "/thankyou")

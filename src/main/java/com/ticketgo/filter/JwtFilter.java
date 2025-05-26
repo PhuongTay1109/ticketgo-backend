@@ -1,17 +1,17 @@
 package com.ticketgo.filter;
 
-import com.ticketgo.constant.RedisKeys;
 import com.ticketgo.config.security.SecurityWhiteList;
+import com.ticketgo.constant.RedisKeys;
 import com.ticketgo.service.UserService;
 import com.ticketgo.util.JwtUtils;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RList;
 import org.redisson.api.RedissonClient;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -29,13 +29,22 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
-@RequiredArgsConstructor
 @Slf4j
 public class JwtFilter extends OncePerRequestFilter {
     private final JwtUtils jwtUtil;
     private final UserService userService;
     private final HandlerExceptionResolver handlerExceptionResolver;
     private final RedissonClient redisson;
+
+    public JwtFilter(JwtUtils jwtUtil,
+                     @Lazy UserService userService,
+                     HandlerExceptionResolver handlerExceptionResolver,
+                     RedissonClient redisson) {
+        this.jwtUtil = jwtUtil;
+        this.userService = userService;
+        this.handlerExceptionResolver = handlerExceptionResolver;
+        this.redisson = redisson;
+    }
 
     private static final Set<String> EXCLUDE_URL_PATTERNS = Arrays.stream(SecurityWhiteList.WHITELIST_PATHS)
                                                                     .collect(Collectors.toSet());

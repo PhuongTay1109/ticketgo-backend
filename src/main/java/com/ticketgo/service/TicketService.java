@@ -7,7 +7,7 @@ import java.util.List;
 public interface TicketService {
     void reserveSeats(String ticketCode, long customerId);
 
-    List<Ticket> findReservedTickets(long userId);
+    List<Ticket> findReservedTickets(long userId, long scheduleId);
 
     void saveAll(List<Ticket> tickets);
 
