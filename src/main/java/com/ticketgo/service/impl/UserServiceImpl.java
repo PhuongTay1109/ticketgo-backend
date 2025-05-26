@@ -78,13 +78,15 @@ public class UserServiceImpl implements UserService {
             throw new AppException("Customer not found with id: " + id, HttpStatus.NOT_FOUND);
         }
 
-        User user = userRepo.findById(id)
-                .orElseThrow(() -> new AppException(
-                        "Tài khoản với id này không tồn tại",
-                        HttpStatus.NOT_FOUND
-                ));
-        user.setImageUrl(request.getImageUrl());
-        userRepo.save(user);
+        if (request.getImageUrl() != null) {
+            User user = userRepo.findById(id)
+                    .orElseThrow(() -> new AppException(
+                            "Tài khoản với id này không tồn tại",
+                            HttpStatus.NOT_FOUND
+                    ));
+            user.setImageUrl(request.getImageUrl());
+            userRepo.save(user);
+        }
     }
 
     private Customer getAuthorizedCustomer() {
