@@ -164,8 +164,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         if (userService.existsByEmail(email)) {
             User user = userService.findByEmail(email);
-            user.setImageUrl(userResponse.getPicture());
-
             return getUserLoginResponse(user);
         } else {
             Customer customer = Customer.builder()

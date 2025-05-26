@@ -48,18 +48,19 @@ public class GmailService {
         // Check if we already have tokens
         Credential credential = flow.loadCredential(USER_ID);
         if (credential != null && credential.getAccessToken() != null) {
-            // Kiểm tra thời gian sống còn lại của access token
+            // Check the remaining lifetime of the access token
             Long expiresIn = credential.getExpiresInSeconds();
             if (expiresIn != null && expiresIn < 60) {
-                // Nếu còn < 60 giây, tự động làm mới access token
+                // If less than 60 seconds remaining, automatically refresh the access token
                 if (credential.refreshToken()) {
-                    log.info("Access token đã được làm mới.");
+                    log.info("Access token has been refreshed.");
                 } else {
-                    log.info("Không thể làm mới access token.");
+                    log.info("Unable to refresh the access token.");
                 }
             } else {
-                log.info("Access token còn hạn: " + expiresIn + " giây.");
+                log.info("Access token is still valid for: {} seconds.", expiresIn);
             }
+
             log.info("Access Token: {}", credential.getAccessToken());
             log.info("Refresh Token: {}", credential.getRefreshToken());
             log.info("Expires in: {}", credential.getExpiresInSeconds());
