@@ -20,6 +20,8 @@ public class UserDTO {
     private String fullName;
     private String phoneNumber;
     private String dateOfBirth;
+    private Integer points;
+    private String membershipLevel;
 
     // BusCompany specific fields
     private String busCompanyName;

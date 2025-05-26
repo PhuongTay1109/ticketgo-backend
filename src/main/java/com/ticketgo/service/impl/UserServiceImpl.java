@@ -23,6 +23,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepo;
     private final CustomerRepository customerRepo;
+    private final UserService userService;
 
     @Override
     public UserDetails loadUserByUsername(String email) {
@@ -77,6 +78,14 @@ public class UserServiceImpl implements UserService {
         if (rowUpdated == 0) {
             throw new AppException("Customer not found with id: " + id, HttpStatus.NOT_FOUND);
         }
+
+        User user = userRepo.findById(id)
+                .orElseThrow(() -> new AppException(
+                        "Tài khoản với id này không tồn tại",
+                        HttpStatus.NOT_FOUND
+                ));
+        user.setImageUrl(request.getImageUrl());
+        userRepo.save(user);
     }
 
     private Customer getAuthorizedCustomer() {

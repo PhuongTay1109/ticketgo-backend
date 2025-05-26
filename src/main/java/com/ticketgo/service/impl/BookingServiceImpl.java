@@ -4,10 +4,7 @@ import com.ticketgo.constant.BookingStep;
 import com.ticketgo.constant.RedisKeys;
 import com.ticketgo.dto.*;
 import com.ticketgo.entity.*;
-import com.ticketgo.enums.BookingStatus;
-import com.ticketgo.enums.PaymentType;
-import com.ticketgo.enums.RefundStatus;
-import com.ticketgo.enums.TicketStatus;
+import com.ticketgo.enums.*;
 import com.ticketgo.exception.AppException;
 import com.ticketgo.mapper.BookingHistoryMapper;
 import com.ticketgo.mapper.BookingInfoMapper;
@@ -158,6 +155,30 @@ public class BookingServiceImpl implements BookingService {
         booking.setStatus(BookingStatus.CONFIRMED);
         booking.setPayment(payment);
         bookingRepo.save(booking);
+
+        Customer customer = customerService.findById(booking.getCustomer().getUserId());
+
+        Double paidAmount = (booking.getDiscountedPrice() != null)
+                ? booking.getDiscountedPrice()
+                : booking.getOriginalPrice();
+
+        // 10.000 VND = 1 point
+        int earnedPoints = (int) Math.floor(paidAmount / 10000);
+
+        int totalPoints = customer.getPoints() + earnedPoints;
+        customer.setPoints(totalPoints);
+
+        if (totalPoints >= 500) {
+            customer.setLevel(MembershipLevel.ELITE_EXPLORER);
+        } else if (totalPoints >= 200) {
+            customer.setLevel(MembershipLevel.GOLD_COMPANION);
+        } else if (totalPoints >= 50) {
+            customer.setLevel(MembershipLevel.LOYAL_TRAVELER);
+        } else {
+            customer.setLevel(MembershipLevel.NEW_PASSENGER);
+        }
+
+        customerService.save(customer);
     }
 
     @Override

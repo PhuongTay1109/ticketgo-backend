@@ -24,6 +24,9 @@ public interface UserMapper {
             dto.setPhoneNumber(customer.getPhoneNumber());
             dto.setDateOfBirth(customer.getDateOfBirth() != null ?
                     customer.getDateOfBirth().toString() : null);
+            dto.setPoints(customer.getPoints());
+            dto.setMembershipLevel(customer.getLevel() != null ?
+                    customer.getLevel().name(): null);
         }
 
         if (user instanceof BusCompany busCompany) {

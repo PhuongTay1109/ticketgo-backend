@@ -1,5 +1,6 @@
 package com.ticketgo.entity;
 
+import com.ticketgo.enums.MembershipLevel;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -23,6 +24,9 @@ public class Customer extends User {
     private LocalDate dateOfBirth;
 
     private Integer points;
+
+    @Enumerated(EnumType.STRING)
+    private MembershipLevel level;
 
     @Override
     public void prePersist() {

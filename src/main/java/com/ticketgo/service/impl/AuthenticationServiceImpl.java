@@ -4,6 +4,7 @@ import com.ticketgo.constant.RedisKeys;
 import com.ticketgo.entity.BaseEntity;
 import com.ticketgo.entity.Customer;
 import com.ticketgo.entity.User;
+import com.ticketgo.enums.MembershipLevel;
 import com.ticketgo.enums.Provider;
 import com.ticketgo.enums.Role;
 import com.ticketgo.enums.TokenType;
@@ -54,6 +55,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
 
         Customer customer = BaseEntity.CustomerMapper.INSTANCE.toCustomer(request, passwordEncoder);
+        customer.setPoints(0);
+        customer.setLevel(MembershipLevel.NEW_PASSENGER);
         customerService.save(customer);
 
         String token = tokenService.createToken(customer, TokenType.ACTIVATION);
