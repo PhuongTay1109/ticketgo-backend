@@ -11,12 +11,14 @@ import com.google.api.services.gmail.*;
 import com.google.api.services.gmail.model.Message;
 import jakarta.mail.*;
 import jakarta.mail.internet.*;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.*;
 import java.util.*;
 
 import static jakarta.mail.Message.RecipientType.TO;
 
+@Slf4j
 public class GmailService {
 
     private static final String APPLICATION_NAME = "TicketGo";
@@ -71,6 +73,8 @@ public class GmailService {
      * Sends an email.
      */
     public static void sendEmail(String to, String subject, String bodyHtml) throws Exception {
+        log.info("[EMAIL-SERVICE] START SENDING EMAIL TO [{}] WITH SUBJECT [{}]", to, subject);
+
         final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
         Credential credential = getCredentials(HTTP_TRANSPORT);
         Gmail service = new Gmail.Builder(HTTP_TRANSPORT, JSON_FACTORY, credential)
@@ -80,8 +84,10 @@ public class GmailService {
         MimeMessage email = createEmail(to, "me", subject, bodyHtml);
         Message message = createMessageWithEmail(email);
         service.users().messages().send("me", message).execute();
-        System.out.println("Email sent to " + to);
+
+        log.info("[EMAIL-SERVICE] ✅ EMAIL SENT SUCCESSFULLY TO [{}]", to);
     }
+
 
     private static MimeMessage createEmail(String to, String from, String subject, String bodyHtml)
             throws MessagingException {

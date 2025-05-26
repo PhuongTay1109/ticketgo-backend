@@ -316,7 +316,7 @@ public class EmailServiceImpl implements EmailService {
         try {
             GmailService.sendEmail(
                     contactEmail,
-                    "Thông tin đặt vé khứ hồi của bạn - Mã #" + bookingId + " / #" + returnBookingId,
+                    "Thông tin đặt vé của bạn - Mã #" + bookingId + " / #" + returnBookingId,
                     emailContent.toString()
             );
         } catch (MessagingException | UnsupportedEncodingException e) {
