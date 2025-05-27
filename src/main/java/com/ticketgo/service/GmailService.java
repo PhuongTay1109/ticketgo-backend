@@ -43,6 +43,7 @@ public class GmailService {
                 HTTP_TRANSPORT, JSON_FACTORY, clientSecrets, SCOPES)
                 .setDataStoreFactory(dataStoreFactory)
                 .setAccessType("offline")
+                .setApprovalPrompt("consent") // Force user to re-authorize
                 .build();
 
         // Check if we already have tokens
@@ -71,7 +72,9 @@ public class GmailService {
 
         // FIRST TIME ONLY: Direct user to this URL
         String redirectUri = "https://ticketgo.site/oauth2callback"; // must match the one on Google Console
-        AuthorizationCodeRequestUrl authUrl = flow.newAuthorizationUrl().setRedirectUri(redirectUri);
+        AuthorizationCodeRequestUrl authUrl = flow.newAuthorizationUrl()
+                .setRedirectUri(redirectUri)
+                .setApprovalPrompt("consent");
         System.out.println("Please open the following URL in your browser and authorize the application:");
         System.out.println(authUrl.build());
 
