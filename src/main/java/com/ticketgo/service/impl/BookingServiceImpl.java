@@ -259,7 +259,11 @@ public class BookingServiceImpl implements BookingService {
                     dto.setOriginalPrice(String.valueOf(booking.getOriginalPrice()));
                     dto.setDiscountedPrice(String.valueOf(booking.getDiscountedPrice()));
                     dto.setStatus("Đã hủy");
-                    dto.setRefundDate(refund.getRefundedAt().format(DateTimeUtils.DATE_TIME_FORMATTER));
+                    if (refund.getRefundedAt() != null) {
+                        dto.setRefundDate(refund.getRefundedAt().format(DateTimeUtils.DATE_TIME_FORMATTER));
+                    } else {
+                        dto.setRefundDate("");
+                    }
                     dto.setRefundStatus(getRefundStatus(refund.getStatus()));
                     dto.setRefundAmount(String.valueOf(refund.getAmount()));
                     dto.setRefundReason(refund.getReason());
@@ -582,7 +586,11 @@ public class BookingServiceImpl implements BookingService {
                     dto.setOriginalPrice(String.valueOf(booking.getOriginalPrice()));
                     dto.setDiscountedPrice(String.valueOf(booking.getDiscountedPrice()));
                     dto.setStatus("Đã hủy");
-                    dto.setRefundDate(refund.getRefundedAt().format(DateTimeUtils.DATE_TIME_FORMATTER));
+                    if (refund.getRefundedAt() != null) {
+                        dto.setRefundDate(refund.getRefundedAt().format(DateTimeUtils.DATE_TIME_FORMATTER));
+                    } else {
+                        dto.setRefundDate("");
+                    }
                     dto.setRefundStatus(getRefundStatus(refund.getStatus()));
                     dto.setRefundAmount(String.valueOf(refund.getAmount()));
                     dto.setRefundReason(refund.getReason());

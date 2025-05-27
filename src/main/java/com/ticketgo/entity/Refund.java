@@ -25,7 +25,6 @@ public class Refund extends BaseEntity {
     @Column(nullable = false)
     private Double amount;
 
-    @Column(nullable = false)
     private LocalDateTime refundedAt;
 
     @Enumerated(EnumType.STRING)
