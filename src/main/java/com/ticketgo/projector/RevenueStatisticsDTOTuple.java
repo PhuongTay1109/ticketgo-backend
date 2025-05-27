@@ -1,7 +1,9 @@
 package com.ticketgo.projector;
 
+import java.math.BigDecimal;
+
 public interface RevenueStatisticsDTOTuple {
     String getPeriod();
-    Double getTotalRevenue();
+    BigDecimal getTotalRevenue();
     Long getTotalTicketsSold();
 }

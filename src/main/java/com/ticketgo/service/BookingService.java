@@ -60,4 +60,10 @@ public interface BookingService {
     );
 
     void updateBookingRefundStatus(Long bookingsId);
+
+    ComprehensiveStatisticsDTO getComprehensiveStatisticsDaily(LocalDateTime startDate, LocalDateTime endDate);
+
+    ComprehensiveStatisticsDTO getComprehensiveStatisticsMonthly(int year);
+
+    Object getComprehensiveStatisticsYearly(int year);
 }

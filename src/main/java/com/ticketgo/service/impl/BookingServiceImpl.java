@@ -6,8 +6,7 @@ import com.ticketgo.dto.*;
 import com.ticketgo.entity.*;
 import com.ticketgo.enums.*;
 import com.ticketgo.exception.AppException;
-import com.ticketgo.mapper.BookingHistoryMapper;
-import com.ticketgo.mapper.BookingInfoMapper;
+import com.ticketgo.mapper.*;
 import com.ticketgo.projector.BookingHistoryDTOTuple;
 import com.ticketgo.projector.BookingInfoDTOTuple;
 import com.ticketgo.projector.CustomerInfoDTOTuple;
@@ -696,5 +695,181 @@ public class BookingServiceImpl implements BookingService {
             refund.setRefundedAt(LocalDateTime.now());
             refundRepo.save(refund);
         }
+    }
+
+    @Override
+    public ComprehensiveStatisticsDTO getComprehensiveStatisticsDaily(LocalDateTime startDate, LocalDateTime endDate) {
+        // Daily revenue
+        String dateFormat = "%Y-%m-%d";
+        List<RevenueStatisticsDTOTuple> dailyTuples = bookingRepo.getRevenueStatistics(dateFormat, startDate, endDate);
+        List<RevenueStatisticsDTO> dailyRevenue = dailyTuples.stream()
+                .map(t -> new RevenueStatisticsDTO(t.getPeriod(), t.getTotalRevenue(), t.getTotalTicketsSold()))
+                .collect(Collectors.toList());
+
+        // Route statistics
+        List<RouteStatisticsTuple> routeTuples = bookingRepo.getRouteStatistics(startDate, endDate);
+        List<RouteStatisticsDTO> routeStatistics = routeTuples.stream()
+                .map(t -> new RouteStatisticsDTO(t.getRouteName(), t.getTotalRevenue(),
+                        t.getTotalBookings(), t.getUniqueCustomers()))
+                .collect(Collectors.toList());
+
+        // Bus type statistics
+        List<BusTypeStatisticsTuple> busTypeTuples = bookingRepo.getBusTypeStatistics(startDate, endDate);
+        List<BusTypeStatisticsDTO.BusTypeStatItem> busTypeStats = busTypeTuples.stream()
+                .map(t -> new BusTypeStatisticsDTO.BusTypeStatItem(
+                        t.getBusType(),
+                        t.getTotalRevenue(),
+                        t.getTotalBookings(),
+                        t.getAverageOccupancyRate()
+                ))
+                .collect(Collectors.toList());
+
+        BusTypeStatisticsDTO busTypeStatistics = new BusTypeStatisticsDTO(busTypeStats);
+
+        // Customer statistics
+        CustomerStatisticsTuple customerTuple = bookingRepo.getCustomerStatistics(startDate, endDate);
+        CustomerStatisticsDTO customerStatistics = new CustomerStatisticsDTO(
+                customerTuple.getNewCustomers(),
+                customerTuple.getReturningCustomers(),
+                customerTuple.getAverageBookingsPerCustomer()
+        );
+
+        // Overall statistics
+        OverallStatsTuple overallTuple = bookingRepo.getOverallStats(startDate, endDate);
+        OverallStatsDTO overallStats = new OverallStatsDTO(
+                overallTuple.getTotalRevenue(),
+                overallTuple.getTotalTicketsSold(),
+                overallTuple.getTotalBookings(),
+                overallTuple.getTotalCancellations(),
+                overallTuple.getAverageTicketPrice()
+        );
+
+        return new ComprehensiveStatisticsDTO(
+                dailyRevenue,
+                routeStatistics,
+                busTypeStatistics,
+                customerStatistics,
+                overallStats
+        );
+    }
+
+    @Override
+    public ComprehensiveStatisticsDTO getComprehensiveStatisticsMonthly(int year) {
+        String dateFormat = "%Y-%m";
+        LocalDateTime startDate =
+                LocalDateTime.of(year, 1, 1, 0, 0, 0, 0);
+        LocalDateTime endDate =
+                LocalDateTime.of(year, 12, 31, 23, 59, 59, 999999);
+
+        List<RevenueStatisticsDTOTuple> dailyTuples = bookingRepo.getRevenueStatistics(dateFormat, startDate, endDate);
+        List<RevenueStatisticsDTO> dailyRevenue = dailyTuples.stream()
+                .map(t -> new RevenueStatisticsDTO(t.getPeriod(), t.getTotalRevenue(), t.getTotalTicketsSold()))
+                .collect(Collectors.toList());
+
+        // Route statistics
+        List<RouteStatisticsTuple> routeTuples = bookingRepo.getRouteStatistics(startDate, endDate);
+        List<RouteStatisticsDTO> routeStatistics = routeTuples.stream()
+                .map(t -> new RouteStatisticsDTO(t.getRouteName(), t.getTotalRevenue(),
+                        t.getTotalBookings(), t.getUniqueCustomers()))
+                .collect(Collectors.toList());
+
+        // Bus type statistics
+        List<BusTypeStatisticsTuple> busTypeTuples = bookingRepo.getBusTypeStatistics(startDate, endDate);
+        List<BusTypeStatisticsDTO.BusTypeStatItem> busTypeStats = busTypeTuples.stream()
+                .map(t -> new BusTypeStatisticsDTO.BusTypeStatItem(
+                        t.getBusType(),
+                        t.getTotalRevenue(),
+                        t.getTotalBookings(),
+                        t.getAverageOccupancyRate()
+                ))
+                .collect(Collectors.toList());
+
+        BusTypeStatisticsDTO busTypeStatistics = new BusTypeStatisticsDTO(busTypeStats);
+
+        // Customer statistics
+        CustomerStatisticsTuple customerTuple = bookingRepo.getCustomerStatistics(startDate, endDate);
+        CustomerStatisticsDTO customerStatistics = new CustomerStatisticsDTO(
+                customerTuple.getNewCustomers(),
+                customerTuple.getReturningCustomers(),
+                customerTuple.getAverageBookingsPerCustomer()
+        );
+
+        // Overall statistics
+        OverallStatsTuple overallTuple = bookingRepo.getOverallStats(startDate, endDate);
+        OverallStatsDTO overallStats = new OverallStatsDTO(
+                overallTuple.getTotalRevenue(),
+                overallTuple.getTotalTicketsSold(),
+                overallTuple.getTotalBookings(),
+                overallTuple.getTotalCancellations(),
+                overallTuple.getAverageTicketPrice()
+        );
+
+        return new ComprehensiveStatisticsDTO(
+                dailyRevenue,
+                routeStatistics,
+                busTypeStatistics,
+                customerStatistics,
+                overallStats
+        );
+    }
+
+    @Override
+    public Object getComprehensiveStatisticsYearly(int year) {
+        String dateFormat = "%Y";
+        LocalDateTime startDate =
+                LocalDateTime.of(year, 1, 1, 0, 0, 0, 0);
+        LocalDateTime endDate =
+                LocalDateTime.of(year, 12, 31, 23, 59, 59, 999999);
+
+        List<RevenueStatisticsDTOTuple> dailyTuples = bookingRepo.getRevenueStatistics(dateFormat, startDate, endDate);
+        List<RevenueStatisticsDTO> dailyRevenue = dailyTuples.stream()
+                .map(t -> new RevenueStatisticsDTO(t.getPeriod(), t.getTotalRevenue(), t.getTotalTicketsSold()))
+                .collect(Collectors.toList());
+
+        // Route statistics
+        List<RouteStatisticsTuple> routeTuples = bookingRepo.getRouteStatistics(startDate, endDate);
+        List<RouteStatisticsDTO> routeStatistics = routeTuples.stream()
+                .map(t -> new RouteStatisticsDTO(t.getRouteName(), t.getTotalRevenue(),
+                        t.getTotalBookings(), t.getUniqueCustomers()))
+                .collect(Collectors.toList());
+
+        // Bus type statistics
+        List<BusTypeStatisticsTuple> busTypeTuples = bookingRepo.getBusTypeStatistics(startDate, endDate);
+        List<BusTypeStatisticsDTO.BusTypeStatItem> busTypeStats = busTypeTuples.stream()
+                .map(t -> new BusTypeStatisticsDTO.BusTypeStatItem(
+                        t.getBusType(),
+                        t.getTotalRevenue(),
+                        t.getTotalBookings(),
+                        t.getAverageOccupancyRate()
+                ))
+                .collect(Collectors.toList());
+
+        BusTypeStatisticsDTO busTypeStatistics = new BusTypeStatisticsDTO(busTypeStats);
+
+        // Customer statistics
+        CustomerStatisticsTuple customerTuple = bookingRepo.getCustomerStatistics(startDate, endDate);
+        CustomerStatisticsDTO customerStatistics = new CustomerStatisticsDTO(
+                customerTuple.getNewCustomers(),
+                customerTuple.getReturningCustomers(),
+                customerTuple.getAverageBookingsPerCustomer()
+        );
+
+        // Overall statistics
+        OverallStatsTuple overallTuple = bookingRepo.getOverallStats(startDate, endDate);
+        OverallStatsDTO overallStats = new OverallStatsDTO(
+                overallTuple.getTotalRevenue(),
+                overallTuple.getTotalTicketsSold(),
+                overallTuple.getTotalBookings(),
+                overallTuple.getTotalCancellations(),
+                overallTuple.getAverageTicketPrice()
+        );
+
+        return new ComprehensiveStatisticsDTO(
+                dailyRevenue,
+                routeStatistics,
+                busTypeStatistics,
+                customerStatistics,
+                overallStats
+        );
     }
 }
