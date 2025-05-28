@@ -60,9 +60,7 @@ public class BookingServiceImpl implements BookingService {
     private final CanceledBookingHistoryRepository canceledBookingHistoryRepo;
 
     private final RedissonClient redisson;
-    private final RouteRepository routeRepository;
     private final CustomerRepository customerRepository;
-    private final DriverRepository driverRepository;
 
     @Override
     @Transactional
@@ -153,13 +151,18 @@ public class BookingServiceImpl implements BookingService {
         Booking booking = findById(bookingId);
         booking.setStatus(BookingStatus.CONFIRMED);
         booking.setPayment(payment);
-        bookingRepo.save(booking);
+
 
         Customer customer = customerService.findById(booking.getCustomer().getUserId());
 
-        Double paidAmount = (booking.getDiscountedPrice() != null)
+        double baseAmount = (booking.getDiscountedPrice() != null)
                 ? booking.getDiscountedPrice()
                 : booking.getOriginalPrice();
+
+        double paidAmount = applyDiscount(baseAmount, customer.getLevel());
+
+        booking.setDiscountedPrice(paidAmount);
+        bookingRepo.save(booking);
 
         // 10.000 VND = 1 point
         int earnedPoints = (int) Math.floor(paidAmount / 10000);
@@ -178,6 +181,16 @@ public class BookingServiceImpl implements BookingService {
         }
 
         customerService.save(customer);
+    }
+
+    private double applyDiscount(double amount, MembershipLevel level) {
+        double discountRate = switch (level) {
+            case NEW_PASSENGER -> 0.0;
+            case LOYAL_TRAVELER -> 0.05;
+            case GOLD_COMPANION -> 0.10;
+            case ELITE_EXPLORER -> 0.15;
+        };
+        return Math.round(amount * (1 - discountRate));
     }
 
     @Override

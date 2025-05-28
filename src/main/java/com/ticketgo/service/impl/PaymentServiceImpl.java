@@ -4,6 +4,7 @@ import com.ticketgo.config.vnpay.VNPayConfig;
 import com.ticketgo.dto.BookingConfirmDTO;
 import com.ticketgo.entity.Customer;
 import com.ticketgo.entity.Payment;
+import com.ticketgo.enums.MembershipLevel;
 import com.ticketgo.repository.PaymentRepository;
 import com.ticketgo.request.PaymentRequest;
 import com.ticketgo.service.AuthenticationService;
@@ -85,11 +86,26 @@ public class PaymentServiceImpl implements PaymentService {
         vnp_Params.put("vnp_Version", vnp_Version);
         vnp_Params.put("vnp_Command", vnp_Command);
         vnp_Params.put("vnp_TmnCode", vnp_TmnCode);
-        long paymentAmount = Math.round(bookingService.saveInProgressBooking(request, request.getScheduleId()).getPaymentAmount());
-        if(request.getReturnScheduleId() != null)
-            paymentAmount += Math.round(bookingService.saveInProgressBooking(returnRequest, request.getReturnScheduleId()).getPaymentAmount());
 
-        String amount = String.valueOf(paymentAmount * 100);
+        long outboundAmount = Math.round(bookingService
+                .saveInProgressBooking(request, request.getScheduleId())
+                .getPaymentAmount());
+
+        outboundAmount = applyDiscount(outboundAmount, customer.getLevel());
+
+        long returnAmount = 0;
+        if (request.getReturnScheduleId() != null) {
+            returnAmount = Math.round(bookingService
+                    .saveInProgressBooking(returnRequest, request.getReturnScheduleId())
+                    .getPaymentAmount());
+
+            returnAmount = applyDiscount(returnAmount, customer.getLevel());
+        }
+
+        long totalPaymentAmount = outboundAmount + returnAmount;
+
+
+        String amount = String.valueOf(totalPaymentAmount * 100);
         vnp_Params.put("vnp_Amount", amount);
         vnp_Params.put("vnp_CurrCode", "VND");
         vnp_Params.put("vnp_TxnRef", vnp_TxnRef);
@@ -148,6 +164,17 @@ public class PaymentServiceImpl implements PaymentService {
 
         return url;
     }
+
+    private long applyDiscount(long amount, MembershipLevel level) {
+        double discountRate = switch (level) {
+            case NEW_PASSENGER -> 0.0;
+            case LOYAL_TRAVELER -> 0.05;
+            case GOLD_COMPANION -> 0.10;
+            case ELITE_EXPLORER -> 0.15;
+        };
+        return Math.round(amount * (1 - discountRate));
+    }
+
 
     @Override
     public void save(Payment payment) {
