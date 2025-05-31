@@ -1,6 +1,7 @@
 package com.ticketgo.repository;
 
 import com.ticketgo.entity.Booking;
+import com.ticketgo.entity.User;
 import com.ticketgo.enums.BookingStatus;
 import com.ticketgo.mapper.BusTypeStatisticsTuple;
 import com.ticketgo.mapper.CustomerStatisticsTuple;
@@ -289,4 +290,17 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     OverallStatsTuple getOverallStats(
             @Param("startDate") LocalDateTime startDate,
             @Param("endDate") LocalDateTime endDate);
+
+    @Query("SELECT DISTINCT t.customer FROM Ticket t WHERE t.schedule.scheduleId = :scheduleId AND t.customer IS NOT NULL AND t.status = com.ticketgo.enums.TicketStatus.BOOKED")
+    List<User> findBookedCustomersByScheduleId(@Param("scheduleId") Long scheduleId);
+
+    @Query("""
+        SELECT DISTINCT b
+        FROM Booking b
+        JOIN b.tickets t
+        WHERE t.schedule.scheduleId = :scheduleId
+        AND b.status = com.ticketgo.enums.BookingStatus.CONFIRMED
+    """)
+    List<Booking> findAllByScheduleId(@Param("scheduleId") Long scheduleId);
+
 }

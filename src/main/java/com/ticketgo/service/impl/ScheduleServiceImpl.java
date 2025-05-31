@@ -7,10 +7,7 @@ import com.ticketgo.enums.ScheduleStatus;
 import com.ticketgo.enums.StopType;
 import com.ticketgo.enums.TicketStatus;
 import com.ticketgo.exception.AppException;
-import com.ticketgo.repository.BookingRepository;
-import com.ticketgo.repository.BusRepository;
-import com.ticketgo.repository.ScheduleRepository;
-import com.ticketgo.repository.TicketRepository;
+import com.ticketgo.repository.*;
 import com.ticketgo.request.ScheduleCreateRequest;
 import com.ticketgo.response.BusScheduleResponse;
 import com.ticketgo.response.DriverScheduleResponse;
@@ -44,6 +41,7 @@ public class ScheduleServiceImpl implements ScheduleService {
     private final BusRepository busRepo;
     private final BookingRepository bookingRepository;
     private final EmailService emailService;
+    private final DriverRepository driverRepository;
 
     @Override
     public Schedule findById(long scheduleId) {
@@ -175,18 +173,22 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     @Override
+    @Transactional
     public void updateDriverForSchedule(Long scheduleId, Long driverId) {
         Schedule schedule = scheduleRepo.findById(scheduleId)
                 .orElseThrow(() -> new AppException("Schedule with id " + scheduleId + " not found", HttpStatus.NOT_FOUND));
 
-        Driver driver = new Driver();
-        driver.setDriverId(driverId);
+        Driver driver = driverRepository.findById(driverId)
+                .orElseThrow(() -> new AppException("Driver with id " + driverId + " not found", HttpStatus.NOT_FOUND));
 
         schedule.setDriver(driver);
         scheduleRepo.save(schedule);
 
-
-
         log.info("Driver updated successfully for schedule id: {}", scheduleId);
+
+        List<Booking> bookings = bookingRepository.findAllByScheduleId(scheduleId);
+        for (Booking booking : bookings) {
+            emailService.sendUpdateDriver(schedule, booking.getBookingId(), driver);
+        }
     }
 }
