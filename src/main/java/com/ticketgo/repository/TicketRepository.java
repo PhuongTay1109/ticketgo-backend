@@ -104,4 +104,9 @@ public interface TicketRepository extends JpaRepository<Ticket, String> {
         """, nativeQuery = true)
     void cancelTicketsByBookingId(@Param("bookingId") Long bookingId);
 
+    @Query("""
+        SELECT t FROM Ticket t
+        WHERE t.schedule.scheduleId = :scheduleId
+        """)
+    List<Ticket> findAllByScheduleId(Long scheduleId);
 }

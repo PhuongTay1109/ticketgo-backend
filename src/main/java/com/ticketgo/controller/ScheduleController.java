@@ -102,4 +102,19 @@ public class ScheduleController {
         );
     }
 
+    @PutMapping("/{scheduleId}/bus")
+    @PreAuthorize("hasRole('BUS_COMPANY')")
+    public ApiResponse updateBusForSchedule(
+            @PathVariable Long scheduleId,
+            @RequestParam Long busId) {
+
+        scheduleService.updateBusForSchedule(scheduleId, busId);
+
+        return new ApiResponse(
+                HttpStatus.OK,
+                "Cập nhật xe cho chuyến xe thành công",
+                null
+        );
+    }
+
 }

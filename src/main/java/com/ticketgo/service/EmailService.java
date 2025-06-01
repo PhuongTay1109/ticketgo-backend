@@ -1,5 +1,6 @@
 package com.ticketgo.service;
 
+import com.ticketgo.entity.Bus;
 import com.ticketgo.entity.Driver;
 import com.ticketgo.entity.Schedule;
 
@@ -13,4 +14,6 @@ public interface EmailService {
     void sendBookingInfoReturn(Long bookingId, Long scheduleId, Long returnBookingId, Long returnScheduleId);
 
     void sendUpdateDriver(Schedule schedule, long bookingId, Driver driver);
+
+    void sendUpdateBus(Schedule schedule, Long bookingId, Bus bus);
 }

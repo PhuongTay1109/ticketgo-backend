@@ -26,10 +26,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.YearMonth;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -42,6 +39,7 @@ public class ScheduleServiceImpl implements ScheduleService {
     private final BookingRepository bookingRepository;
     private final EmailService emailService;
     private final DriverRepository driverRepository;
+    private final TicketRepository ticketRepository;
 
     @Override
     public Schedule findById(long scheduleId) {
@@ -189,6 +187,49 @@ public class ScheduleServiceImpl implements ScheduleService {
         List<Booking> bookings = bookingRepository.findAllByScheduleId(scheduleId);
         for (Booking booking : bookings) {
             emailService.sendUpdateDriver(schedule, booking.getBookingId(), driver);
+        }
+    }
+
+    @Override
+    public void updateBusForSchedule(Long scheduleId, Long busId) {
+        Schedule schedule = scheduleRepo.findById(scheduleId)
+                .orElseThrow(() -> new AppException("Schedule with id " + scheduleId + " not found", HttpStatus.NOT_FOUND));
+
+        Bus newBus = busRepo.findById(busId)
+                .orElseThrow(() -> new AppException("Bus with id " + busId + " not found", HttpStatus.NOT_FOUND));
+
+        // Lưu lại bus cũ để log/kiểm tra nếu cần
+        Bus oldBus = schedule.getBus();
+
+        // Cập nhật lại bus mới cho schedule
+        schedule.setBus(newBus);
+        scheduleRepo.save(schedule);
+
+        log.info("Bus updated successfully for schedule id: {}", scheduleId);
+
+        // Tạo map ánh xạ seatNumber → Seat trong bus mới
+        Map<String, Seat> newSeatMap = newBus.getSeats().stream()
+                .collect(Collectors.toMap(Seat::getSeatNumber, seat -> seat));
+
+        // Cập nhật từng ticket với ghế mới
+        List<Ticket> tickets = ticketRepository.findAllByScheduleId(scheduleId);
+        for (Ticket ticket : tickets) {
+            String oldSeatNumber = ticket.getSeat().getSeatNumber();
+            Seat newSeat = newSeatMap.get(oldSeatNumber);
+
+            if (newSeat != null) {
+                ticket.setSeat(newSeat);
+            } else {
+                log.warn("Không tìm thấy ghế '{}' trong xe mới (busId={})", oldSeatNumber, busId);
+            }
+        }
+
+        ticketRepository.saveAll(tickets);
+
+        // Gửi email thông báo khách
+        List<Booking> bookings = bookingRepository.findAllByScheduleId(scheduleId);
+        for (Booking booking : bookings) {
+            emailService.sendUpdateBus(schedule, booking.getBookingId(), newBus);
         }
     }
 }
