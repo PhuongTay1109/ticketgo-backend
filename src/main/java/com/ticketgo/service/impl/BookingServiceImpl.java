@@ -7,10 +7,7 @@ import com.ticketgo.entity.*;
 import com.ticketgo.enums.*;
 import com.ticketgo.exception.AppException;
 import com.ticketgo.mapper.*;
-import com.ticketgo.projector.BookingHistoryDTOTuple;
-import com.ticketgo.projector.BookingInfoDTOTuple;
-import com.ticketgo.projector.CustomerInfoDTOTuple;
-import com.ticketgo.projector.RevenueStatisticsDTOTuple;
+import com.ticketgo.projector.*;
 import com.ticketgo.repository.*;
 import com.ticketgo.request.*;
 import com.ticketgo.response.ApiPaginationResponse;
@@ -765,12 +762,26 @@ public class BookingServiceImpl implements BookingService {
                 overallTuple.getAverageTicketPrice()
         );
 
+        List<BusStatisticsTuple> busTuples = bookingRepo.getBusStatisticsByBus(startDate, endDate);
+        List<BusStatisticsDTO> busStatistics = busTuples.stream()
+                .map(t -> new BusStatisticsDTO(
+                        t.getLicensePlate(),
+                        t.getBusType(),
+                        t.getTotalRevenue(),
+                        t.getTotalBookings(),
+                        t.getTotalTicketsSold(),
+                        t.getAverageOccupancyRate()
+                ))
+                .collect(Collectors.toList());
+
+
         return new ComprehensiveStatisticsDTO(
                 dailyRevenue,
                 routeStatistics,
                 busTypeStatistics,
                 customerStatistics,
-                overallStats
+                overallStats,
+                busStatistics
         );
     }
 
@@ -825,12 +836,26 @@ public class BookingServiceImpl implements BookingService {
                 overallTuple.getAverageTicketPrice()
         );
 
+        List<BusStatisticsTuple> busTuples = bookingRepo.getBusStatisticsByBus(startDate, endDate);
+        List<BusStatisticsDTO> busStatistics = busTuples.stream()
+                .map(t -> new BusStatisticsDTO(
+                        t.getLicensePlate(),
+                        t.getBusType(),
+                        t.getTotalRevenue(),
+                        t.getTotalBookings(),
+                        t.getTotalTicketsSold(),
+                        t.getAverageOccupancyRate()
+                ))
+                .collect(Collectors.toList());
+
+
         return new ComprehensiveStatisticsDTO(
                 dailyRevenue,
                 routeStatistics,
                 busTypeStatistics,
                 customerStatistics,
-                overallStats
+                overallStats,
+                busStatistics
         );
     }
 
@@ -885,12 +910,26 @@ public class BookingServiceImpl implements BookingService {
                 overallTuple.getAverageTicketPrice()
         );
 
+        List<BusStatisticsTuple> busTuples = bookingRepo.getBusStatisticsByBus(startDate, endDate);
+        List<BusStatisticsDTO> busStatistics = busTuples.stream()
+                .map(t -> new BusStatisticsDTO(
+                        t.getLicensePlate(),
+                        t.getBusType(),
+                        t.getTotalRevenue(),
+                        t.getTotalBookings(),
+                        t.getTotalTicketsSold(),
+                        t.getAverageOccupancyRate()
+                ))
+                .collect(Collectors.toList());
+
+
         return new ComprehensiveStatisticsDTO(
                 dailyRevenue,
                 routeStatistics,
                 busTypeStatistics,
                 customerStatistics,
-                overallStats
+                overallStats,
+                busStatistics
         );
     }
 }

@@ -1,5 +1,6 @@
 package com.ticketgo.service;
 
+import com.ticketgo.dto.DriverBusDTO;
 import com.ticketgo.dto.DriverDTO;
 import com.ticketgo.request.DriverCreateRequest;
 import com.ticketgo.request.DriverListRequest;
@@ -16,7 +17,7 @@ public interface DriverService {
     void update(Long id, DriverUpdateRequest req);
     void delete(Long id);
 
-    DriverDTO getDriverForSchedule(Long scheduleId);
+    DriverBusDTO getDriverForSchedule(Long scheduleId);
 
     List<DriverDTO> getAvailableDrivers(LocalDateTime departureTime, LocalDateTime arrivalTime);
 }

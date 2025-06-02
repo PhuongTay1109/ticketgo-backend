@@ -7,10 +7,7 @@ import com.ticketgo.mapper.BusTypeStatisticsTuple;
 import com.ticketgo.mapper.CustomerStatisticsTuple;
 import com.ticketgo.mapper.OverallStatsTuple;
 import com.ticketgo.mapper.RouteStatisticsTuple;
-import com.ticketgo.projector.BookingHistoryDTOTuple;
-import com.ticketgo.projector.BookingInfoDTOTuple;
-import com.ticketgo.projector.CustomerInfoDTOTuple;
-import com.ticketgo.projector.RevenueStatisticsDTOTuple;
+import com.ticketgo.projector.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -303,4 +300,34 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     """)
     List<Booking> findAllByScheduleId(@Param("scheduleId") Long scheduleId);
 
+    @Query(value = """
+        SELECT 
+            b.license_plate AS licensePlate,
+            b.bus_type AS busType,
+            COALESCE(SUM(CASE 
+                WHEN bk.status IN ('COMPLETED', 'CONFIRMED') THEN 
+                    COALESCE(bk.discounted_price, bk.original_price) 
+                ELSE 0 END), 0) AS totalRevenue,
+            COALESCE(COUNT(DISTINCT CASE 
+                WHEN bk.status IN ('COMPLETED', 'CONFIRMED') THEN bk.booking_id 
+                ELSE NULL END), 0) AS totalBookings,
+            COALESCE(COUNT(t.ticket_code), 0) AS totalTicketsSold,
+            CASE 
+                WHEN b.total_seats > 0 THEN 
+                    COALESCE(COUNT(t.ticket_code) * 100.0 / b.total_seats, 0)
+                ELSE 0
+            END AS averageOccupancyRate
+        FROM buses b
+        LEFT JOIN schedules s ON s.bus_id = b.bus_id AND s.is_deleted = 0
+        LEFT JOIN tickets t ON t.schedule_id = s.schedule_id
+        LEFT JOIN bookings bk ON t.booking_id = bk.booking_id 
+                              AND bk.is_deleted = 0 
+                              AND bk.booking_date BETWEEN :startDate AND :endDate
+        WHERE b.is_deleted = 0
+        GROUP BY b.license_plate, b.bus_type, b.total_seats
+    """, nativeQuery = true)
+    List<BusStatisticsTuple> getBusStatisticsByBus(
+            @Param("startDate") LocalDateTime startDate,
+            @Param("endDate") LocalDateTime endDate
+    );
 }

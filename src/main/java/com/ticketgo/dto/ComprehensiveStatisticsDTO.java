@@ -13,5 +13,6 @@ public class ComprehensiveStatisticsDTO {
     private BusTypeStatisticsDTO busTypeStatistics;
     private CustomerStatisticsDTO customerStatistics;
     private OverallStatsDTO overallStats;
+    private List<BusStatisticsDTO> busStatistics;
 }
 

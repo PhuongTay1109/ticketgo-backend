@@ -1,9 +1,13 @@
 package com.ticketgo.service.impl;
 
+import com.ticketgo.dto.DriverBusDTO;
 import com.ticketgo.dto.DriverDTO;
+import com.ticketgo.entity.Bus;
 import com.ticketgo.entity.Driver;
 import com.ticketgo.exception.AppException;
+import com.ticketgo.mapper.BusMapper;
 import com.ticketgo.mapper.DriverMapper;
+import com.ticketgo.repository.BusRepository;
 import com.ticketgo.repository.DriverRepository;
 import com.ticketgo.repository.ScheduleRepository;
 import com.ticketgo.request.DriverCreateRequest;
@@ -32,6 +36,7 @@ import java.util.stream.Collectors;
 public class DriverServiceImpl implements DriverService {
     private final DriverRepository driverRepo;
     private final ScheduleRepository scheduleRepo;
+    private final BusRepository busRepository;
 
     @Override
     @Transactional
@@ -93,10 +98,16 @@ public class DriverServiceImpl implements DriverService {
 
     @Override
     @Transactional
-    public DriverDTO getDriverForSchedule(Long scheduleId) {
+    public DriverBusDTO getDriverForSchedule(Long scheduleId) {
         Long driverId = scheduleRepo.getDriverIdByScheduleId(scheduleId);
         log.info("Find driverId {} for scheduleId {}", driverId, scheduleId);
-        return this.get(driverId);
+        Long busId = scheduleRepo.getBusIdByScheduleId(scheduleId);
+        Bus bus = busRepository.findByBusId(busId)
+                .orElseThrow(() -> new AppException("Không tìm thấy thông tin xe", HttpStatus.NOT_FOUND));
+        return new DriverBusDTO(
+                this.get(driverId),
+                BusMapper.INSTANCE.toBusDTO(bus)
+        );
     }
 
     @Override

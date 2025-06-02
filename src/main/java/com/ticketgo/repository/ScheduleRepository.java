@@ -38,4 +38,8 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long>, JpaSp
     List<Schedule> findSchedulesByDriverAndMonth(@Param("driverId") Long driverId,
                                                  @Param("start") LocalDateTime start,
                                                  @Param("end") LocalDateTime end);
+
+
+    @Query("SELECT s.bus.busId FROM Schedule s WHERE s.scheduleId = :scheduleId")
+    Long getBusIdByScheduleId(@Param("scheduleId") Long scheduleId);
 }

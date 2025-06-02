@@ -47,7 +47,7 @@ public class DriverController {
     public ApiResponse getDriverForSchedule(@RequestParam Long scheduleId) {
         return new ApiResponse(
                 HttpStatus.OK,
-                "Lấy thông tin tài xế thành công",
+                "Lấy thông tin tài xế và xe thành công",
                 driverService.getDriverForSchedule(scheduleId)
         );
     }
