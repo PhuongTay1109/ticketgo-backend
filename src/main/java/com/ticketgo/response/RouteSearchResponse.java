@@ -1,7 +1,7 @@
 package com.ticketgo.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.ticketgo.enums.ScheduleStatus;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -19,10 +19,12 @@ public class RouteSearchResponse {
     private String busImage;
     private String busType;
     private String busId;
+    @JsonFormat(pattern = "dd/MM/yyyy HH:mm")
     private LocalDateTime departureTime;
     private String departureLocation;
     private String departureAddress;
     private String arrivalAddress;
+    @JsonFormat(pattern = "dd/MM/yyyy HH:mm")
     private LocalDateTime arrivalTime;
     private String arrivalLocation;
     private double price;

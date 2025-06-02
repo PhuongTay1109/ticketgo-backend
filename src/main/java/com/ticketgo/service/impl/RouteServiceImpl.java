@@ -46,6 +46,10 @@ public class RouteServiceImpl implements RouteService {
                                               String sortDirection,
                                               int pageNumber,
                                               int pageSize) {
+        log.info("[RouteService] searchRoutes called with: departureLocation={}, arrivalLocation={}, departureDate={}, sortBy={}, sortDirection={}, pageNumber={}, pageSize={}",
+                departureLocation, arrivalLocation, departureDate, sortBy, sortDirection, pageNumber, pageSize);
+
+
         Specification<Schedule> spec = Specification.where(null);
 
         if (departureLocation != null) {
@@ -89,7 +93,17 @@ public class RouteServiceImpl implements RouteService {
                 schedules.getTotalElements()
         );
 
-        return new ApiPaginationResponse(HttpStatus.OK, "Kết quả tìm kiếm", scheduleDTOs, pagination);
+        ApiPaginationResponse response = new ApiPaginationResponse(HttpStatus.OK, "Kết quả tìm kiếm", scheduleDTOs, pagination);
+
+        log.info("[RouteService] searchRoutes returning: totalElements={}, totalPages={}, currentPage={}, pageSize={}, dataCount={}",
+                schedules.getTotalElements(),
+                pagination.getTotalPages(),
+                pagination.getPageNumber(),
+                pagination.getPageSize(),
+                scheduleDTOs != null ? scheduleDTOs.size() : 0);
+
+        return response;
+
     }
 
     @Override

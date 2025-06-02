@@ -28,6 +28,16 @@ public class ApiPaginationResponse extends ResponseEntity<ApiPaginationResponse.
             this.data = data;
             this.pagination = pagination;
         }
+
+        @Override
+        public String toString() {
+            return "Payload{" +
+                    "status=" + status +
+                    ", message='" + message + '\'' +
+                    ", data=" + data +
+                    ", pagination=" + pagination +
+                    '}';
+        }
     }
 
     @Data
@@ -44,5 +54,22 @@ public class ApiPaginationResponse extends ResponseEntity<ApiPaginationResponse.
             this.totalPages = totalPages;
             this.totalItems = totalItems;
         }
+
+        @Override
+        public String toString() {
+            return "Pagination{" +
+                    "pageNumber=" + pageNumber +
+                    ", pageSize=" + pageSize +
+                    ", totalPages=" + totalPages +
+                    ", totalItems=" + totalItems +
+                    '}';
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "ApiPaginationResponse{" +
+                "body=" + getBody() +
+                '}';
     }
 }
