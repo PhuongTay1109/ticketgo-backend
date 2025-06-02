@@ -34,12 +34,17 @@ public class SeatController {
     }
 
     @PostMapping("/cancel-reserve")
-    public ApiResponse cancelReserveSeats(@RequestParam Long scheduleId, @RequestParam Long returnScheduleId) {
+    public ApiResponse cancelReserveSeats(
+            @RequestParam Long scheduleId,
+            @RequestParam(required = false) Long returnScheduleId) {
+
         seatService.cancelReservedSeatsByCustomer(scheduleId, returnScheduleId);
+
         return new ApiResponse(
                 HttpStatus.OK,
                 "Hủy các vé đang giữ cho khách hàng thành công",
                 null
         );
     }
+
 }

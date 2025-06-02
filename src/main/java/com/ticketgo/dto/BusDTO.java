@@ -19,5 +19,8 @@ public class BusDTO {
     private Integer floors;
     private String registrationExpiry;
     private String expirationDate;
+
+    private boolean registrationExpiringSoon;
+    private boolean usageExpiringSoon;
 }
 
