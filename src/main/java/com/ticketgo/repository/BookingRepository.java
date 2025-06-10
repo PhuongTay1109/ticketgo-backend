@@ -301,31 +301,54 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     List<Booking> findAllByScheduleId(@Param("scheduleId") Long scheduleId);
 
     @Query(value = """
-        SELECT 
-            b.license_plate AS licensePlate,
-            b.bus_type AS busType,
-            COALESCE(SUM(CASE 
-                WHEN bk.status IN ('COMPLETED', 'CONFIRMED') THEN 
-                    COALESCE(bk.discounted_price, bk.original_price) 
-                ELSE 0 END), 0) AS totalRevenue,
-            COALESCE(COUNT(DISTINCT CASE 
-                WHEN bk.status IN ('COMPLETED', 'CONFIRMED') THEN bk.booking_id 
-                ELSE NULL END), 0) AS totalBookings,
-            COALESCE(COUNT(t.ticket_code), 0) AS totalTicketsSold,
-            CASE 
-                WHEN b.total_seats > 0 THEN 
-                    COALESCE(COUNT(t.ticket_code) * 100.0 / b.total_seats, 0)
-                ELSE 0
-            END AS averageOccupancyRate
-        FROM buses b
-        LEFT JOIN schedules s ON s.bus_id = b.bus_id AND s.is_deleted = 0
-        LEFT JOIN tickets t ON t.schedule_id = s.schedule_id
-        LEFT JOIN bookings bk ON t.booking_id = bk.booking_id 
-                              AND bk.is_deleted = 0 
-                              AND bk.booking_date BETWEEN :startDate AND :endDate
-        WHERE b.is_deleted = 0
-        GROUP BY b.license_plate, b.bus_type, b.total_seats
-    """, nativeQuery = true)
+    SELECT 
+        b.license_plate AS licensePlate,
+        b.bus_type AS busType,
+        COALESCE(SUM(CASE 
+            WHEN t.ticket_code IS NOT NULL 
+                 AND t.is_deleted = 0 
+                 AND t.status = 'BOOKED' 
+                 AND bk.status IN ('COMPLETED', 'CONFIRMED') 
+                 AND bk.booking_date BETWEEN :startDate AND :endDate
+            THEN COALESCE(bk.discounted_price, bk.original_price) 
+            ELSE 0 END), 0) AS totalRevenue,
+        COALESCE(COUNT(DISTINCT CASE 
+            WHEN t.ticket_code IS NOT NULL 
+                 AND t.is_deleted = 0 
+                 AND t.status = 'BOOKED' 
+                 AND bk.status IN ('COMPLETED', 'CONFIRMED') 
+                 AND bk.booking_date BETWEEN :startDate AND :endDate
+            THEN bk.booking_id 
+            ELSE NULL END), 0) AS totalBookings,
+        COALESCE(COUNT(CASE 
+            WHEN t.ticket_code IS NOT NULL 
+                 AND t.is_deleted = 0 
+                 AND t.status = 'BOOKED' 
+                 AND bk.booking_date BETWEEN :startDate AND :endDate
+            THEN t.ticket_code 
+            ELSE NULL END), 0) AS totalTicketsSold,
+        CASE 
+            WHEN COUNT(DISTINCT s.schedule_id) > 0 AND b.total_seats > 0 THEN 
+                COALESCE(
+                    COUNT(CASE 
+                        WHEN t.ticket_code IS NOT NULL 
+                             AND t.is_deleted = 0 
+                             AND t.status = 'BOOKED' 
+                             AND bk.booking_date BETWEEN :startDate AND :endDate
+                        THEN t.ticket_code 
+                        ELSE NULL END) * 100.0 / 
+                    (COUNT(DISTINCT s.schedule_id) * b.total_seats), 
+                    0
+                )
+            ELSE 0
+        END AS averageOccupancyRate
+    FROM buses b
+    LEFT JOIN schedules s ON s.bus_id = b.bus_id AND s.is_deleted = 0
+    LEFT JOIN tickets t ON t.schedule_id = s.schedule_id AND t.is_deleted = 0
+    LEFT JOIN bookings bk ON t.booking_id = bk.booking_id AND bk.is_deleted = 0
+    WHERE b.is_deleted = 0
+    GROUP BY b.license_plate, b.bus_type, b.total_seats
+""", nativeQuery = true)
     List<BusStatisticsTuple> getBusStatisticsByBus(
             @Param("startDate") LocalDateTime startDate,
             @Param("endDate") LocalDateTime endDate

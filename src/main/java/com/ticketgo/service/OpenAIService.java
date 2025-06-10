@@ -189,7 +189,7 @@ public class OpenAIService {
 
     private String systemPrompt() {
         var systemTime = LocalDateTime.now();
-        return "Bạn là một trợ lý thông minh chuyên hỗ trợ tìm kiếm chuyến xe buýt. Bạn có thể trả lời câu hỏi của người dùng bằng cách sử dụng các công cụ tìm kiếm chuyến xe. Hãy lịch sự, súc tích và chính xác.\n" +
+        return "Bạn là một trợ lý thông minh chuyên hỗ trợ tìm kiếm chuyến xe khách. Bạn có thể trả lời câu hỏi của người dùng bằng cách sử dụng các công cụ tìm kiếm chuyến xe. Hãy lịch sự, súc tích và chính xác.\n" +
                 "\n" +
                 "<general_guidelines>\n" +
                 "- Luôn trả lời bằng tiếng Việt\n" +

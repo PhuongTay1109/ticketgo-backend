@@ -27,7 +27,7 @@ public class Seat extends BaseEntity {
     @Column(nullable = false)
     private Integer floor;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "seat_row")
     private Integer row;
 
     @Column(nullable = false)

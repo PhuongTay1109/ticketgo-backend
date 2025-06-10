@@ -9,4 +9,6 @@ import java.util.Optional;
 @Repository
 public interface ConversationRepository extends JpaRepository<Conversation, Long> {
     Optional<Conversation> findByConversationId(String conversationId);
+
+    Optional<Conversation> findTopByUserIdOrderByUpdatedAtDesc(String userId);
 }
