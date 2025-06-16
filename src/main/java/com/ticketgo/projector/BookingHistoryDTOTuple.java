@@ -18,4 +18,5 @@ public interface BookingHistoryDTOTuple {
     String getOriginalPrice();
     String getDiscountedPrice();
     String getStatus();
+    String getPaymentStatus();
 }

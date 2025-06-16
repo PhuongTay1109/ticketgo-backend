@@ -109,4 +109,18 @@ public interface TicketRepository extends JpaRepository<Ticket, String> {
         WHERE t.schedule.scheduleId = :scheduleId
         """)
     List<Ticket> findAllByScheduleId(Long scheduleId);
+
+
+    @Modifying
+    @Transactional
+    @Query(value = """
+        UPDATE tickets t
+        SET 
+            t.status = 'RESERVED',
+            t.reserved_until = CURRENT_TIMESTAMP + INTERVAL 5 MINUTE
+        WHERE t.ticket_code IN (:ticketCodes)
+        """, nativeQuery = true)
+    void reserveSeatsByTicketCodes(@Param("ticketCodes") List<String> ticketCodes);
+
+    List<Ticket> findAllByTicketCodeIn(List<String> ticketCodes);
 }

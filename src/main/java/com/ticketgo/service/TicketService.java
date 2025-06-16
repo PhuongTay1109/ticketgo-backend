@@ -1,5 +1,6 @@
 package com.ticketgo.service;
 
+import com.ticketgo.dto.BookingRequestDTO;
 import com.ticketgo.entity.Ticket;
 
 import java.util.List;
@@ -26,4 +27,8 @@ public interface TicketService {
     List<Ticket> findAllByBookingId(long bookingId);
 
     Long getTicketRemainingTime(String ticketCode);
+
+    void reserveSeats(List<String> ticketCodes);
+
+    void adminBooking(BookingRequestDTO dto);
 }

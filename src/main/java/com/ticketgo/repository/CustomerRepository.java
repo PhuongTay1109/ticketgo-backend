@@ -41,9 +41,9 @@ public interface CustomerRepository extends JpaRepository<Customer,Long> {
     Page<Customer> findByRoleAndKeyword(Role role, String keyword, Pageable pageable);
 
     @Query("""
-        select c.userId
-        from Customer c
-        where c.isDeleted = false
+        select u.userId
+        from User u
+        where u.isDeleted = false
     """)
     List<Long> getAllCustomerId();
 }

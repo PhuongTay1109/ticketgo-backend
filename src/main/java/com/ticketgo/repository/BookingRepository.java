@@ -157,7 +157,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             bs.license_plate AS licensePlate,
             b.original_price AS originalPrice,
             b.discounted_price AS discountedPrice,
-            b.status AS status
+            b.status AS status,
+            p.payment_status AS paymentStatus
         FROM
             bookings b
         JOIN
@@ -174,6 +175,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             route_stops ps ON b.pickup_stop_id = ps.stop_id
         JOIN
             route_stops ds ON b.dropoff_stop_id = ds.stop_id
+        LEFT JOIN payments p ON p.booking_id = b.booking_id
         WHERE
             b.status NOT LIKE 'IN_PROGRESS'
         AND  b.status NOT LIKE 'FAILED'
